@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sivustokartta — Muotoilun pajat</title>
+<meta name="theme-color" content="#CE3F1B">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="mhks-icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE6DA;--paper-deep:#E4DCCC;--card:#F3EFE7;--ink:#211C16;--ink-soft:#5A5347;
+    --ember:#CE3F1B;--rule:#C8BFAD;--rule-soft:#D8D0C0;
+    --a-oppi:#CE3F1B;--a-tyo:#5E8C5A;--a-hall:#4E8C84;--a-perus:#3D4B58;--a-asia:#6E5A93;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 clamp(14px,4vw,30px) 40px;}
+  h1,h2,h3,h4{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;text-transform:uppercase;line-height:.95;margin:0;}
+  p{margin:0 0 1em;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+
+  .head{padding:clamp(28px,5vw,52px) 0 10px;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);}
+  .head h1{font-size:clamp(2rem,6vw,3.1rem);margin-top:.35em;}
+  .head h1 .e{color:var(--ember);}
+  .head .sub{color:var(--ink-soft);font-size:.98rem;max-width:66ch;margin-top:.6em;}
+
+  /* juuri */
+  .root{display:flex;justify-content:center;margin:22px 0 0;}
+  .rootcard{background:linear-gradient(160deg,#CE3F1B,#A83314);color:#fff;border-radius:18px;padding:16px 22px;text-align:center;
+    box-shadow:0 14px 26px rgba(33,28,22,.2);max-width:420px;}
+  .rootcard h2{font-size:1.5rem;}
+  .rootcard .f{font-family:"IBM Plex Mono",monospace;font-size:.6rem;opacity:.85;margin-top:.3em;letter-spacing:.06em;}
+  .rootcard .d{font-size:.88rem;opacity:.95;margin-top:.4em;}
+  .stem{width:2px;height:26px;background:var(--rule);margin:0 auto;}
+  .spread{height:2px;background:var(--rule);max-width:82%;margin:0 auto 0;}
+
+  /* haarat */
+  .branch{margin:22px 0 0;border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--card);}
+  .bhead{display:flex;align-items:center;gap:10px;padding:11px 15px;color:#fff;}
+  .bhead .n{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.1em;opacity:.9;}
+  .bhead h3{font-size:1.2rem;}
+  .bhead .who{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.05em;text-transform:uppercase;background:rgba(255,255,255,.22);padding:.25em .6em;border-radius:20px;}
+  .b-oppi .bhead{background:var(--a-oppi);} .b-tyo .bhead{background:var(--a-tyo);}
+  .b-hall .bhead{background:var(--a-hall);} .b-perus .bhead{background:var(--a-perus);}
+  .b-asia .bhead{background:var(--a-asia);}
+  .bbody{padding:13px 15px 15px;}
+  .bdesc{font-size:.9rem;color:var(--ink-soft);margin:0 0 .8em;}
+
+  .nodes{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px;}
+  .node{display:block;background:#fff;border:1px solid var(--rule);border-left:4px solid var(--rule);border-radius:9px;padding:11px 12px;transition:transform .14s ease,box-shadow .14s ease;}
+  .node:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(33,28,22,.12);}
+  .b-oppi .node{border-left-color:var(--a-oppi);} .b-tyo .node{border-left-color:var(--a-tyo);}
+  .b-hall .node{border-left-color:var(--a-hall);} .b-perus .node{border-left-color:var(--a-perus);}
+  .b-asia .node{border-left-color:var(--a-asia);}
+  .node h4{font-size:1.02rem;margin-bottom:.2em;}
+  .node .d{font-size:.83rem;color:var(--ink-soft);line-height:1.35;}
+  .node .f{font-family:"IBM Plex Mono",monospace;font-size:.56rem;color:var(--ink-soft);margin-top:.4em;opacity:.85;word-break:break-all;}
+  .node .roles{margin-top:.35em;}
+  .rb{font-family:"IBM Plex Mono",monospace;font-size:.5rem;letter-spacing:.05em;text-transform:uppercase;background:var(--paper-deep);color:var(--ink-soft);padding:.16em .45em;border-radius:20px;margin-right:.25em;display:inline-block;}
+  .node.ext{background:var(--paper-deep);border-style:dashed;}
+  .node.ext h4{color:var(--ink-soft);}
+
+  /* polku */
+  .path{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:.2em 0 1em;}
+  .step{background:#fff;border:1px solid var(--rule);border-radius:20px;padding:.4em .75em;font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.04em;text-transform:uppercase;}
+  .step.done{background:var(--a-oppi);color:#fff;border-color:var(--a-oppi);}
+  .arr{color:var(--rule);font-weight:700;}
+
+  .outside{margin-top:26px;background:var(--paper-deep);border:1px dashed var(--rule);border-radius:12px;padding:14px 16px;}
+  .outside h3{font-size:1.1rem;margin-bottom:.35em;}
+  .outside p{font-size:.9rem;color:var(--ink-soft);margin:0 0 .7em;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:16px 0 0;}
+  .lg{display:flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:.6rem;color:var(--ink-soft);}
+  .lg i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+
+  @media (prefers-reduced-motion:reduce){ .node{transition:none;} .node:hover{transform:none;} }
+</style>
+<link rel="apple-touch-icon" href="icon-180.png">
+</head>
+<body>
+<script src="pajakuutio-nav.js"></script>
+<div class="wrap">
+
+  <header class="head">
+    <span class="eyebrow">Muotoilun pajat · Metropolia · Arabian kampus</span>
+    <h1>Sivusto<span class="e">kartta</span></h1>
+    <p class="sub">Koko kokonaisuus yhdellä silmäyksellä: mitä varten kukin sivu on, kuka sitä käyttää ja mikä tiedosto sen avaa. Kaikki laatikot ovat linkkejä.</p>
+    <div class="legend">
+      <span class="lg"><i style="background:var(--a-oppi)"></i>Oppiminen ja pätevyys</span>
+      <span class="lg"><i style="background:var(--a-tyo)"></i>Päivittäinen työ</span>
+      <span class="lg"><i style="background:var(--a-hall)"></i>Hallinta ja talous</span>
+      <span class="lg"><i style="background:var(--a-perus)"></i>Perusta ja ymmärrys</span>
+      <span class="lg"><i style="background:var(--a-asia)"></i>Asiakirjat</span>
+    </div>
+  </header>
+
+  <div class="root">
+    <a class="rootcard" href="index.html">
+      <h2>Sisäänkäynti</h2>
+      <div class="d">Tunnistautuminen ja roolikohtaiset työkalut. Tästä aloitetaan aina.</div>
+      <div class="f">index.html</div>
+    </a>
+  </div>
+  <div class="stem"></div>
+  <div class="spread"></div>
+
+  <!-- 1 OPPIMINEN -->
+  <section class="branch b-oppi">
+    <div class="bhead"><span class="n">01</span><h3>Oppiminen ja pätevyys</h3><span class="who">Opiskelija</span></div>
+    <div class="bbody">
+      <p class="bdesc">Polku pajalle. Nämä suoritetaan järjestyksessä, ja vasta viimeinen avaa itsenäisen työskentelyn.</p>
+      <div class="path">
+        <span class="step done">1 Perehdytys</span><span class="arr">&rarr;</span>
+        <span class="step done">2 Työlupa</span><span class="arr">&rarr;</span>
+        <span class="step done">3 Paja-ajokortti</span><span class="arr">&rarr;</span>
+        <span class="step">Valvottu itsenäinen työ</span>
+      </div>
+      <div class="nodes">
+        <a class="node" href="syksyn_orientaatiokurssi.html"><h4>Orientaatiokurssi</h4>
+          <div class="d">Kurssin ohjelma ja koko ajokorttiputki yhdessä sivussa.</div>
+          <div class="roles"><span class="rb">Opiskelija</span><span class="rb">Lehtori</span></div>
+          <div class="f">syksyn_orientaatiokurssi.html</div></a>
+        <a class="node" href="vaihe1_turvallisuus_mhks.html"><h4>Vaihe 1 — esitiedot</h4>
+          <div class="d">Turvallisuuden esitietojen ja ymmärryksen varmistus ennen pajaa.</div>
+          <div class="roles"><span class="rb">Opiskelija</span></div>
+          <div class="f">vaihe1_turvallisuus_mhks.html</div></a>
+        <a class="node" href="turvallisuus_ja_tyolupa.html"><h4>Työlupa</h4>
+          <div class="d">Allekirjoitettava lupa: havaitse, ymmärrä, toimi.</div>
+          <div class="roles"><span class="rb">Opiskelija</span><span class="rb">Pajamestari</span></div>
+          <div class="f">turvallisuus_ja_tyolupa.html</div></a>
+        <a class="node" href="orientaatiokurssi_moodle.html"><h4>Kurssidokumentti</h4>
+          <div class="d">Kuvitettava, Moodleen vietävä versio kurssiohjelmasta.</div>
+          <div class="roles"><span class="rb">Lehtori</span></div>
+          <div class="f">orientaatiokurssi_moodle.html</div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 PÄIVITTÄINEN TYÖ -->
+  <section class="branch b-tyo">
+    <div class="bhead"><span class="n">02</span><h3>Päivittäinen työ pajalla</h3><span class="who">Kaikki</span></div>
+    <div class="bbody">
+      <p class="bdesc">Työkalut, jotka ovat käytössä silloin kun ollaan pajalla. Nämä toimivat myös puhelimessa.</p>
+      <div class="nodes">
+        <a class="node" href="paja_app.html"><h4>Paja-app</h4>
+          <div class="d">Koneiden ohjeet, työkalujen paikat, jätteet, siivous ja ajanvaraus.</div>
+          <div class="roles"><span class="rb">Opiskelija</span><span class="rb">Pajamestari</span></div>
+          <div class="f">paja_app.html</div></a>
+        <a class="node" href="paja_kemikaalirekisteri.html"><h4>Kemikaalirekisteri</h4>
+          <div class="d">Kemikaalikortit, KTT-linkit, säilytys- ja käyttöpaikat, ehdotukset.</div>
+          <div class="roles"><span class="rb">Opiskelija</span><span class="rb">Pajamestari</span></div>
+          <div class="f">paja_kemikaalirekisteri.html</div></a>
+        <a class="node" href="paja_herateloki.html"><h4>Herätteet ja loki</h4>
+          <div class="d">Poikkeamat ja läheltä piti -ilmoitukset, vastaukset ja muuttumaton jälki.</div>
+          <div class="roles"><span class="rb">Kaikki</span></div>
+          <div class="f">paja_herateloki.html</div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 HALLINTA -->
+  <section class="branch b-hall">
+    <div class="bhead"><span class="n">03</span><h3>Hallinta ja talous</h3><span class="who">Henkilökunta</span></div>
+    <div class="bbody">
+      <p class="bdesc">Materiaalit, kustannukset ja ryhmän seuranta. Opiskelija näkee näistä vain oman osuutensa.</p>
+      <div class="nodes">
+        <a class="node" href="mhks_app.html"><h4>MHKS</h4>
+          <div class="d">Materiaalikortti, hinnat ja toimittajat, inventaario, laitteet, kiertotalous, laskutus.</div>
+          <div class="roles"><span class="rb">Kaikki roolit</span></div>
+          <div class="f">mhks_app.html</div></a>
+        <a class="node" href="paja_seuranta.html"><h4>Seuranta</h4>
+          <div class="d">Ryhmä ja luokkakuva, kutsut, läsnäolo, tehtävät ja arviointi.</div>
+          <div class="roles"><span class="rb">Lehtori</span><span class="rb">Pajamestari</span></div>
+          <div class="f">paja_seuranta.html</div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 PERUSTA -->
+  <section class="branch b-perus">
+    <div class="bhead"><span class="n">04</span><h3>Perusta ja ymmärrys</h3><span class="who">Taustaksi</span></div>
+    <div class="bbody">
+      <p class="bdesc">Miksi järjestelmä on tällainen. Näitä ei tarvita päivittäin — ne luetaan kerran ja palataan tarvittaessa.</p>
+      <div class="nodes">
+        <a class="node" href="pajatoiminnan_perusta.html"><h4>Pajatoiminnan perusta</h4>
+          <div class="d">Lainmukainen, opiskelijalle toimiva ja kaikille reilu pohja. Roolit ja vastuut.</div>
+          <div class="roles"><span class="rb">Kaikki</span></div>
+          <div class="f">pajatoiminnan_perusta.html</div></a>
+        <a class="node" href="pajakuutio_hallinnan_kartta.html"><h4>Hallinnan kartta</h4>
+          <div class="d">Ajattelun perusta: kenttä, kunnioitus, akselit ja tahkojen suhteet.</div>
+          <div class="roles"><span class="rb">Henkilökunta</span></div>
+          <div class="f">pajakuutio_hallinnan_kartta.html</div></a>
+        <a class="node" href="pajakuutio_esikatselu.html"><h4>Pajakuutio</h4>
+          <div class="d">Kuusi tahkoa ja niiden väliset suhteet pyöritettävänä mallina.</div>
+          <div class="roles"><span class="rb">Henkilökunta</span></div>
+          <div class="f">pajakuutio_esikatselu.html</div></a>
+        <a class="node" href="pajapeli_digital_twin.html"><h4>Pajapeli</h4>
+          <div class="d">Pelilauta, jolla toisen roolin asema tulee ymmärrettäväksi.</div>
+          <div class="roles"><span class="rb">Henkilökunta</span></div>
+          <div class="f">pajapeli_digital_twin.html</div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 ASIAKIRJAT -->
+  <section class="branch b-asia">
+    <div class="bhead"><span class="n">05</span><h3>Asiakirjat ja hallinto</h3><span class="who">Johto</span></div>
+    <div class="bbody">
+      <p class="bdesc">Dokumentit päätöksentekoa ja tietosuojaa varten. Osa on Word- tai Excel-tiedostoja, jotka avautuvat omalla ohjelmallaan.</p>
+      <div class="nodes">
+        <a class="node" href="tietosuoja.html"><h4>Tietosuoja ja GDPR</h4>
+          <div class="d">Mitä tietoja kerätään, miksi ja millä oikeudella. Linkki on joka sivun alalaidassa.</div>
+          <div class="roles"><span class="rb">Kaikki</span></div>
+          <div class="f">tietosuoja.html</div></a>
+        <a class="node" href="Tietosuojaseloste_ja_GDPR_dokumentaatio.docx"><h4>GDPR-dokumentaatio</h4>
+          <div class="d">Täysi seloste, säilytysajat ja DPIA-esiarvio tietosuojavastaavalle.</div>
+          <div class="roles"><span class="rb">Word</span></div>
+          <div class="f">Tietosuojaseloste_ja_GDPR_dokumentaatio.docx</div></a>
+        <a class="node" href="Pajapilotti_esitys_esimiehelle.docx"><h4>Esitys esimiehelle</h4>
+          <div class="d">Yhden sivun esitys syksyn pilotista ja sen päätösporteista.</div>
+          <div class="roles"><span class="rb">Word</span></div>
+          <div class="f">Pajapilotti_esitys_esimiehelle.docx</div></a>
+        <a class="node" href="ajokorttirekisteri.xlsx"><h4>Ajokorttirekisteri</h4>
+          <div class="d">Suoritettujen ajokorttien ja hyväksyntöjen taulukko.</div>
+          <div class="roles"><span class="rb">Excel</span></div>
+          <div class="f">ajokorttirekisteri.xlsx</div></a>
+        <a class="node" href="asenna.html"><h4>Asenna puhelimeen</h4>
+          <div class="d">Sovellus kotinäytölle. Ohjeet Androidille, iPhonelle ja tietokoneelle.</div>
+          <div class="roles"><span class="rb">Kaikki</span></div>
+          <div class="f">asenna.html</div></a>
+        <a class="node" href="linkit.html"><h4>Kaikki sivut</h4>
+          <div class="d">Pitkä luettelo kaikista sivuista, jos haet jotain tiettyä.</div>
+          <div class="roles"><span class="rb">Kaikki</span></div>
+          <div class="f">linkit.html</div></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="outside">
+    <h3>Mikä EI ole tällä sivustolla</h3>
+    <p>Nämä ovat tarkoituksella muualla, jotta samaa tietoa ei ylläpidetä kahdessa paikassa. Sivusto linkittää niihin, ei korvaa niitä.</p>
+    <div class="nodes">
+      <div class="node ext"><h4>PRO24</h4><div class="d">Virallinen kemikaalirekisteri ja käyttöturvallisuustiedotteet.</div><div class="f">erillinen järjestelmä</div></div>
+      <div class="node ext"><h4>Peppi</h4><div class="d">Opiskelija-, kurssi- ja suoritustiedot.</div><div class="f">erillinen järjestelmä</div></div>
+      <div class="node ext"><h4>Moodle</h4><div class="d">Perehdytyksen SCORM-paketti ja kurssialue.</div><div class="f">paja_ajokortti_scorm12.zip</div></div>
+      <div class="node ext"><h4>Outlook / Asio</h4><div class="d">Viralliset tilavaraukset ja kalenterit.</div><div class="f">erillinen järjestelmä</div></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
