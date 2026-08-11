@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  SYKSYN ORIENTAATIOKURSSI — Moodleen ladattava, kuvitettava versio
+  ============================================================
+
+  MUOKKAAMINEN (Dreamweaver):
+  - Tämä on staattinen sivu: ei JavaScriptiä, helppo muokata.
+  - Kaikki tyylit ovat <style>-lohkossa <head>:ssä. Värit voi vaihtaa
+    yhdestä paikasta: ks. :root { --korostus, --muste, --paperi ... }.
+
+  KUVIEN LISÄÄMINEN:
+  - Etsi koodista laatikot: <figure class="kuvapaikka"> ... </figure>
+  - Jokaisen yläpuolella on valmis <img>-esimerkki kommentissa.
+  - Korvaa laatikko (div.paikka) omalla kuvalla, esim:
+        <img src="kuvat/paistinlasta.jpg" alt="Valmis paistinlasta">
+  - Laita kuvat samaan kansioon (esim. alikansio "kuvat/").
+
+  MOODLEEN VIENTI:
+  - Lataa tämä TIEDOSTONA (Lisää aineisto → Tiedosto) ja liitä kuvat
+    mukaan samassa kansiorakenteessa. Näin tyylit ja kuvat toimivat.
+  - ÄLÄ liitä sisältöä Moodlen sivueditoriin (Sivu/Teksti): editori
+    poistaa <head>:n tyylit. Käytä Tiedosto-aineistoa tai upota iframe.
+  ============================================================
+-->
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Syksyn orientaatiokurssi — Muotoilun Pajat</title>
+
+  <!-- Fontit (voit poistaa nämä kaksi riviä, jolloin käytetään järjestelmäfontteja) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== VÄRIT — vaihda koko sivun teema tästä ===== */
+    :root {
+      --paperi:      #ECE6DA;
+      --paperi-tumma:#E4DCCC;
+      --kortti:      #F3EFE7;
+      --muste:       #211C16;
+      --muste-vaalea:#5A5347;
+      --korostus:    #CE3F1B; /* ember */
+      --viiva:       #C8BFAD;
+      --teras:       #3D4B58;
+    }
+
+    /* ===== PERUS ===== */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paperi);
+      color: var(--muste);
+      font-family: "Spectral", Georgia, serif;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 70px; }
+
+    h1, h2, h3, h4 {
+      font-family: "Big Shoulders Display", Arial, sans-serif;
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1;
+      margin: 0;
+    }
+    p { margin: 0 0 1em; }
+    a { color: var(--korostus); }
+
+    .eyebrow {
+      font-family: "Big Shoulders Display", Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: .8rem;
+      color: var(--muste-vaalea);
+    }
+
+    /* ===== OTSIKKO ===== */
+    .head { padding: 46px 0 20px; }
+    .head h1 { font-size: 52px; }
+    .head h1 .korostus { color: var(--korostus); }
+    .head .alaotsikko { font-style: italic; font-size: 22px; margin: 16px 0 0; max-width: 34ch; }
+    .head .meta { color: var(--muste-vaalea); font-size: .95rem; margin-top: .6em; }
+
+    /* ===== OSIO ===== */
+    .osio { padding: 34px 0; border-top: 1px solid var(--viiva); }
+    .osio .numero { color: var(--korostus); font-weight: 700; letter-spacing: .1em; font-size: .8rem; font-family: "Big Shoulders Display", Arial, sans-serif; text-transform: uppercase; }
+    .osio h2 { font-size: 34px; margin-top: .1em; }
+    .johdanto { color: var(--muste-vaalea); max-width: 62ch; margin-top: .5em; }
+
+    /* ===== BANNERI (aloitus / päätös) ===== */
+    .banneri {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: var(--paperi-tumma);
+      border: 1px solid var(--viiva);
+      border-left: 4px solid var(--korostus);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin: 14px 0;
+    }
+    .merkki {
+      font-family: "Big Shoulders Display", Arial, sans-serif; font-weight: 700;
+      text-transform: uppercase; font-size: .8rem; letter-spacing: .04em;
+      background: var(--korostus); color: #fff; padding: .3em .55em; border-radius: 3px;
+      white-space: nowrap; flex: none;
+    }
+
+    /* ===== TYÖ (projekti) ===== */
+    .paja-otsikko { font-size: 22px; margin: 26px 0 6px; }
+    .paja-otsikko .lisa { font-size: .7rem; color: var(--muste-vaalea); letter-spacing: .04em; }
+    .tyo {
+      background: var(--kortti);
+      border: 1px solid var(--viiva);
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+    }
+    .tyo h4 { font-size: 20px; margin-bottom: .3em; }
+    .tyo p { font-size: .95rem; margin: 0; }
+
+    /* ===== KUVAPAIKKA — korvaa omalla kuvalla ===== */
+    .kuvapaikka { margin: 14px 0 0; }
+    .kuvapaikka img { width: 100%; height: auto; border-radius: 6px; display: block; }
+    .kuvapaikka .paikka {
+      border: 2px dashed var(--viiva);
+      border-radius: 6px;
+      background: repeating-linear-gradient(45deg, #EEE7D8, #EEE7D8 12px, #E7DFCE 12px, #E7DFCE 24px);
+      color: var(--muste-vaalea);
+      font-family: "Big Shoulders Display", Arial, sans-serif;
+      text-transform: uppercase; letter-spacing: .05em; font-size: .85rem;
+      text-align: center;
+      padding: 40px 16px;
+    }
+    .kuvapaikka figcaption { font-size: .82rem; color: var(--muste-vaalea); margin-top: .4em; font-style: italic; }
+
+    /* ===== TURVALLISUUSASTEIKKO ===== */
+    .asteikko { list-style: none; margin: .6em 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; }
+    .asteikko li { font-family: "Big Shoulders Display", Arial, sans-serif; text-transform: uppercase; letter-spacing: .03em; font-size: .8rem; color: var(--muste-vaalea); display: flex; align-items: center; gap: 6px; }
+    .palkki { letter-spacing: -1px; }
+    .palkki .on { color: var(--korostus); }
+    .palkki .off { color: var(--viiva); }
+
+    .huomio {
+      background: var(--paperi-tumma);
+      border: 1px solid var(--viiva);
+      border-left: 4px solid var(--teras);
+      border-radius: 6px;
+      padding: 12px 15px;
+      font-size: .92rem;
+    }
+
+    /* ===== POLKU (jatko) ===== */
+    .polku { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+    .solmu { font-family: "Big Shoulders Display", Arial, sans-serif; text-transform: uppercase; font-size: .78rem; letter-spacing: .03em; border: 1px solid var(--viiva); border-radius: 20px; padding: .45em .8em; color: var(--muste-vaalea); }
+    .solmu.nyt { background: var(--korostus); color: #fff; border-color: var(--korostus); }
+    .nuoli { color: var(--viiva); }
+
+    /* ===== PAINIKE (linkki työkaluun) ===== */
+    .painike {
+      display: inline-block; text-decoration: none;
+      font-family: "Big Shoulders Display", Arial, sans-serif; text-transform: uppercase; letter-spacing: .04em;
+      background: var(--muste); color: var(--paperi);
+      padding: .6em 1.1em; border-radius: 4px; margin: .3em .4em .3em 0; font-size: .9rem;
+    }
+    .painike.reuna { background: transparent; color: var(--muste); border: 1px solid var(--muste); }
+
+    /* ===== ALATUNNISTE ===== */
+    .foot { border-top: 2px solid var(--muste); margin-top: 24px; padding: 24px 0 0; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
+    .foot .brand { font-family: "Big Shoulders Display", Arial, sans-serif; font-weight: 800; text-transform: uppercase; font-size: 22px; line-height: 1; }
+    .foot .fmeta { text-align: right; color: var(--muste-vaalea); font-size: .85rem; }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <!-- ============================================================
+       OTSIKKO
+       ============================================================ -->
+  <header class="head">
+    <span class="eyebrow">Muotoilun Pajat · Teollinen muotoilu · 1. vsk · Arabia</span>
+    <h1>Syksyn orientaatio<span class="korostus">kurssi</span></h1>
+    <p class="alaotsikko">Turvallisesti pajalle — ja oikeita töitä puusta ja metallista.</p>
+    <p class="meta">Yhdeksän päivää · kaksi pajaa · puu- ja metallityön perusteet ja pajaluvat.</p>
+
+    <!-- KUVA: korvaa alla oleva laatikko esim: <img src="kuvat/kansikuva.jpg" alt="Muotoilun pajat"> -->
+    <figure class="kuvapaikka">
+      <!-- <img src="kuvat/kansikuva.jpg" alt="Muotoilun pajat"> -->
+      <div class="paikka">Kansikuva — paja tai valmiita töitä</div>
+    </figure>
+  </header>
+
+  <!-- ============================================================
+       OSIO 01 — PEDAGOGINEN YDIN
+       ============================================================ -->
+  <section class="osio">
+    <span class="numero">01</span>
+    <h2>Pedagoginen ydin</h2>
+    <p class="johdanto">Yhdeksän päivää, kaksi pajaa ja aitoja käytännön töitä. Opit tekemällä — mutta vasta sitten, kun turvallisuusohjeet on sisäistetty. Yhteinen turvallisuus on jokaisen etu.</p>
+  </section>
+
+  <!-- ============================================================
+       OSIO 02 — 9 PÄIVÄN KIERTO
+       ============================================================ -->
+  <section class="osio">
+    <span class="numero">02</span>
+    <h2>Kierto · 9 päivää</h2>
+
+    <div class="banneri">
+      <span class="merkki">Pv 1</span>
+      <span><b>Yhteinen aloitus.</b> Perehdytys ja työturvallisuusluento (1 h). Paistinlastan suunnittelu, ryhmäjako ja siirtyminen pajoille konekohtaisten korttien aloittamista varten.</span>
+    </div>
+
+    <!-- ---------- PUUPAJA ---------- -->
+    <h3 class="paja-otsikko">Puupaja <span class="lisa">— kolme työtä, neljän päivän kierto</span></h3>
+
+    <div class="tyo">
+      <h4>Työ 1 · Paistinlasta</h4>
+      <p>Aihion valmistus: halkaisu, katkaisu ja vannesahaus muotoon kahdelta sivulta. Viimeistely hiomalla ja pintakäsittely elintarvikekelpoisella öljyvahalla.</p>
+      <!-- KUVA: <img src="kuvat/paistinlasta.jpg" alt="Valmis paistinlasta"> -->
+      <figure class="kuvapaikka">
+        <!-- <img src="kuvat/paistinlasta.jpg" alt="Valmis paistinlasta"> -->
+        <div class="paikka">Kuva — paistinlasta valmiina</div>
+        <figcaption>Paistinlasta</figcaption>
+      </figure>
+    </div>
+
+    <div class="tyo">
+      <h4>Työ 2 · Leikkuulauta</h4>
+      <p>Katkaisu- ja halkaisusahaus → oiko- ja tasohöyläys → liimalevyn valmistus → viimeistelyhöyläys ja hionta. Alapinnan nostouran jyrsintä, viistäminen ja pyöristäminen. Pintakäsittely elintarvikekelpoisella öljyvahalla.</p>
+      <!-- KUVA: <img src="kuvat/leikkuulauta.jpg" alt="Valmis leikkuulauta"> -->
+      <figure class="kuvapaikka">
+        <!-- <img src="kuvat/leikkuulauta.jpg" alt="Valmis leikkuulauta"> -->
+        <div class="paikka">Kuva — leikkuulauta ja nostoura</div>
+        <figcaption>Leikkuulauta</figcaption>
+      </figure>
+    </div>
+
+    <div class="tyo">
+      <h4>Työ 3 · Intarsiakorurasia</h4>
+      <p>Kannellinen, puusaranoitu rasia, johon muotoillaan korupaikat poraamalla tai veistämällä. Kurssilla opitaan pylväsporakoneen käyttö, jigien rakentaminen sekä yksinkertaisen puusaranan periaate. Kanteen valmistetaan 2D CAD -kurssilla laserleikattava intarsia-aihe, jonka jokainen suunnittelee itse.</p>
+      <!-- KUVA: <img src="kuvat/korurasia.jpg" alt="Intarsiakorurasia"> -->
+      <figure class="kuvapaikka">
+        <!-- <img src="kuvat/korurasia.jpg" alt="Intarsiakorurasia"> -->
+        <div class="paikka">Kuva — korurasia ja kannen intarsia</div>
+        <figcaption>Intarsiakorurasia</figcaption>
+      </figure>
+    </div>
+
+    <!-- ---------- METALLIPAJA ---------- -->
+    <h3 class="paja-otsikko">Metallipaja <span class="lisa">— kolme työtä, neljän päivän kierto</span></h3>
+
+    <div class="tyo">
+      <h4>Työ 1 · Kavaletti</h4>
+      <p>Kahden laipan poraus ja kierteytys, laakerin asennus sekä kokonaisuuden kokoonpano.</p>
+      <!-- KUVA: <img src="kuvat/kavaletti.jpg" alt="Kavaletti"> -->
+      <figure class="kuvapaikka">
+        <!-- <img src="kuvat/kavaletti.jpg" alt="Kavaletti"> -->
+        <div class="paikka">Kuva — kavaletti koottuna</div>
+        <figcaption>Kavaletti</figcaption>
+      </figure>
+    </div>
+
+    <div class="tyo">
+      <h4>Työ 2 · Pikkujakkara</h4>
+      <p>Neliöputken vannesahaus, hionta/rälläköinti, kokoonpano, tulppahitsaus ja maalaus.</p>
+      <!-- KUVA: <img src="kuvat/pikkujakkara.jpg" alt="Pikkujakkara"> -->
+      <figure class="kuvapaikka">
+        <!-- <img src="kuvat/pikkujakkara.jpg" alt="Pikkujakkara"> -->
+        <div class="paikka">Kuva — pikkujakkara valmiina</div>
+        <figcaption>Pikkujakkara</figcaption>
+      </figure>
+    </div>
+
+    <div class="tyo">
+      <h4>Työ 3 · Plastisen sommittelun työvälineet</h4>
+      <p>Muotoilu takoen ja prässäten — kylmänä ja kuumana. Huom. Taonta ja kuumatyö suoritetaan aina valvotusti.</p>
+      <!-- KUVA: <img src="kuvat/tyovalineet.jpg" alt="Takomalla tehdyt työvälineet"> -->
+      <figure class="kuvapaikka">
+        <!-- <img src="kuvat/tyovalineet.jpg" alt="Takomalla tehdyt työvälineet"> -->
+        <div class="paikka">Kuva — taotut / prässätyt työvälineet</div>
+        <figcaption>Plastisen sommittelun työvälineet</figcaption>
+      </figure>
+    </div>
+
+    <div class="banneri">
+      <span class="merkki">Pv 9</span>
+      <span><b>Yhteenveto ja työluvat.</b> Koko kurssin purku, valmistuneiden töiden katselmus ja työlupien virallinen luovuttaminen opiskelijoille.</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       OSIO 03 — TURVALLISUUS
+       ============================================================ -->
+  <section class="osio">
+    <span class="numero">03</span>
+    <h2>Turvallisuus &amp; pajakortit</h2>
+    <p class="johdanto">Kurssin tärkein edellytys on ennakoivan työturvallisuuskulttuurin omaksuminen. Yhteinen ja vastuullinen toimintatapa luodaan ennen koneiden käynnistämistä.</p>
+
+    <p>Kurssi alkaa työturvallisuuskatsauksella: käymme läpi suojavarusteet, hätäpysäytyksen, ergonomian ja vaaratilanteiden ennaltaehkäisyn. Hyväksyt turvallisuusohjeet allekirjoituksellasi. Tämän pohjalta suoritetaan yleinen pajakortti sekä konekohtaiset luvat pajamestarien opastuksella — näin varmistetaan oikeus toimia työtiloissa turvallisesti.</p>
+
+    <p style="color:var(--muste-vaalea); margin-bottom:.4em;">Konekohtaiset vaarallisuusluokat:</p>
+    <ul class="asteikko">
+      <li><span class="palkki"><span class="on">■</span><span class="off">■■■■</span></span> 1 · Matala</li>
+      <li><span class="palkki"><span class="on">■■</span><span class="off">■■■</span></span> 2 · Kohtalainen</li>
+      <li><span class="palkki"><span class="on">■■■</span><span class="off">■■</span></span> 3 · Keskitaso</li>
+      <li><span class="palkki"><span class="on">■■■■</span><span class="off">■</span></span> 4 · Korkea</li>
+      <li><span class="palkki"><span class="on">■■■■■</span></span> 5 · Erittäin korkea</li>
+    </ul>
+
+    <p class="huomio">Korkeimman luokan koneita (esim. alajyrsin 5/5, sorvit ja prässi) sekä kaikkea hitsausta ja taontaa käytetään vain valvotusti. Metallipajassa suojalasien ja kuulosuojainten käyttö on pakollista.</p>
+
+    <!-- KUVA: <img src="kuvat/suojaimet.jpg" alt="Suojaimet ja turvallinen työskentely"> -->
+    <figure class="kuvapaikka" style="margin-top:16px;">
+      <!-- <img src="kuvat/suojaimet.jpg" alt="Suojaimet ja turvallinen työskentely"> -->
+      <div class="paikka">Kuva — suojaimet / turvallinen työskentely</div>
+    </figure>
+  </section>
+
+  <!-- ============================================================
+       OSIO 04 — PAJA-AJOKORTTI (linkki työkaluun)
+       ============================================================ -->
+  <section class="osio">
+    <span class="numero">04</span>
+    <h2>Paja-ajokortti</h2>
+    <p class="johdanto">Perehdytys → työlupa → paja-ajokortti. Suoritus tehdään erillisellä työkalulla, ja konekortin vahvistaa aina pajamestari osoituksena siitä, että hallitset koneen turvallisen käytön.</p>
+
+    <p>Työkalussa käyt läpi turvallisuusperehdytyksen ja työluvan (Havaitse → Ymmärrä → Toimi), suoritat paja-ajokortin ja saat sen tulostettavaan muotoon. Suoritustiedoista viedään talteen vain pseudonyymitunniste, ei nimeäsi. Siisteys ja oikea jätteiden lajittelu suojaavat myös näkymätöntä: siivoojaa, vierasta ja seuraavaa käyttäjää.</p>
+
+    <!-- HUOM (Moodle): nämä ovat linkkejä erillisiin työkaluihin. Vie ne Moodleen omina
+         aineistoina/URL-linkkeinä ja päivitä osoitteet alle. -->
+    <p style="margin-top:1em;">
+      <a class="painike" href="syksyn_orientaatiokurssi.html">Avaa ajokorttityökalu</a>
+      <a class="painike reuna" href="paja_app.html">Avaa paja-app (koneet, jätteet, kemikaalit)</a>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       OSIO 05 — KURSSIN JÄLKEEN
+       ============================================================ -->
+  <section class="osio">
+    <span class="numero">05</span>
+    <h2>Kurssin jälkeen</h2>
+    <p class="johdanto">Orientaation jälkeen sinulla on viralliset pajaluvat sekä vahva perusosaaminen puun ja metallin työstöstä.</p>
+
+    <div class="polku">
+      <span class="solmu nyt">Orientaatio</span><span class="nuoli">→</span>
+      <span class="solmu">2D CAD · intarsia + emalointi</span><span class="nuoli">→</span>
+      <span class="solmu">Esitystekniikka</span><span class="nuoli">→</span>
+      <span class="solmu">Sommittelu · 3D Rhino</span><span class="nuoli">→</span>
+      <span class="solmu">2. vsk: SolidWorks</span>
+    </div>
+
+    <div class="huomio" style="margin-top:16px; border-left-color:var(--korostus);">
+      <b>Kaksi siltaa 2D CAD -kurssille.</b> <b>Puutyö:</b> korurasian kanteen valmistetaan intarsia laserleikkaamalla. <b>Metallityö:</b> kupariin pakotetut muodot emaloidaan Nabertherm-uunissa koruksi tai tasotaideteokseksi.
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ALATUNNISTE
+       ============================================================ -->
+  <footer class="foot">
+    <div class="brand">Muotoilun Pajat<br>Metropolia</div>
+    <div class="fmeta">
+      Teollinen muotoilu · 1. vuosikurssi<br>
+      Arabian kampus · Helsinki<br>
+      Kurssidokumentti — kuvitettava versio
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

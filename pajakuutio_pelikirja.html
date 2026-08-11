@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fi" class="js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pelikirja — Pajakuution kokonaisuus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE6DA;--paper-deep:#E4DCCC;--card:#F3EFE7;--ink:#211C16;--ink-soft:#5A5347;
+    --ember:#CE3F1B;--rule:#C8BFAD;--rule-soft:#D8D0C0;
+    --c-vihrea:#5E8C5A;--c-oikeus:#4F6E92;--c-turva:#C25A3E;
+    --c-laatu:#BE8A2E;--c-projekti:#6E5A93;--c-talous:#4E8C84;--steel:#3D4B58;--wood:#B0712F;
+    --maxw:720px;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:radial-gradient(1100px 560px at 84% -8%,rgba(206,63,27,.06),transparent 62%),var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:19px;line-height:1.68;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,40px);}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;}
+  h1,h2,h3,h4{font-family:"Big Shoulders Display","Arial Narrow",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:.95;margin:0;}
+
+  .printbar{position:fixed;top:18px;right:18px;z-index:40;}
+  .printbtn{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;background:var(--ink);color:var(--paper);border:none;padding:.62em 1em;border-radius:2px;box-shadow:0 6px 22px rgba(33,28,22,.22);}
+  .printbtn:hover{background:var(--ember);}
+
+  /* hero */
+  .hero{padding:clamp(50px,9vw,100px) 0 clamp(28px,4vw,40px);}
+  .hero__eyebrow{display:block;margin-bottom:clamp(20px,4vw,32px);}
+  .hero__title{font-size:clamp(3.4rem,16vw,8.4rem);line-height:.82;}
+  .hero__title .ember{color:var(--ember);}
+  .hero__epi{font-family:"Spectral",serif;font-style:italic;font-size:clamp(1.2rem,2.8vw,1.7rem);line-height:1.4;max-width:32ch;margin:clamp(24px,4vw,36px) 0 clamp(8px,2vw,16px);}
+  .hero__sub{font-size:1.04rem;color:var(--ink-soft);max-width:58ch;}
+
+  .toc{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:clamp(20px,3vw,28px) 0;margin-top:clamp(24px,4vw,36px);}
+  .toc h3{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:1em;}
+  .toc ol{list-style:none;margin:0;padding:0;counter-reset:toc;display:grid;grid-template-columns:1fr 1fr;gap:.45em 2em;}
+  .toc li{counter-increment:toc;display:flex;gap:.7em;align-items:baseline;font-size:.98rem;}
+  .toc li::before{content:counter(toc);font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ember);min-width:1.6em;}
+  .toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid transparent;}
+  .toc a:hover{border-bottom-color:var(--ember);}
+  @media (max-width:600px){.toc ol{grid-template-columns:1fr;}}
+
+  /* sections */
+  .part{padding:clamp(38px,6vw,64px) 0;border-top:1px solid var(--rule);}
+  .part__head{margin-bottom:clamp(20px,3vw,30px);}
+  .part__no{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ember);display:block;margin-bottom:.5em;}
+  .part__title{font-size:clamp(2rem,6vw,3.2rem);}
+  .part__lead{font-size:clamp(1.04rem,2vw,1.18rem);max-width:62ch;margin:.5em 0 0;}
+  p{margin:0 0 1.1em;}
+  p:last-child{margin-bottom:0;}
+
+  .pull{margin:clamp(26px,4vw,38px) 0;padding:0 0 0 clamp(18px,2.5vw,26px);border-left:4px solid var(--ember);font-family:"Spectral",serif;font-style:italic;font-size:clamp(1.3rem,3vw,1.8rem);line-height:1.34;}
+
+  /* layers diagram */
+  .layers{margin:clamp(18px,3vw,26px) 0 0;}
+  .layer{position:relative;background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--rule);border-radius:3px;padding:clamp(12px,2.2vw,16px) clamp(14px,2.4vw,20px);margin-bottom:9px;}
+  .layer h4{font-size:1.18rem;line-height:1;margin-bottom:.12em;}
+  .layer p{margin:0;font-size:.9rem;color:var(--ink-soft);line-height:1.4;}
+  .layer.l1{border-left-color:var(--ember);}
+  .layer.l2{border-left-color:var(--steel);}
+  .layer.l3{border-left-color:var(--wood);}
+  .layer.l4{border-left-color:var(--c-talous);}
+  .layer.l5{border-left-color:var(--c-laatu);}
+  .layer.l6{border-left-color:var(--c-vihrea);}
+  .layer__tag{position:absolute;top:50%;right:14px;transform:translateY(-50%);font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
+  .layers__arrow{text-align:center;color:var(--ember);font-family:"IBM Plex Mono",monospace;font-size:.9rem;margin:-2px 0 7px;}
+
+  /* journey chain */
+  .journey{list-style:none;margin:clamp(16px,2.5vw,24px) 0 0;padding:0;counter-reset:jr;}
+  .journey li{counter-increment:jr;position:relative;padding:0 0 1.15em 2.7em;border-left:2px solid var(--rule);margin-left:.6em;}
+  .journey li:last-child{border-left-color:transparent;padding-bottom:0;}
+  .journey li::before{content:counter(jr);position:absolute;left:-.85em;top:-.1em;width:1.7em;height:1.7em;background:var(--ember);color:#fff;border-radius:50%;display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-size:.72rem;font-weight:600;}
+  .journey h4{font-size:1.2rem;margin-bottom:.15em;}
+  .journey p{margin:0;font-size:.94rem;color:var(--ink-soft);line-height:1.45;}
+
+  /* plays */
+  .play{border-top:1px solid var(--rule-soft);padding:1.05em 0;}
+  .play:first-of-type{border-top:none;}
+  .play h4{font-size:1.25rem;margin-bottom:.5em;}
+  .pline{display:grid;grid-template-columns:5.2rem 1fr;gap:.25em .9em;font-size:.95rem;line-height:1.45;}
+  .pline dt{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;padding-top:.25em;}
+  .pline dd{margin:0;}
+  .pline .res{color:var(--ink);font-weight:500;}
+  .pline .res-l{color:var(--ember);}
+  @media (max-width:560px){.pline{grid-template-columns:1fr;gap:.05em;}.pline dt{padding-top:.5em;}}
+
+  /* decision plays */
+  .decide{list-style:none;margin:clamp(14px,2.4vw,20px) 0 0;padding:0;}
+  .decide li{border-top:1px solid var(--rule-soft);padding:.95em 0;}
+  .decide li:first-child{border-top:none;}
+  .decide .ax{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ember);font-weight:600;display:block;margin-bottom:.2em;}
+  .decide .q{font-weight:600;font-size:1.04rem;}
+  .decide .a{display:block;margin-top:.15em;font-size:.95rem;color:var(--ink-soft);line-height:1.45;}
+
+  /* roles */
+  .roles{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,2vw,14px);margin-top:clamp(14px,2.4vw,20px);}
+  .role{background:var(--card);border:1px solid var(--rule);border-top:3px solid var(--wood);border-radius:3px;padding:clamp(12px,2vw,15px);}
+  .role h5{font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;font-size:1.08rem;margin:0 0 .2em;line-height:1;}
+  .role p{margin:0;font-size:.88rem;color:var(--ink-soft);line-height:1.42;}
+  .role.invis{border-top-color:var(--ember);}
+  .role.lead{border-top-color:var(--steel);}
+  @media (max-width:560px){.roles{grid-template-columns:1fr;}}
+
+  /* cadence */
+  .cadence{list-style:none;margin:clamp(14px,2.4vw,20px) 0 0;padding:0;}
+  .cadence li{display:grid;grid-template-columns:8rem 1fr;gap:.6em 1em;border-top:1px solid var(--rule-soft);padding:.85em 0;}
+  .cadence li:first-child{border-top:none;}
+  .cadence .when{font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;font-size:1.05rem;line-height:1;color:var(--ink);}
+  .cadence .what{font-size:.95rem;line-height:1.45;color:var(--ink-soft);}
+  @media (max-width:560px){.cadence li{grid-template-columns:1fr;gap:.1em;}}
+
+  .closing{padding:clamp(40px,7vw,72px) 0 clamp(60px,9vw,100px);border-top:2px solid var(--ink);}
+  .colophon{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.05em;color:var(--ink-soft);margin-top:clamp(28px,4vw,40px);line-height:1.8;}
+
+  .js .reveal{opacity:0;transform:translateY(16px);}
+  .js .reveal.in{opacity:1;transform:none;transition:opacity .7s ease,transform .7s ease;}
+  @media (prefers-reduced-motion:reduce){.js .reveal,.js .reveal.in{opacity:1!important;transform:none!important;transition:none!important;}}
+  @media (max-width:600px){body{font-size:18px;}}
+
+  @media print{
+    :root{--paper:#fff;--paper-deep:#f3efe7;--card:#f6f2ea;}
+    body{background:#fff;font-size:11.5pt;line-height:1.5;}
+    .printbar{display:none;}.wrap{max-width:100%;}
+    .part,.closing{break-inside:avoid-page;}
+    .play,.layer,.role,.journey li,.pull{break-inside:avoid;}
+    .js .reveal{opacity:1!important;transform:none!important;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+  <script src="pajakuutio-nav.js"></script>
+
+<div class="printbar"><button class="printbtn" onclick="window.print()">Tulosta / PDF</button></div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <span class="hero__eyebrow eyebrow">Pajakuutio · Metropolia · Muotoilun pajat</span>
+    <h1 class="hero__title">Peli<span class="ember">kirja</span></h1>
+    <p class="hero__epi">Kartta näytti kentän. Tämä näyttää liikkeet.</p>
+    <p class="hero__sub">Miten kokonaisuus toimii arjessa — ja miten se ei vain toimi, vaan kukoistaa. Hallinnan kartan käytännön kumppani.</p>
+
+    <nav class="toc reveal">
+      <h3>Sisältö</h3>
+      <ol>
+        <li><a href="#avaus">Avaus — yksi olet sinä ja minä</a></li>
+        <li><a href="#kerrokset">Kerrokset — miten osat liittyvät</a></li>
+        <li><a href="#polku">Opiskelijan polku</a></li>
+        <li><a href="#paivanpelit">Päivän pelit</a></li>
+        <li><a href="#paatospelit">Päätöspelit</a></li>
+        <li><a href="#roolit">Roolit pelissä</a></li>
+        <li><a href="#kukoistus">Kukoistus</a></li>
+        <li><a href="#rytmit">Rytmit</a></li>
+      </ol>
+    </nav>
+  </header>
+
+  <!-- 1 AVAUS -->
+  <section class="part" id="avaus">
+    <div class="part__head reveal"><span class="part__no">Avaus</span><h2 class="part__title">Yksi olet sinä ja minä</h2></div>
+    <div class="reveal">
+      <p>Tämä kokonaisuus ei ole järjestelmä paperilla. Se on ihmisiä. Ja molemmilla on omat halunsa: minä haluan itselleni asioita, ja niin sinäkin. Se on rehellistä, ja se on hyvä. Yhteinen etu ei kiellä omaa etua — se suuntaa sen. Kun molemmat saavat kasvaa, kokonaisuus kasvaa.</p>
+      <p>Olen täällä teitä varten. En riitä kaikkeen — mutta hetkessä olen kaikki, mitä tarvitset. Juuri siksi tämän rinnalle on rakennettu systeemi, joka kantaa siellä missä yksi ihminen ei ehdi: kuutio muistuttaa, MHKS pitää kirjaa, kortit opettavat, kartta suuntaa. Ihminen antaa läsnäolon; rakenne antaa jatkuvuuden.</p>
+      <blockquote class="pull reveal">En riitä kaikkeen — mutta hetkessä olen kaikki, mitä tarvitset.</blockquote>
+      <p>Pelikirja ei korvaa karttaa, vaan vie sen arkeen. Kartta kertoo miksi; pelikirja kertoo miten. Seuraavat sivut ovat liikkeitä — toistuvia kuvioita, joilla kenttää pidetään turvallisena, reiluna ja elävänä.</p>
+    </div>
+  </section>
+
+  <!-- 2 KERROKSET -->
+  <section class="part" id="kerrokset">
+    <div class="part__head reveal"><span class="part__no">Osa 1</span><h2 class="part__title">Kerrokset</h2>
+      <p class="part__lead">Miten osat liittyvät yhteen — filosofiasta tekemiseen. Ylin kertoo suunnan, alin tapahtuu käsissä. Jokainen kerros nojaa ylempäänsä.</p>
+    </div>
+    <div class="layers reveal">
+      <div class="layer l1"><span class="layer__tag">Miksi</span><h4>Hallinnan kartta</h4><p>Kenttä ja suunta. Periaatteet, joiden varassa kaikki muu seisoo.</p></div>
+      <div class="layers__arrow">↓</div>
+      <div class="layer l2"><span class="layer__tag">Perusta</span><h4>Pajatoiminnan perusta</h4><p>Lainmukainen · opiskelijalle toimiva · kaikille reilu. Lattia, jonka alle ei mennä.</p></div>
+      <div class="layers__arrow">↓</div>
+      <div class="layer l3"><span class="layer__tag">Malli</span><h4>Pajakuutio</h4><p>Kuusi tahkoa, kolme akselia, viisitoista suhdetta. Tapa pitää kokonaisuus mielessä.</p></div>
+      <div class="layers__arrow">↓</div>
+      <div class="layer l4"><span class="layer__tag">Järjestelmä</span><h4>MHKS</h4><p>Yksi käyttöliittymä työpajoihin: tunnistus, eteneminen, inventaario, hankinta, kustannus.</p></div>
+      <div class="layers__arrow">↓</div>
+      <div class="layer l5"><span class="layer__tag">Työkalut</span><h4>Vaihe 1 · perehdytys · työluvat · konekortit</h4><p>Tieto muuttuu ymmärrykseksi ja ymmärrys osaamiseksi — kunnioittaen.</p></div>
+      <div class="layers__arrow">↓</div>
+      <div class="layer l6"><span class="layer__tag">Tekeminen</span><h4>Kurssit &amp; projektit</h4><p>Siellä missä kasvu tapahtuu: kappale syntyy, taito jää käteen, opiskelija kukkii.</p></div>
+    </div>
+  </section>
+
+  <!-- 3 POLKU -->
+  <section class="part" id="polku">
+    <div class="part__head reveal"><span class="part__no">Osa 2</span><h2 class="part__title">Opiskelijan polku</h2>
+      <p class="part__lead">Keskeinen peli: miten ihminen kulkee systeemin läpi siemenestä lentoon. Jokainen vaihe aukeaa, kun edellinen on ymmärretty.</p>
+    </div>
+    <ol class="journey reveal">
+      <li><h4>Saapuminen</h4><p>Opiskelija tunnistetaan Moodlen ja MHKS:n kautta. Kenttä tietää kuka on tulossa.</p></li>
+      <li><h4>Vaihe 1 — esitiedot</h4><p>Turvallisuuden perusta varmistetaan. Väärä vastaus ei kaada vaan opettaa; ymmärrys varmistetaan kunnioittaen.</p></li>
+      <li><h4>Vaihe 2 — perehdytys &amp; työlupa</h4><p>Pajamestari käy turvallisuuden ja työluvan läpi kolmessa tasossa: Havaitse → Ymmärrä → Toimi. Allekirjoitus on sitoumus.</p></li>
+      <li><h4>Konekortit</h4><p>Kone kerrallaan, riskimittari edessä. Korkean riskin kone aukeaa vasta ohjaajan kanssa.</p></li>
+      <li><h4>Projektit</h4><p>Tekeminen alkaa. Itsenäisen työn ikkunat on mitoitettu ohjausresurssiin — lupaus ei eroa arjesta.</p></li>
+      <li><h4>Kukinta</h4><p>Itsenäisyys kasvaa, ja lopulta kukkinut rohkaisee seuraavia. Kenttä uudistuu yli yhden ihmisen ajan.</p></li>
+    </ol>
+  </section>
+
+  <!-- 4 PÄIVÄN PELIT -->
+  <section class="part" id="paivanpelit">
+    <div class="part__head reveal"><span class="part__no">Osa 3</span><h2 class="part__title">Päivän pelit</h2>
+      <p class="part__lead">Toistuvat liikkeet, joilla paja pysyy turvallisena ja toimivana. Jokainen on muotoa: tilanne → liike → tulos.</p>
+    </div>
+    <div class="reveal">
+
+      <div class="play">
+        <h4>Avaus</h4>
+        <dl class="pline">
+          <dt>Tilanne</dt><dd>Paja aukeaa.</dd>
+          <dt>Liike</dt><dd>Suojalasit päähän, kohdepoisto päälle, kulkutiet ja turva-alueet vapaiksi.</dd>
+          <dt>Tulos</dt><dd class="res res-l">Kenttä on turvallinen ennen ensimmäistäkään konetta.</dd>
+        </dl>
+      </div>
+
+      <div class="play">
+        <h4>Pyyntö → toimitus</h4>
+        <dl class="pline">
+          <dt>Tilanne</dt><dd>Lehtori tarvitsee materiaalia tai laitetta kurssille, joka alkaa parin viikon päästä.</dd>
+          <dt>Liike</dt><dd>Pyyntö MHKS:ään (mitä, milloin). Pajamestari kuittaa avatessaan; esimies näkee tilan.</dd>
+          <dt>Tulos</dt><dd class="res res-l">Hankinta etenee. Hinta, toimittaja ja varastosaldo täyttyvät itsestään ja näkyvät opiskelijalle.</dd>
+        </dl>
+      </div>
+
+      <div class="play">
+        <h4>Poikkeama</h4>
+        <dl class="pline">
+          <dt>Tilanne</dt><dd>Läheltä piti -tilanne tai vika koneessa.</dd>
+          <dt>Liike</dt><dd>Ilmoitus puhelimella heti. Näkyy ohjaajille reaaliajassa; korjataan syyssä, ei oireessa.</dd>
+          <dt>Tulos</dt><dd class="res res-l">Seuraava vaara on poissa ennen kuin se sattuu.</dd>
+        </dl>
+      </div>
+
+      <div class="play">
+        <h4>Korjausliike</h4>
+        <dl class="pline">
+          <dt>Tilanne</dt><dd>Joku unohtaa suojalasit — myös seniori tai vieraileva johtaja.</dd>
+          <dt>Liike</dt><dd>Matalin saa huomauttaa lämpimästi; valtuutus on kirjattu. Kysytään millä asialla, ohjataan lasit päähän.</dd>
+          <dt>Tulos</dt><dd class="res res-l">Sääntö kestää huipulta asti. Valvonta on huolenpitoa, ei kiinniottoa.</dd>
+        </dl>
+      </div>
+
+      <div class="play">
+        <h4>Sulkeminen</h4>
+        <dl class="pline">
+          <dt>Tilanne</dt><dd>Työ loppuu, piste jää.</dd>
+          <dt>Liike</dt><dd>Se joka synnytti vaaran turvaa sen: kemikaali suljettuna paikalleen, kuuma jäähtymään, pöly imuroiden — ei harjaten.</dd>
+          <dt>Tulos</dt><dd class="res res-l">Yksin tilaan tuleva — siivooja, vieras — ei kohtaa piilotettua vaaraa. Näkymätön on turvattu.</dd>
+        </dl>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 5 PÄÄTÖSPELIT -->
+  <section class="part" id="paatospelit">
+    <div class="part__head reveal"><span class="part__no">Osa 4</span><h2 class="part__title">Päätöspelit</h2>
+      <p class="part__lead">Kun akselit vetävät vastakkain, päätös ei ole yhdellä akselilla. Kysy nämä — ja etsi piste, joka palvelee kokonaisuutta.</p>
+    </div>
+    <ul class="decide reveal">
+      <li><span class="ax">Rima × Vastuu</span><span class="q">Voinko rahoittaa ja pitää turvallisena tämän tason?</span><span class="a">Jos et, porrasta: pakko nyt, pitäisi pian, tavoite myöhemmin. Älä kirjaa rahoittamatonta standardia — se on vaarallisempi kuin vaatimaton mutta ylläpidetty.</span></li>
+      <li><span class="ax">Aikajänne</span><span class="q">Mitä tästä jää?</span><span class="a">Jos kestävän ja nopean ero on pieni, valitse kestävä. Jokainen projekti on paikka harjoitella kiertotaloutta.</span></li>
+      <li><span class="ax">Vastuu rajallisesta</span><span class="q">Säästänkö ihmisen kustannuksella?</span><span class="a">Jos kyllä, pysähdy. Turvallisuus ei ole säästökohde; tapaturma on kallein lopputulos.</span></li>
+      <li><span class="ax">Yleispeli</span><span class="q">Voitanko yhden akselin kokonaisuuden hinnalla?</span><span class="a">Voitto yhdellä akselilla, joka kaataa kokonaisuuden, on tappio. Etsi yhteinen etu — se on aina isoin etu.</span></li>
+    </ul>
+  </section>
+
+  <!-- 6 ROOLIT -->
+  <section class="part" id="roolit">
+    <div class="part__head reveal"><span class="part__no">Osa 5</span><h2 class="part__title">Roolit pelissä</h2>
+      <p class="part__lead">Ei käskyketju vaan jaettu sopimus. Jokaisella on liikkeensä, ja kaikki kiertävät saman päämäärän ympärillä. Tehdään kanssa, ei sanella.</p>
+    </div>
+    <div class="roles reveal">
+      <div class="role"><h5>Opiskelija</h5><p>Omistaa oman pisteensä ja sen siivouksen. Kysyy kun ei tiedä — se on voimaa.</p></div>
+      <div class="role lead"><h5>Lehtori</h5><p>Pedagoginen johto ja opetuksen aikainen valvonta. Rinnastuu esimieheen.</p></div>
+      <div class="role"><h5>Pajamestari</h5><p>Tilat, laitteet, huollot, kortit. Ehdotuksia muokataan kanssa, ei sanella.</p></div>
+      <div class="role"><h5>Assari</h5><p>Pitää työkierron pyörimässä — ratkaisee pullonkaulat, ettei jonoja synny.</p></div>
+      <div class="role invis"><h5>Siivooja · kiinteistö · vieras</h5><p>Näkymätön ensin. Eniten alttiina, vähiten varoitettuja — turvataan ylävirrassa.</p></div>
+      <div class="role lead"><h5>Esimies / johto</h5><p>Omistaa turvallisuustason ja sen resurssin. Integroi roolien rajapinnat.</p></div>
+    </div>
+  </section>
+
+  <!-- 7 KUKOISTUS -->
+  <section class="part" id="kukoistus">
+    <div class="part__head reveal"><span class="part__no">Osa 6</span><h2 class="part__title">Kukoistus</h2>
+      <p class="part__lead">Toimiva on vähimmäisvaatimus. Kukoistus on enemmän — ja se ei synny säännöistä vaan olosuhteista. Kenttää hoidetaan kuin puutarhaa.</p>
+    </div>
+    <div class="reveal">
+      <p><b>Maaperä on ihminen.</b> Jokaista kunnioitetaan hänen omalla tasollaan. Kasvun tila annetaan, esittämistä ei vaadita. Nöyryys on suojaa: "en vielä osaa" on turvallisin lause, ei heikoin.</p>
+      <p><b>Valo on rehellinen oma etu.</b> Molemmilla on halunsa — sinulla ja minulla. Niitä ei piiloteta vaan suunnataan: kun molemmat saavat kasvaa kohti omaa todellisuuttaan, koko kenttä kukkii. Yhteinen etu ei ole uhraus vaan se maaperä, jossa monen oma etu mahtuu rinnakkain.</p>
+      <p><b>Vesi on läsnäolo, ja rakenne pitää sen.</b> Ohjaaja ei riitä kaikkeen, mutta on hetkessä kaikki mitä tarvitaan. Siellä missä yksi ihminen ei ehdi, systeemi kantaa: kuutio muistuttaa, MHKS pitää kirjaa, kartta suuntaa. Niin läsnäolo ei lopu, kun yksi kääntää selkänsä.</p>
+      <p><b>Vuodenajat ovat yhteinen omistajuus.</b> Karttaa ja pelikirjaa ei lyödä lukkoon — niitä hoidetaan yhdessä, niiden kanssa jotka kenttää työstävät. Elävä systeemi muuttuu; jäykkä kuolee.</p>
+      <p><b>Sato on seuraava kylvö.</b> Jokainen kukkinut rohkaisee seuraavaa omalla kukinnallaan. Pieni on se aika, jonka yhdessä kuljemme — mutta suunta, jonka annamme, jatkaa kasvuaan yli meidän.</p>
+      <blockquote class="pull reveal">Yhteinen etu ei ole uhraus, vaan maaperä, jossa monen oma etu mahtuu rinnakkain.</blockquote>
+    </div>
+  </section>
+
+  <!-- 8 RYTMIT -->
+  <section class="part" id="rytmit">
+    <div class="part__head reveal"><span class="part__no">Osa 7</span><h2 class="part__title">Rytmit</h2>
+      <p class="part__lead">Systeemi pysyy elävänä toistuvilla sykleillä. Mitä tehdään, ja milloin.</p>
+    </div>
+    <ul class="cadence reveal">
+      <li><span class="when">Päivittäin</span><span class="what">Avaus ja sulkeminen. Poikkeamat ilmoitetaan. Vaara turvataan ylävirrassa ennen poistumista.</span></li>
+      <li><span class="when">Kurssin alku</span><span class="what">Esitiedot ja perehdytys läpi. Materiaalipyynnöt MHKS:ään ajoissa. Riskit ja roolit selviksi.</span></li>
+      <li><span class="when">Kurssin lopussa</span><span class="what">Töiden viimeistely ja arviointi. Mitä jäi käteen, mitä kannattaa kierrättää, mitä opittiin.</span></li>
+      <li><span class="when">Lukuvuosittain</span><span class="what">Kuution tahkot tarkastetaan, konekortit päivitetään, kartta ja pelikirja hiotaan yhdessä.</span></li>
+    </ul>
+  </section>
+
+  <!-- LOPPU -->
+  <section class="closing reveal">
+    <div class="part__head"><span class="part__no">Loppuun</span><h2 class="part__title">Yksi, joka kasvaa</h2></div>
+    <div>
+      <p>Kartta on kenttä. Pelikirja on liikkeet. Mutta sydän on tämä: yksi olet sinä ja minä — ja kaikki ne, jotka kentällä kulkevat. Kokonaisuus kukoistaa silloin, kun jokainen siinä kukkii.</p>
+      <p>Kun seuraavan kerran seisot pajassa, älä kysy vain mikä tässä on paras. Kysy: mikä piste palvelee kokonaisuutta — ja mikä antaa edessäsi olevalle ihmiselle tilan kasvaa. Siinä on koko peli.</p>
+      <p class="colophon">Pajakuutio · Pelikirja · v. 1<br>Metropolia · Muotoilun pajat · Arabian kampus<br>Hallinnan kartan käytännön kumppani — muokattavissa yhdessä</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  (function(){
+    "use strict";
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var items = document.querySelectorAll(".reveal");
+    if(reduce || !("IntersectionObserver" in window)){ items.forEach(function(el){ el.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, {rootMargin:"0px 0px -8% 0px", threshold:0.06});
+    items.forEach(function(el){ io.observe(el); });
+  })();
+</script>
+</body>
+</html>

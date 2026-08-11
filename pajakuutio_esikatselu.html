@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pajakuutio — esikatselu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE6DA;--ink:#2A2018;--ink-soft:#5A5347;--rule:#C8BFAD;
+    --accent:#C25A3E;--accent-rgb:194,90,62;
+    --c-vihrea:#5E8C5A;--c-oikeus:#4F6E92;--c-turva:#C25A3E;
+    --c-laatu:#BE8A2E;--c-projekti:#6E5A93;--c-talous:#4E8C84;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{margin:0;color:var(--ink);font-family:"Spectral",Georgia,serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  .bgtint{position:fixed;inset:0;z-index:-2;background-color:rgba(var(--accent-rgb),.14);transition:background-color .6s ease;}
+  .bgbase{position:fixed;inset:0;z-index:-3;background:var(--paper);}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px clamp(18px,5vw,40px);border-bottom:1px solid var(--rule);}
+  .brand{display:flex;align-items:center;gap:9px;font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;font-size:1.05rem;letter-spacing:.02em;}
+  .brand .dot{width:11px;height:11px;background:var(--accent);border-radius:3px;transform:rotate(45deg);transition:background-color .4s ease;}
+  .topbar .tag{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);}
+
+  .stage{max-width:760px;margin:0 auto;padding:clamp(18px,4vw,36px) clamp(18px,5vw,40px) 60px;text-align:center;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;}
+  h1{font-family:"Big Shoulders Display",sans-serif;font-weight:800;text-transform:uppercase;font-size:clamp(2.4rem,9vw,4rem);line-height:.9;margin:.25em 0 .15em;}
+  .sub{color:var(--ink-soft);font-size:clamp(1rem,2vw,1.14rem);max-width:48ch;margin:0 auto;}
+
+  /* ---- 3D-kuutio ---- */
+  .scene{width:100%;height:360px;display:flex;align-items:center;justify-content:center;perspective:1100px;margin-top:clamp(14px,3vw,24px);touch-action:none;cursor:grab;}
+  .scene:active{cursor:grabbing;}
+  .cubewrap{transform-style:preserve-3d;transition:transform .6s ease;}
+  .cubewrap.exploded{transform:scale(.72);}
+  .cube{position:relative;width:190px;height:190px;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.34,.72,.18,1);}
+  .face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.18em;text-align:center;padding:14px;border:2px solid rgba(255,255,255,.55);border-radius:18px;color:var(--ink);box-shadow:inset 0 2px 18px rgba(255,255,255,.35),inset 0 -10px 26px rgba(0,0,0,.10);user-select:none;transition:transform .6s cubic-bezier(.34,.72,.18,1);}
+  .face .fe{font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;opacity:.7;}
+  .face .fn{font-family:"Big Shoulders Display",sans-serif;font-weight:800;text-transform:uppercase;font-size:1.18rem;line-height:.95;}
+  .face .fs{font-size:.66rem;letter-spacing:.02em;opacity:.78;font-style:italic;}
+  .f-front {background:#E0A48F;transform:translateZ(95px);}
+  .f-right {background:#DEC79A;transform:rotateY(90deg) translateZ(95px);}
+  .f-back  {background:#A8CBC4;transform:rotateY(180deg) translateZ(95px);}
+  .f-left  {background:#A6B8CE;transform:rotateY(-90deg) translateZ(95px);}
+  .f-top   {background:#AAC9A4;transform:rotateX(90deg) translateZ(95px);}
+  .f-bottom{background:#B8ABCE;transform:rotateX(-90deg) translateZ(95px);}
+
+  .axle{position:absolute;top:50%;left:50%;border-radius:6px;opacity:0;transition:opacity .5s ease;pointer-events:none;box-shadow:0 0 12px rgba(0,0,0,.16);}
+  .axle-x{width:300px;height:10px;transform:translate(-50%,-50%);background:linear-gradient(90deg,var(--c-oikeus),var(--c-laatu));}
+  .axle-y{width:10px;height:300px;transform:translate(-50%,-50%);background:linear-gradient(180deg,var(--c-vihrea),var(--c-projekti));}
+  .axle-z{width:300px;height:10px;transform:translate(-50%,-50%) rotateY(90deg);background:linear-gradient(90deg,var(--c-talous),var(--c-turva));}
+  .cubewrap.exploded .axle{opacity:.95;}
+  .cubewrap.exploded .f-front {transform:translateZ(150px);}
+  .cubewrap.exploded .f-right {transform:rotateY(90deg) translateZ(150px);}
+  .cubewrap.exploded .f-back  {transform:rotateY(180deg) translateZ(150px);}
+  .cubewrap.exploded .f-left  {transform:rotateY(-90deg) translateZ(150px);}
+  .cubewrap.exploded .f-top   {transform:rotateX(90deg) translateZ(150px);}
+  .cubewrap.exploded .f-bottom{transform:rotateX(-90deg) translateZ(150px);}
+
+  .shadow{width:180px;height:30px;margin:-6px auto 0;border-radius:50%;background:radial-gradient(closest-side,rgba(var(--accent-rgb),.30),transparent);transition:background .6s ease;filter:blur(3px);}
+
+  .controls{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:14px;}
+  .hint{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:0;}
+  .axbtn{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;padding:.6em 1.1em;border:1.5px solid var(--ink-soft);border-radius:3px;background:transparent;color:var(--ink);cursor:pointer;transition:background-color .2s,color .2s,border-color .2s;}
+  .axbtn:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .axbtn:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+
+  /* ---- välilehdet ---- */
+  .tabs{display:flex;justify-content:center;align-items:flex-end;gap:clamp(12px,2.6vw,20px);margin-top:clamp(20px,3.5vw,28px);padding:8px 0 4px;}
+  .tab{writing-mode:vertical-rl;text-orientation:mixed;font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:clamp(.72rem,1.9vw,.86rem);line-height:1;padding:.9em .55em;border:1.5px solid var(--rule);border-radius:5px 5px 11px 11px;background:rgba(255,255,255,.42);color:var(--ink-soft);cursor:pointer;min-height:110px;transform:rotate(-17deg);transform-origin:50% 100%;transition:opacity .25s ease,border-color .25s ease,color .25s ease,background-color .25s ease,min-height .25s ease,box-shadow .25s ease;opacity:.62;white-space:nowrap;}
+  .tab:hover{opacity:.92;}
+  .tab.on{opacity:1;color:#fff;border-color:transparent;min-height:132px;box-shadow:0 7px 18px rgba(0,0,0,.16);}
+  .tab:focus-visible{outline:3px solid var(--ink);outline-offset:2px;}
+
+  /* ---- aktiivisen tahkon kuvaus ---- */
+  .desc{max-width:52ch;margin:clamp(26px,4vw,36px) auto 0;text-align:left;background:rgba(255,255,255,.42);border:1px solid var(--rule);border-left:4px solid var(--accent);border-radius:4px;padding:clamp(16px,2.6vw,22px);transition:border-color .4s ease;}
+  .desc h2{font-family:"Big Shoulders Display",sans-serif;font-weight:800;text-transform:uppercase;font-size:clamp(1.5rem,4vw,2rem);line-height:.95;margin:0 0 .25em;color:var(--accent);transition:color .4s ease;}
+  .desc p{margin:0;font-size:1rem;line-height:1.5;color:var(--ink);}
+  .desc .pin{display:inline-block;margin-top:.7em;font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);}
+
+  /* ---- akselit ---- */
+  .axes{max-width:660px;margin:clamp(34px,5vw,50px) auto 0;text-align:left;}
+  .axes>h3{font-family:"Big Shoulders Display",sans-serif;font-weight:800;text-transform:uppercase;font-size:clamp(1.6rem,4.5vw,2.2rem);margin:0 0 .3em;line-height:.95;}
+  .axes-intro{color:var(--ink-soft);font-size:1rem;margin:0 0 clamp(16px,3vw,24px);max-width:64ch;line-height:1.5;}
+
+  .map-wrap{max-width:400px;margin:clamp(16px,3vw,26px) auto;}
+  .map-wrap svg{width:100%;height:auto;display:block;}
+  .map-cap{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.03em;color:var(--ink-soft);text-align:center;margin:.6em auto 0;max-width:46ch;line-height:1.5;}
+
+  .subhead{font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;font-size:1.4rem;margin:clamp(28px,4vw,38px) 0 .1em;line-height:1;}
+  .subhead .n{font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--ink-soft);font-weight:500;letter-spacing:.06em;text-transform:uppercase;}
+
+  .axis{border-top:1px solid var(--rule);padding:clamp(15px,2.4vw,20px) 0;}
+  .axis:last-of-type{border-bottom:1px solid var(--rule);}
+  .axis-ends{display:flex;align-items:center;gap:10px;margin-bottom:.7em;}
+  .chip{font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;font-size:.92rem;letter-spacing:.03em;color:#fff;padding:.42em .85em;border-radius:4px;white-space:nowrap;}
+  .axis-rod{flex:1;height:5px;border-radius:3px;min-width:24px;}
+  .axis-body h4{font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;font-size:1.18rem;margin:0 0 .25em;color:var(--ink);line-height:1;}
+  .axis-body p{margin:0;font-size:.97rem;line-height:1.52;color:var(--ink);}
+
+  .reuna{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,2vw,15px);margin-top:clamp(14px,2.5vw,20px);}
+  .rax{background:rgba(255,255,255,.4);border:1px solid var(--rule);border-radius:4px;padding:clamp(12px,2vw,15px);}
+  .rax-ends{display:flex;align-items:center;gap:6px;margin-bottom:.45em;}
+  .rchip{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.03em;text-transform:uppercase;font-weight:600;color:#fff;padding:.32em .5em;border-radius:3px;white-space:nowrap;}
+  .rax-rod{flex:0 0 14px;height:3px;border-radius:2px;}
+  .rax h5{font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;font-size:1.1rem;margin:.15em 0 .25em;line-height:1;}
+  .rax p{margin:0;font-size:.87rem;line-height:1.45;color:var(--ink-soft);}
+
+  .foot{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.05em;color:var(--ink-soft);margin-top:clamp(30px,5vw,46px);text-align:center;}
+
+  @media (max-width:600px){.reuna{grid-template-columns:1fr;}}
+  @media (max-width:520px){
+    .scene{height:300px;}
+    .cube{width:152px;height:152px;}
+    .cubewrap.exploded{transform:scale(.7);}
+    .f-front{transform:translateZ(76px);}
+    .f-right{transform:rotateY(90deg) translateZ(76px);}
+    .f-back{transform:rotateY(180deg) translateZ(76px);}
+    .f-left{transform:rotateY(-90deg) translateZ(76px);}
+    .f-top{transform:rotateX(90deg) translateZ(76px);}
+    .f-bottom{transform:rotateX(-90deg) translateZ(76px);}
+    .cubewrap.exploded .f-front{transform:translateZ(120px);}
+    .cubewrap.exploded .f-right{transform:rotateY(90deg) translateZ(120px);}
+    .cubewrap.exploded .f-back{transform:rotateY(180deg) translateZ(120px);}
+    .cubewrap.exploded .f-left{transform:rotateY(-90deg) translateZ(120px);}
+    .cubewrap.exploded .f-top{transform:rotateX(90deg) translateZ(120px);}
+    .cubewrap.exploded .f-bottom{transform:rotateX(-90deg) translateZ(120px);}
+    .axle-x{width:240px;}.axle-y{height:240px;}.axle-z{width:240px;}
+    .face .fn{font-size:1.02rem;}
+    .tab{min-height:98px;}.tab.on{min-height:118px;}
+    .chip{font-size:.82rem;padding:.4em .6em;}
+  }
+  @media (prefers-reduced-motion:reduce){.cube,.face,.cubewrap{transition:none;}}
+</style>
+</head>
+<body>
+  <script src="pajakuutio-nav.js"></script>
+<div class="bgbase"></div>
+<div class="bgtint" id="bgtint"></div>
+
+<div class="topbar">
+  <div class="brand"><span class="dot" id="brandDot"></span>MHKS</div>
+  <span class="tag">Pajakuutio · esikatselu</span>
+</div>
+
+<main class="stage">
+  <span class="eyebrow">Metropolia · Muotoilun pajat</span>
+  <h1>Pajakuutio</h1>
+  <p class="sub">Kuusi tahkoa kytkeytyvät toisiinsa akseleilla. Pyöritä kuutiota, valitse välilehti, ja avaa akselit nähdäksesi miten tekijät liittyvät yhteen.</p>
+
+  <div class="scene" id="scene" aria-label="Pajakuutio, pyöritettävä">
+    <div class="cubewrap" id="cubewrap">
+      <div class="cube" id="cube">
+        <div class="face f-front"><span class="fe">Tahko 3</span><span class="fn">Turvallisuus</span><span class="fs">Perehdytys &amp; luvat</span></div>
+        <div class="face f-right"><span class="fe">Tahko 4</span><span class="fn">Laatu</span><span class="fs">Standardit</span></div>
+        <div class="face f-back"><span class="fe">Tahko 6</span><span class="fn">Talous</span><span class="fs">Kustannukset</span></div>
+        <div class="face f-left"><span class="fe">Tahko 2</span><span class="fn">Oikeus</span><span class="fs">Reilut roolit</span></div>
+        <div class="face f-top"><span class="fe">Tahko 1</span><span class="fn">Vihreä siirtymä</span><span class="fs">Uusiokäyttö</span></div>
+        <div class="face f-bottom"><span class="fe">Tahko 5</span><span class="fn">Projektit</span><span class="fs">Hallinta</span></div>
+        <div class="axle axle-x"></div>
+        <div class="axle axle-y"></div>
+        <div class="axle axle-z"></div>
+      </div>
+    </div>
+  </div>
+  <div class="shadow"></div>
+
+  <div class="controls">
+    <p class="hint">Vedä pyörittääksesi · napauta välilehteä</p>
+    <button class="axbtn" id="axBtn" type="button">Näytä pääakselit</button>
+  </div>
+
+  <div class="tabs" id="tabs" role="tablist"></div>
+
+  <div class="desc" id="desc"></div>
+
+  <section class="axes">
+    <h3>Akselit</h3>
+    <p class="axes-intro">Jokainen tahko liittyy jokaiseen. Kuusi tahkoa muodostavat 15 akselia — kukin on semanttinen taso kahden tekijän välillä ja avaa niiden yhteyden. Kolme akselia läpäisee kuution keskeltä (vastakkaiset parit), kaksitoista yhdistää naapurit.</p>
+
+    <div class="map-wrap">
+      <svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Akselikartta: kuusi tahkoa ja niiden 15 akselia">
+        <!-- reuna-akselit: sivut + lyhyet lävistäjät (12 ohutta) -->
+        <g stroke="#C8BFAD" stroke-width="1.3">
+          <line x1="180" y1="40" x2="275" y2="95"/>
+          <line x1="275" y1="95" x2="275" y2="205"/>
+          <line x1="275" y1="205" x2="180" y2="260"/>
+          <line x1="180" y1="260" x2="85" y2="205"/>
+          <line x1="85" y1="205" x2="85" y2="95"/>
+          <line x1="85" y1="95" x2="180" y2="40"/>
+          <line x1="180" y1="40" x2="275" y2="205"/>
+          <line x1="275" y1="95" x2="180" y2="260"/>
+          <line x1="275" y1="205" x2="85" y2="205"/>
+          <line x1="180" y1="260" x2="85" y2="95"/>
+          <line x1="85" y1="205" x2="180" y2="40"/>
+          <line x1="85" y1="95" x2="275" y2="95"/>
+        </g>
+        <!-- pääakselit: pitkät lävistäjät (3 paksua) -->
+        <g stroke="#2A2018" stroke-width="3" stroke-linecap="round">
+          <line x1="180" y1="40" x2="180" y2="260"/>
+          <line x1="275" y1="95" x2="85" y2="205"/>
+          <line x1="275" y1="205" x2="85" y2="95"/>
+        </g>
+        <!-- solmut -->
+        <g stroke="#ECE6DA" stroke-width="2.5">
+          <circle cx="180" cy="40"  r="10" fill="#5E8C5A"/>
+          <circle cx="275" cy="95"  r="10" fill="#BE8A2E"/>
+          <circle cx="275" cy="205" r="10" fill="#4E8C84"/>
+          <circle cx="180" cy="260" r="10" fill="#6E5A93"/>
+          <circle cx="85"  cy="205" r="10" fill="#4F6E92"/>
+          <circle cx="85"  cy="95"  r="10" fill="#C25A3E"/>
+        </g>
+        <!-- nimet -->
+        <g fill="#2A2018" font-family="'Big Shoulders Display',sans-serif" font-weight="700" font-size="11" text-transform="uppercase">
+          <text x="180" y="28" text-anchor="middle">VIHREÄ SIIRTYMÄ</text>
+          <text x="283" y="99" text-anchor="start">LAATU</text>
+          <text x="283" y="209" text-anchor="start">TALOUS</text>
+          <text x="180" y="282" text-anchor="middle">PROJEKTIT</text>
+          <text x="77" y="209" text-anchor="end">OIKEUS</text>
+          <text x="77" y="99" text-anchor="end">TURVALLISUUS</text>
+        </g>
+      </svg>
+      <p class="map-cap">Akselikartta · paksut viivat = kolme läpäisevää pääakselia · ohuet = kaksitoista reuna-akselia</p>
+    </div>
+
+    <h4 class="subhead">Kolme pääakselia <span class="n">— läpäisevät kuution</span></h4>
+
+    <div class="axis">
+      <div class="axis-ends">
+        <span class="chip" style="background:var(--c-oikeus)">Oikeus</span>
+        <span class="axis-rod" style="background:linear-gradient(90deg,var(--c-oikeus),var(--c-laatu))"></span>
+        <span class="chip" style="background:var(--c-laatu)">Laatu</span>
+      </div>
+      <div class="axis-body">
+        <h4>Rima — taso jota ei lasketa</h4>
+        <p>Sama vaatimustaso ihmisille ja työn jäljelle. Oikeus on se, miten kohtelemme toisiamme; laatu se, miten kohtelemme työtä. Kumpaakaan ei tingitä — reilu prosessi tuottaa kestävää jälkeä, ja huolella tehty työ kunnioittaa sekä tekijää että käyttäjää.</p>
+      </div>
+    </div>
+
+    <div class="axis">
+      <div class="axis-ends">
+        <span class="chip" style="background:var(--c-vihrea)">Vihreä siirtymä</span>
+        <span class="axis-rod" style="background:linear-gradient(90deg,var(--c-vihrea),var(--c-projekti))"></span>
+        <span class="chip" style="background:var(--c-projekti)">Projektit</span>
+      </div>
+      <div class="axis-body">
+        <h4>Aikajänne — tekeminen ja sen jälki</h4>
+        <p>Lyhyt ja pitkä aika samalla akselilla. Projekti on tässä ja nyt: määräaika, kurssi, valmis kappale. Vihreä siirtymä on se, mitä siitä jää: materiaali, hukka, uusiokäyttö. Jokainen projekti on paikka harjoitella kiertotaloutta — kestävä valinta tehdään aina projektin sisällä.</p>
+      </div>
+    </div>
+
+    <div class="axis">
+      <div class="axis-ends">
+        <span class="chip" style="background:var(--c-turva)">Turvallisuus</span>
+        <span class="axis-rod" style="background:linear-gradient(90deg,var(--c-turva),var(--c-talous))"></span>
+        <span class="chip" style="background:var(--c-talous)">Talous</span>
+      </div>
+      <div class="axis-body">
+        <h4>Vastuu rajallisesta — vaikein vaihtokauppa</h4>
+        <p>Ihmiset ja varat samalla akselilla. Talous houkuttaa säästämään, turvallisuus vaatii panostamaan — mutta pitkällä aikavälillä ne ovat sama asia, sillä tapaturma on kallein lopputulos. Turvallisuutta ei osteta halvalla eikä säästetä ihmisen kustannuksella. Tässä yhteisen edun periaate punnitaan kovimmin.</p>
+      </div>
+    </div>
+
+    <h4 class="subhead">Kaksitoista reuna-akselia <span class="n">— naapuritahkot</span></h4>
+    <div class="reuna">
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-vihrea)">Vihreä</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-vihrea),var(--c-oikeus))"></span><span class="rchip" style="background:var(--c-oikeus)">Oikeus</span></div>
+        <h5>Reilu kierto</h5>
+        <p>Jätteen ja uusiokäytön reilu jakautuminen — kuka kantaa kuorman, kuka hyötyy.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-vihrea)">Vihreä</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-vihrea),var(--c-turva))"></span><span class="rchip" style="background:var(--c-turva)">Turva</span></div>
+        <h5>Puhdas käsittely</h5>
+        <p>Materiaalien ja kemikaalien turvallinen käsittely ja hävitys — sama teko suojaa ihmistä ja ympäristöä.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-vihrea)">Vihreä</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-vihrea),var(--c-laatu))"></span><span class="rchip" style="background:var(--c-laatu)">Laatu</span></div>
+        <h5>Kestävyys</h5>
+        <p>Pitkäikäisyys ja korjattavuus — hyvin tehty ei päädy roskiin. Laatu on ekologinen teko.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-vihrea)">Vihreä</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-vihrea),var(--c-talous))"></span><span class="rchip" style="background:var(--c-talous)">Talous</span></div>
+        <h5>Materiaalitalous</h5>
+        <p>Hukka on rahaa — kierto ja uusiokäyttö pienentävät hankintaa. Ekologia ja säästö samaan suuntaan.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-oikeus)">Oikeus</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-oikeus),var(--c-turva))"></span><span class="rchip" style="background:var(--c-turva)">Turva</span></div>
+        <h5>Oikeus turvaan</h5>
+        <p>Jokaisen yhtäläinen suoja — junior saa huomauttaa seniorille, ja vaarallisesta työstä saa pidättäytyä.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-oikeus)">Oikeus</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-oikeus),var(--c-projekti))"></span><span class="rchip" style="background:var(--c-projekti)">Projektit</span></div>
+        <h5>Reilu jako</h5>
+        <p>Ajan, laitteiden ja resurssien tasapuolisuus — ei etuilua, jokaiselle vuoro.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-oikeus)">Oikeus</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-oikeus),var(--c-talous))"></span><span class="rchip" style="background:var(--c-talous)">Talous</span></div>
+        <h5>Läpinäkyvyys</h5>
+        <p>Avoin hinnoittelu ja kustannusten jako — opiskelija näkee mistä maksaa. Läpinäkyvyys on reiluutta.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-turva)">Turva</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-turva),var(--c-laatu))"></span><span class="rchip" style="background:var(--c-laatu)">Laatu</span></div>
+        <h5>Hallittu tekeminen</h5>
+        <p>Kunnossa oleva kone ja oikea tekniikka tuottavat sekä turvaa että laatua — terävä työkalu on turvallisempi ja parempi.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-turva)">Turva</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-turva),var(--c-projekti))"></span><span class="rchip" style="background:var(--c-projekti)">Projektit</span></div>
+        <h5>Lupa tekemiseen</h5>
+        <p>Perehdytys ja työlupa avaavat projektityön — ja määräaika ei koskaan ohita turvaa.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-laatu)">Laatu</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-laatu),var(--c-projekti))"></span><span class="rchip" style="background:var(--c-projekti)">Projektit</span></div>
+        <h5>Valmis kunnolla</h5>
+        <p>Laadun pitäminen projektin rajoissa — standardi kestää määräajan paineen, kappale tehdään valmiiksi.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-laatu)">Laatu</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-laatu),var(--c-talous))"></span><span class="rchip" style="background:var(--c-talous)">Talous</span></div>
+        <h5>Arvo, ei hinta</h5>
+        <p>Halvin ei ole halvin, jos se tehdään uudestaan — oikea materiaali ja kestävä jälki maksavat itsensä takaisin.</p>
+      </div>
+
+      <div class="rax">
+        <div class="rax-ends"><span class="rchip" style="background:var(--c-projekti)">Projektit</span><span class="rax-rod" style="background:linear-gradient(90deg,var(--c-projekti),var(--c-talous))"></span><span class="rchip" style="background:var(--c-talous)">Talous</span></div>
+        <h5>Suunniteltu hankinta</h5>
+        <p>Budjetointi ja tilaus ajoissa — kurssin tarpeet, varasto ja kustannusseuranta saman näkymän alle.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <p class="foot">Esikatseluversio — visuaalin testaamiseen. Tahkojen takainen toiminnallisuus rakennetaan iteraatioissa.</p>
+</main>
+
+<script>
+"use strict";
+(function(){
+  var T = [
+    { id:"vihrea",   name:"Vihreä siirtymä", color:"#5E8C5A", rgb:"94,140,90",  pin:"Tahko 1 · akselipari: Projektit",  desc:"Kiertotalous ja materiaalien uusiokäyttö. RETAKE — vähemmän hukkaa, enemmän uudelleen.",                     tx:-60, ty:-30 },
+    { id:"oikeus",   name:"Oikeus",          color:"#4F6E92", rgb:"79,110,146", pin:"Tahko 2 · akselipari: Laatu",      desc:"Reilut pelisäännöt ja selkeät roolit. Sama oikeus ja vastuu kaikille — myös näkymättömille toimijoille.",   tx:-22, ty:60  },
+    { id:"turva",    name:"Turvallisuus",    color:"#C25A3E", rgb:"194,90,62",  pin:"Tahko 3 · akselipari: Talous · sisältää Vaihe 1", desc:"Perehdytys, työluvat ja turvallinen työ. Sisältää Vaihe 1 -esitietotyökalun ja konekortit.",  tx:-22, ty:-30 },
+    { id:"laatu",    name:"Laatu",           color:"#BE8A2E", rgb:"190,138,46", pin:"Tahko 4 · akselipari: Oikeus",     desc:"Työn ja lopputuloksen laatu: standardit, viimeistely ja se että opittu jää käteen.",                        tx:-22, ty:-120},
+    { id:"projekti", name:"Projektit",       color:"#6E5A93", rgb:"110,90,147", pin:"Tahko 5 · akselipari: Vihreä siirtymä", desc:"Kurssien ja töiden projektit, aikataulut ja eteneminen yhdessä näkymässä.",                            tx:60,  ty:-30 },
+    { id:"talous",   name:"Talous",          color:"#4E8C84", rgb:"78,140,132", pin:"Tahko 6 · akselipari: Turvallisuus", desc:"Materiaalit, kustannukset, hankinnat ja seuranta — läpinäkyvästi opiskelijalle asti.",                   tx:-22, ty:150 }
+  ];
+  var ORDER = ["vihrea","oikeus","turva","laatu","projekti","talous"];
+
+  var cube = document.getElementById("cube");
+  var wrap = document.getElementById("cubewrap");
+  var scene = document.getElementById("scene");
+  var tabsBox = document.getElementById("tabs");
+  var descBox = document.getElementById("desc");
+  var axBtn = document.getElementById("axBtn");
+  var root = document.documentElement;
+
+  function byId(id){ for(var i=0;i<T.length;i++){ if(T[i].id===id) return T[i]; } return T[0]; }
+
+  var rotX = 0, rotY = 0;
+  var current = byId("turva");
+
+  function applyTransform(animate){
+    cube.style.transition = animate ? "" : "none";
+    cube.style.transform = "rotateX(" + rotX + "deg) rotateY(" + rotY + "deg)";
+  }
+  function setTheme(t){
+    current = t;
+    root.style.setProperty("--accent", t.color);
+    root.style.setProperty("--accent-rgb", t.rgb);
+    var nodes = tabsBox.children;
+    for(var i=0;i<nodes.length;i++){
+      var on = nodes[i].getAttribute("data-id") === t.id;
+      nodes[i].classList.toggle("on", on);
+      nodes[i].style.backgroundColor = on ? t.color : "";
+      nodes[i].setAttribute("aria-selected", on ? "true" : "false");
+    }
+    descBox.innerHTML = "";
+    var h = document.createElement("h2"); h.textContent = t.name;
+    var p = document.createElement("p"); p.textContent = t.desc;
+    var pin = document.createElement("span"); pin.className = "pin"; pin.textContent = t.pin;
+    descBox.appendChild(h); descBox.appendChild(p); descBox.appendChild(pin);
+  }
+  function select(t, animate){ rotX = t.tx; rotY = t.ty; applyTransform(animate); setTheme(t); }
+
+  ORDER.forEach(function(id){
+    var t = byId(id);
+    var b = document.createElement("button");
+    b.className = "tab"; b.type = "button";
+    b.setAttribute("data-id", t.id); b.setAttribute("role", "tab");
+    b.textContent = t.name;
+    b.addEventListener("click", function(){ select(t, true); });
+    tabsBox.appendChild(b);
+  });
+
+  axBtn.addEventListener("click", function(){
+    var on = wrap.classList.toggle("exploded");
+    axBtn.textContent = on ? "Kokoa kuutio" : "Näytä pääakselit";
+  });
+
+  var drag=false, sx=0, sy=0, srx=0, sry=0, moved=false;
+  scene.addEventListener("pointerdown", function(e){
+    drag=true; moved=false; sx=e.clientX; sy=e.clientY; srx=rotX; sry=rotY;
+    cube.style.transition="none";
+    if(scene.setPointerCapture){ try{ scene.setPointerCapture(e.pointerId); }catch(err){} }
+  });
+  scene.addEventListener("pointermove", function(e){
+    if(!drag) return;
+    var dx=e.clientX-sx, dy=e.clientY-sy;
+    if(Math.abs(dx)+Math.abs(dy)>3){ moved=true; }
+    rotY = sry + dx*0.55; rotX = srx - dy*0.55;
+    if(rotX>140) rotX=140; if(rotX<-140) rotX=-140;
+    applyTransform(false);
+  });
+  function endDrag(){ if(!drag) return; drag=false; if(moved){ select(nearestTahko(rotX, rotY), true); } }
+  scene.addEventListener("pointerup", endDrag);
+  scene.addEventListener("pointercancel", endDrag);
+
+  function angDiff(a, b){ return ((a - b) % 360 + 540) % 360 - 180; }
+  function nearestTahko(ax, ay){
+    var best=null, bestD=Infinity;
+    for(var i=0;i<T.length;i++){
+      var dxx = ax - T[i].tx, dyy = angDiff(ay, T[i].ty), d = dxx*dxx + dyy*dyy;
+      if(d < bestD){ bestD = d; best = T[i]; }
+    }
+    return best;
+  }
+
+  select(current, true);
+})();
+</script>
+</body>
+</html>

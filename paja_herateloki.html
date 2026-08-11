@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herätteet ja loki — poikkeamat, vastaukset ja digitaalinen jälki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE6DA;--paper-deep:#E4DCCC;--card:#F3EFE7;--ink:#211C16;--ink-soft:#5A5347;
+    --ember:#CE3F1B;--rule:#C8BFAD;--rule-soft:#D8D0C0;
+    --vihrea:#5E8C5A;--oikeus:#4F6E92;--turva:#C25A3E;--laatu:#BE8A2E;--projekti:#6E5A93;--talous:#4E8C84;--steel:#3D4B58;--wood:#B0712F;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 clamp(12px,3vw,26px) 60px;}
+  h1,h2,h3,h4,h5{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;text-transform:uppercase;line-height:.95;margin:0;}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+  p{margin:0 0 1em;}
+
+  .head{padding:clamp(20px,4vw,34px) 0 10px;}
+  .head h1{font-size:clamp(1.9rem,5.5vw,3rem);}
+  .head h1 .e{color:var(--ember);}
+  .head p{color:var(--ink-soft);font-size:.92rem;max-width:66ch;margin:.4em 0 0;}
+
+  .tabs{position:sticky;top:0;z-index:20;background:var(--paper);display:flex;gap:4px;overflow-x:auto;padding:10px 0;border-bottom:1px solid var(--rule);}
+  .tab{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;cursor:pointer;border:1px solid var(--rule);background:var(--card);color:var(--ink-soft);padding:.55em .85em;border-radius:20px;flex:none;}
+  .tab:hover{border-color:var(--ink-soft);color:var(--ink);}
+  .tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+  .view{padding-top:18px;}
+  .lead{color:var(--ink-soft);font-size:.93rem;max-width:72ch;margin:0 0 14px;}
+
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;margin-bottom:14px;}
+  .panel h3{font-size:1.15rem;margin-bottom:.4em;}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);font-weight:600;display:block;margin-bottom:.25em;}
+
+  .btn{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:.5em .85em;border-radius:3px;}
+  .btn:hover{background:var(--ink);color:var(--paper);}
+  .btn.primary{background:var(--ember);border-color:var(--ember);color:#fff;}
+  .btn.primary:hover{background:#b0340f;}
+  .btn.ghost{border-color:var(--rule);color:var(--ink-soft);}
+  .btn.mini{font-size:.56rem;padding:.34em .6em;}
+  .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+
+  .field{margin:.5em 0;}
+  .field label{display:block;font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.2em;}
+  .field input,.field select,.field textarea{width:100%;font-family:"Spectral",serif;font-size:.98rem;padding:.5em .6em;border:1px solid var(--rule);border-radius:4px;background:#fff;color:var(--ink);}
+  .field textarea{resize:vertical;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--ember);border-color:var(--ember);}
+  .inline{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;}
+  .inline .field{flex:1;min-width:140px;margin:0;}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px;}
+  .kpi{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;}
+  .kpi .k{font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);}
+  .kpi .v{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;font-size:2rem;line-height:1;margin-top:.1em;}
+
+  .item{background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--rule);border-radius:8px;padding:13px 15px;margin-bottom:10px;}
+  .item.uusi{border-left-color:var(--ember);}
+  .item.kasittelyssa{border-left-color:var(--laatu);}
+  .item.suljettu{border-left-color:var(--vihrea);}
+  .item .top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;}
+  .item h4{font-size:1.05rem;line-height:1.05;}
+  .item .meta{font-family:"IBM Plex Mono",monospace;font-size:.6rem;color:var(--ink-soft);margin-top:.2em;}
+  .item .txt{font-size:.94rem;margin:.5em 0 0;white-space:pre-wrap;}
+  .pill{font-family:"IBM Plex Mono",monospace;font-size:.54rem;letter-spacing:.06em;text-transform:uppercase;padding:.24em .55em;border-radius:20px;display:inline-block;}
+  .p-uusi{background:rgba(206,63,27,.16);color:#8f2a10;}
+  .p-kasittelyssa{background:rgba(190,138,46,.25);color:#7a5a12;}
+  .p-suljettu{background:rgba(94,140,90,.22);color:#3c5e39;}
+  .p-type{background:var(--paper-deep);color:var(--ink-soft);}
+  .sev{font-family:"IBM Plex Mono",monospace;font-size:.62rem;color:var(--ink-soft);display:inline-flex;align-items:center;gap:5px;}
+  .sev .b{letter-spacing:-1px;}
+  .sev .on{color:var(--ember);}.sev .off{color:var(--rule);}
+  .aging{font-family:"IBM Plex Mono",monospace;font-size:.56rem;color:var(--ember);}
+
+  .resp{border-top:1px dashed var(--rule);margin-top:.6em;padding-top:.5em;}
+  .resp .r{padding:.35em 0;font-size:.9rem;}
+  .resp .r .rh{font-family:"IBM Plex Mono",monospace;font-size:.58rem;color:var(--ink-soft);}
+  .resp .r .ract{font-family:"IBM Plex Mono",monospace;font-size:.54rem;letter-spacing:.05em;text-transform:uppercase;background:var(--paper-deep);color:var(--ink-soft);padding:.15em .45em;border-radius:20px;margin-left:.3em;}
+
+  .logline{font-family:"IBM Plex Mono",monospace;font-size:.7rem;padding:.4em 0;border-bottom:1px dashed var(--rule);display:flex;gap:10px;flex-wrap:wrap;}
+  .logline .ts{color:var(--ink-soft);white-space:nowrap;}
+  .logline .kind{font-weight:600;text-transform:uppercase;font-size:.58rem;letter-spacing:.05em;padding:.15em .45em;border-radius:20px;white-space:nowrap;}
+  .k-luotu{background:rgba(206,63,27,.16);color:#8f2a10;}
+  .k-vastaus{background:rgba(79,110,146,.18);color:#33506e;}
+  .k-tila{background:rgba(190,138,46,.25);color:#7a5a12;}
+  .k-suljettu{background:rgba(94,140,90,.22);color:#3c5e39;}
+
+  .msg{font-size:.85rem;padding:.5em .7em;border-radius:4px;margin-top:.5em;}
+  .msg.ok{background:rgba(94,140,90,.12);border-left:3px solid var(--vihrea);color:#3c5e39;}
+  .msg.err{background:rgba(206,63,27,.1);border-left:3px solid var(--ember);color:#8f2a10;}
+  .msg.info{background:var(--paper-deep);border-left:3px solid var(--steel);color:var(--ink-soft);}
+
+  .note{font-family:"IBM Plex Mono",monospace;font-size:.62rem;color:var(--ink-soft);line-height:1.75;margin-top:16px;border-top:1px solid var(--rule);padding-top:10px;}
+  @media print{.tabs,.btnrow,.btn{display:none !important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <h1>Herätteet ja <span class="e">loki</span></h1>
+    <p>Poikkeamat, läheltä piti -tilanteet, viat ja havainnot yhteen paikkaan. Jokainen heräte, vastaus ja tilan muutos kirjautuu lokiin aikaleimalla — loki on vain lisäävä, eli merkintöjä ei muokata eikä poisteta.</p>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+  <main class="view" id="view"></main>
+  <div class="note" id="note"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY="paja_herate_loki_v1";
+  var current="herateet";
+  var filter={ status:"", area:"", type:"" };
+
+  var TYPES=[
+    { id:"poikkeama", label:"Poikkeama" },
+    { id:"laheltapiti", label:"Läheltä piti" },
+    { id:"vika", label:"Konevika" },
+    { id:"kemikaali", label:"Kemikaali" },
+    { id:"jate", label:"Jäte" },
+    { id:"siisteys", label:"Siisteys" },
+    { id:"kysymys", label:"Kysymys" }
+  ];
+  var AREAS=["Puustudio","Metallistudio","Protostudio","CO2 Laser","Maalaamo","Maalaamo esikäsittely","Kuvanveisto","3D tulostus","Jalometallistudio","Valvomo","Puu CNC","Yleiset tilat"];
+  var ROLES=["Opiskelija","Lehtori","Pajamestari","Siivooja","Kiinteistö","Vierailija","Esimies"];
+  var STATUS={ uusi:"Uusi", kasittelyssa:"Käsittelyssä", suljettu:"Suljettu" };
+
+  var DB={ items:[], log:[] };
+  function load(){ try{ var s=localStorage.getItem(KEY); if(s){ var d=JSON.parse(s); DB.items=d.items||[]; DB.log=d.log||[]; } }catch(e){} }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(DB)); return true; }catch(e){ flash("Tallennus ei onnistunut.","err"); return false; } }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function nowISO(){ return new Date().toISOString(); }
+  function fmt(iso){ var d=new Date(iso);
+    function p(n){ return (n<10?"0":"")+n; }
+    return d.getDate()+"."+(d.getMonth()+1)+"."+d.getFullYear()+" "+p(d.getHours())+":"+p(d.getMinutes()); }
+  function ageHours(iso){ return Math.floor((Date.now()-new Date(iso).getTime())/3600000); }
+  function ageText(h){ if(h<1) return "alle tunti"; if(h<24) return h+" h"; return Math.floor(h/24)+" pv"; }
+  function typeLabel(id){ var a=TYPES.filter(function(t){ return t.id===id; }); return a.length?a[0].label:id; }
+  function nextId(){ var n=DB.items.length+1, y=new Date().getFullYear(); return "H"+y+"-"+(n<10?"00":(n<100?"0":""))+n; }
+
+  var flashMsg=null;
+  function flash(t,k){ flashMsg={t:t,k:k}; render(); }
+
+  // ---- LOKI: vain lisäävä ----
+  function logAdd(kind, ref, text, by){
+    DB.log.push({ ts:nowISO(), kind:kind, ref:ref, text:text, by:by });
+  }
+
+  function sevBlocks(n){
+    var on="",off="",i;
+    for(i=0;i<n;i++) on+="■";
+    for(i=n;i<5;i++) off+="■";
+    return '<span class="sev"><span class="b"><span class="on">'+on+'</span><span class="off">'+off+'</span></span>'+n+' / 5</span>';
+  }
+
+  // ================= UUSI HERÄTE =================
+  function viewNew(){
+    var t="",a="",r="",i;
+    for(i=0;i<TYPES.length;i++){ t+='<option value="'+TYPES[i].id+'">'+esc(TYPES[i].label)+'</option>'; }
+    for(i=0;i<AREAS.length;i++){ a+='<option value="'+esc(AREAS[i])+'">'+esc(AREAS[i])+'</option>'; }
+    for(i=0;i<ROLES.length;i++){ r+='<option value="'+esc(ROLES[i])+'">'+esc(ROLES[i])+'</option>'; }
+    return '<p class="lead">Tee heräte havainnosta. Kaikki kentät tallentuvat lokiin sellaisenaan — kirjoita se, mitä oikeasti näit.</p>'
+      + '<div class="panel"><span class="kicker">Uusi heräte</span><h3>Mitä havaitsit?</h3>'
+      + '<div class="inline"><div class="field"><label>Tyyppi</label><select id="fType">'+t+'</select></div>'
+      + '<div class="field"><label>Tila</label><select id="fArea">'+a+'</select></div>'
+      + '<div class="field" style="max-width:150px;"><label>Vakavuus 1–5</label><select id="fSev"><option value="1">1 · vähäinen</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5 · vakava</option></select></div></div>'
+      + '<div class="field"><label>Kuvaus</label><textarea id="fText" rows="4" placeholder="Mitä tapahtui tai mitä havaitsit? Missä ja milloin?"></textarea></div>'
+      + '<div class="inline"><div class="field"><label>Nimi</label><input type="text" id="fBy" placeholder="Etunimi Sukunimi"></div>'
+      + '<div class="field" style="max-width:180px;"><label>Rooli</label><select id="fRole">'+r+'</select></div></div>'
+      + '<div id="mNew"></div>'
+      + '<div class="btnrow"><button class="btn primary" id="addIt">Lähetä heräte</button></div>'
+      + '<div class="msg info" style="margin-top:.8em;">Vakava vaara: älä jää kirjaamaan — pysäytä työ, varmista turvallisuus ja hälytä paikalle. Heräte on jälkikirjaus, ei hätäilmoitus.</div>'
+      + '</div>';
+  }
+  function bindNew(){
+    var b=document.getElementById("addIt"); if(!b) return;
+    b.addEventListener("click", function(){
+      var txt=document.getElementById("fText").value.trim();
+      var by=document.getElementById("fBy").value.trim();
+      if(txt.length<5){ document.getElementById("mNew").innerHTML='<div class="msg err">Kirjoita lyhyt kuvaus.</div>'; return; }
+      if(by.length<2){ document.getElementById("mNew").innerHTML='<div class="msg err">Kirjoita nimesi — heräte ei ole nimetön.</div>'; return; }
+      var it={ id:nextId(), ts:nowISO(), type:document.getElementById("fType").value,
+        area:document.getElementById("fArea").value, sev:parseInt(document.getElementById("fSev").value,10),
+        text:txt, by:by, role:document.getElementById("fRole").value, status:"uusi", responses:[] };
+      DB.items.unshift(it);
+      logAdd("luotu", it.id, typeLabel(it.type)+" · "+it.area+" · vakavuus "+it.sev+" — "+txt, by+" ("+it.role+")");
+      save(); current="herateet"; flash("Heräte "+it.id+" kirjattu ja lokiin merkitty.","ok");
+    });
+  }
+
+  // ================= HERÄTTEET =================
+  function passes(it){
+    if(filter.status && it.status!==filter.status) return false;
+    if(filter.area && it.area!==filter.area) return false;
+    if(filter.type && it.type!==filter.type) return false;
+    return true;
+  }
+  function viewItems(){
+    var open=DB.items.filter(function(x){ return x.status!=="suljettu"; }).length;
+    var neu=DB.items.filter(function(x){ return x.status==="uusi"; }).length;
+    var sev=DB.items.filter(function(x){ return x.status!=="suljettu"&&x.sev>=4; }).length;
+    var s='<div class="kpis">'
+      + '<div class="kpi"><div class="k">Herätteitä</div><div class="v">'+DB.items.length+'</div></div>'
+      + '<div class="kpi"><div class="k">Avoinna</div><div class="v">'+open+'</div></div>'
+      + '<div class="kpi"><div class="k">Vastaamatta</div><div class="v" style="color:'+(neu>0?"var(--ember)":"var(--ink)")+'">'+neu+'</div></div>'
+      + '<div class="kpi"><div class="k">Vakavia avoinna</div><div class="v" style="color:'+(sev>0?"var(--ember)":"var(--ink)")+'">'+sev+'</div></div>'
+      + '<div class="kpi"><div class="k">Lokimerkintöjä</div><div class="v">'+DB.log.length+'</div></div></div>';
+
+    var so="",ao="",to="",i;
+    so+='<option value="">Kaikki tilat</option>';
+    var sk; for(sk in STATUS){ if(STATUS.hasOwnProperty(sk)){ so+='<option value="'+sk+'"'+(filter.status===sk?" selected":"")+'>'+STATUS[sk]+'</option>'; } }
+    ao+='<option value="">Kaikki tilat/paikat</option>';
+    for(i=0;i<AREAS.length;i++){ ao+='<option value="'+esc(AREAS[i])+'"'+(filter.area===AREAS[i]?" selected":"")+'>'+esc(AREAS[i])+'</option>'; }
+    to+='<option value="">Kaikki tyypit</option>';
+    for(i=0;i<TYPES.length;i++){ to+='<option value="'+TYPES[i].id+'"'+(filter.type===TYPES[i].id?" selected":"")+'>'+esc(TYPES[i].label)+'</option>'; }
+    s+='<div class="panel"><span class="kicker">Suodata</span><div class="inline">'
+      + '<div class="field"><label>Tila</label><select id="flStatus">'+so+'</select></div>'
+      + '<div class="field"><label>Paikka</label><select id="flArea">'+ao+'</select></div>'
+      + '<div class="field"><label>Tyyppi</label><select id="flType">'+to+'</select></div>'
+      + '<button class="btn ghost" id="flClear">Tyhjennä</button></div></div>';
+
+    var list=DB.items.filter(passes);
+    if(list.length===0){ return s+'<div class="panel"><p class="lead" style="margin:0;">Ei herätteitä näillä ehdoilla. Tee ensimmäinen Uusi heräte -välilehdeltä.</p></div>'; }
+
+    for(i=0;i<list.length;i++){
+      var it=list[i], h=ageHours(it.ts);
+      s+='<div class="item '+it.status+'"><div class="top"><div>'
+        + '<h4>'+esc(typeLabel(it.type))+' — '+esc(it.area)+'</h4>'
+        + '<div class="meta">'+it.id+' · '+fmt(it.ts)+' · '+esc(it.by)+' ('+esc(it.role)+')</div></div>'
+        + '<div style="text-align:right;"><span class="pill p-'+it.status+'">'+STATUS[it.status]+'</span><br>'+sevBlocks(it.sev)+'</div></div>'
+        + '<div class="txt">'+esc(it.text)+'</div>';
+      if(it.status==="uusi"&&h>=24){ s+='<div class="aging">Vastaamatta '+ageText(h)+' — vastaa tai siirrä käsittelyyn.</div>'; }
+      if(it.responses.length>0){
+        s+='<div class="resp">';
+        var j; for(j=0;j<it.responses.length;j++){ var r=it.responses[j];
+          s+='<div class="r"><div class="rh">'+fmt(r.ts)+' · '+esc(r.by)+'<span class="ract">'+esc(r.action)+'</span></div>'+esc(r.text)+'</div>'; }
+        s+='</div>';
+      }
+      if(it.status!=="suljettu"){
+        s+='<div class="resp"><div class="field"><label>Vastaus tai kuittaus</label><textarea rows="2" data-rtext="'+it.id+'" placeholder="Mitä tehtiin tai mitä ohjeistat?"></textarea></div>'
+          + '<div class="inline"><div class="field"><label>Vastaaja</label><input type="text" data-rby="'+it.id+'" placeholder="Nimi"></div>'
+          + '<div class="field" style="max-width:190px;"><label>Toimenpide</label><select data-ract="'+it.id+'">'
+          + '<option value="ohjeistettu">Ohjeistettu</option><option value="korjattu">Korjattu</option><option value="tilattu">Huolto tilattu</option>'
+          + '<option value="siivottu">Siivottu</option><option value="lukittu">Tila/kone lukittu</option><option value="siirretty">Siirretty eteenpäin</option></select></div>'
+          + '<button class="btn" data-radd="'+it.id+'">Kirjaa vastaus</button>'
+          + '<button class="btn primary" data-close="'+it.id+'">Sulje heräte</button></div></div>';
+      }
+      s+='</div>';
+    }
+    return s;
+  }
+  function bindItems(){
+    var fs=document.getElementById("flStatus"), fa=document.getElementById("flArea"), ft=document.getElementById("flType"), fc=document.getElementById("flClear");
+    if(fs){ fs.addEventListener("change", function(){ filter.status=fs.value; render(); }); }
+    if(fa){ fa.addEventListener("change", function(){ filter.area=fa.value; render(); }); }
+    if(ft){ ft.addEventListener("change", function(){ filter.type=ft.value; render(); }); }
+    if(fc){ fc.addEventListener("click", function(){ filter={status:"",area:"",type:""}; render(); }); }
+
+    document.querySelectorAll("[data-radd]").forEach(function(b){ b.addEventListener("click", function(){
+      var id=b.getAttribute("data-radd");
+      var ta=document.querySelector('[data-rtext="'+id+'"]'), by=document.querySelector('[data-rby="'+id+'"]'), ac=document.querySelector('[data-ract="'+id+'"]');
+      var txt=ta.value.trim(), who=by.value.trim();
+      if(txt.length<3){ flash("Kirjoita vastaus.","err"); return; }
+      if(who.length<2){ flash("Kirjoita vastaajan nimi.","err"); return; }
+      var it=DB.items.filter(function(x){ return x.id===id; })[0]; if(!it) return;
+      it.responses.push({ ts:nowISO(), text:txt, by:who, action:ac.value });
+      logAdd("vastaus", id, ac.value+" — "+txt, who);
+      if(it.status==="uusi"){ it.status="kasittelyssa"; logAdd("tila", id, "Tila: Käsittelyssä", who); }
+      save(); flash("Vastaus kirjattu lokiin.","ok");
+    }); });
+
+    document.querySelectorAll("[data-close]").forEach(function(b){ b.addEventListener("click", function(){
+      var id=b.getAttribute("data-close");
+      var by=document.querySelector('[data-rby="'+id+'"]');
+      var who=by?by.value.trim():"";
+      if(who.length<2){ flash("Kirjoita nimesi ennen sulkemista — sulkija merkitään lokiin.","err"); return; }
+      var it=DB.items.filter(function(x){ return x.id===id; })[0]; if(!it) return;
+      if(it.responses.length===0){ flash("Kirjaa ensin vastaus — heräte ei sulkeudu ilman kirjattua toimenpidettä.","err"); return; }
+      it.status="suljettu";
+      logAdd("suljettu", id, "Heräte suljettu", who);
+      save(); flash("Heräte "+id+" suljettu ja merkitty lokiin.","ok");
+    }); });
+  }
+
+  // ================= LOKI =================
+  function viewLog(){
+    var s='<p class="lead">Kaikki tapahtumat aikajärjestyksessä, uusin ensin. Loki on vain lisäävä: merkintöjä ei muokata eikä poisteta — se on toiminnan digitaalinen jälki.</p>';
+    if(DB.log.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Loki on tyhjä.</p></div>';
+    s+='<div class="panel">';
+    var i; for(i=DB.log.length-1;i>=0;i--){ var l=DB.log[i];
+      s+='<div class="logline"><span class="ts">'+fmt(l.ts)+'</span>'
+        + '<span class="kind k-'+l.kind+'">'+esc(l.kind)+'</span>'
+        + '<span class="ts">'+esc(l.ref)+'</span>'
+        + '<span style="flex:1;min-width:180px;">'+esc(l.text)+'</span>'
+        + '<span class="ts">'+esc(l.by)+'</span></div>'; }
+    s+='</div>';
+    s+='<div class="btnrow"><button class="btn" id="expLog">Vie loki (CSV)</button><button class="btn ghost" id="expAll">Vie kaikki (JSON)</button></div>';
+    return s;
+  }
+  function bindLog(){
+    var a=document.getElementById("expLog");
+    if(a){ a.addEventListener("click", function(){
+      var rows=["Aika;Tapahtuma;Herate;Kuvaus;Kirjaaja"],i;
+      for(i=0;i<DB.log.length;i++){ var l=DB.log[i];
+        rows.push([cc(fmt(l.ts)),cc(l.kind),cc(l.ref),cc(l.text),cc(l.by)].join(";")); }
+      download("\ufeff"+rows.join("\r\n"),"herateloki.csv","text/csv;charset=utf-8"); }); }
+    var b=document.getElementById("expAll");
+    if(b){ b.addEventListener("click", function(){ download(JSON.stringify(DB,null,2),"herateet_ja_loki.json","application/json"); }); }
+  }
+
+  // ================= DEMO / TYHJENNYS =================
+  function viewTools(){
+    return '<p class="lead">Demoaineisto kokeiluun sekä varmuuskopiot.</p>'
+      + '<div class="panel"><span class="kicker">Demo</span><h3>Kokeile</h3>'
+      + '<p style="font-size:.9rem;">Lataa muutama esimerkkiheräte vastauksineen, niin näet miltä loki näyttää käytössä.</p>'
+      + '<div class="btnrow"><button class="btn primary" id="loadDemo">Lataa demoherätteet</button></div></div>'
+      + '<div class="panel"><span class="kicker">Vienti</span><h3>Varmuuskopio</h3>'
+      + '<div class="btnrow"><button class="btn" id="expItems">Vie herätteet (CSV)</button><button class="btn ghost" id="expAll2">Vie kaikki (JSON)</button></div></div>'
+      + '<div class="panel"><span class="kicker">Vaarallinen</span><h3>Tyhjennä</h3>'
+      + '<p style="font-size:.9rem;">Loki on tarkoitettu pysyväksi. Tyhjennä vain kokeilun jälkeen.</p>'
+      + '<div class="btnrow"><button class="btn ghost" id="wipe">Tyhjennä herätteet ja loki</button></div></div>';
+  }
+  function bindTools(){
+    var d=document.getElementById("loadDemo");
+    if(d){ d.addEventListener("click", function(){
+      if(!window.confirm("Ladataanko demoherätteet? Ne lisätään nykyisten lisäksi.")) return;
+      var base=Date.now();
+      function mk(hoursAgo,type,area,sev,text,by,role){ return { id:nextId(), ts:new Date(base-hoursAgo*3600000).toISOString(),
+        type:type,area:area,sev:sev,text:text,by:by,role:role,status:"uusi",responses:[] }; }
+      var a=mk(50,"laheltapiti","Puustudio",4,"Vannesahan teräsuojus oli auki ja kappale nykäisi. Kukaan ei loukkaantunut, mutta tilanne oli lähellä.","Aino Virtanen","Opiskelija");
+      var b=mk(26,"kemikaali","Maalaamo esikäsittely",3,"Liuotinpurkin merkintä oli kulunut eikä KTT:tä löytynyt hyllystä.","Riikka Ahola","Lehtori");
+      var c=mk(6,"jate","Metallistudio",2,"Öljyisiä rättejä sekajäteastiassa. Siirsin metalliastiaan.","Sanna K.","Siivooja");
+      var e=mk(2,"vika","CO2 Laser",3,"Savunpoisto pitää kovaa ääntä ja imu tuntuu heikolta.","Eero Nieminen","Opiskelija");
+      DB.items.unshift(a); logAdd("luotu",a.id,"Läheltä piti · Puustudio · vakavuus 4 — "+a.text,a.by+" ("+a.role+")");
+      DB.items.unshift(b); logAdd("luotu",b.id,"Kemikaali · Maalaamo esikäsittely · vakavuus 3 — "+b.text,b.by+" ("+b.role+")");
+      DB.items.unshift(c); logAdd("luotu",c.id,"Jäte · Metallistudio · vakavuus 2 — "+c.text,c.by+" ("+c.role+")");
+      DB.items.unshift(e); logAdd("luotu",e.id,"Konevika · CO2 Laser · vakavuus 3 — "+e.text,e.by+" ("+e.role+")");
+      a.responses.push({ ts:new Date(base-48*3600000).toISOString(), text:"Suojus säädetty ja lukittu. Kävin käytön läpi ryhmän kanssa uudelleen.", by:"Mika Ihanus", action:"korjattu" });
+      logAdd("vastaus",a.id,"korjattu — Suojus säädetty ja lukittu.","Mika Ihanus");
+      a.status="kasittelyssa"; logAdd("tila",a.id,"Tila: Käsittelyssä","Mika Ihanus");
+      c.responses.push({ ts:new Date(base-5*3600000).toISOString(), text:"Kiitos ilmoituksesta. Muistutan ryhmiä itsesyttymisvaarasta.", by:"Mika Ihanus", action:"ohjeistettu" });
+      logAdd("vastaus",c.id,"ohjeistettu — Muistutus itsesyttymisvaarasta.","Mika Ihanus");
+      c.status="suljettu"; logAdd("suljettu",c.id,"Heräte suljettu","Mika Ihanus");
+      save(); current="herateet"; flash("Demoherätteet ladattu.","ok"); }); }
+    var ei=document.getElementById("expItems");
+    if(ei){ ei.addEventListener("click", function(){
+      var rows=["Tunnus;Aika;Tyyppi;Paikka;Vakavuus;Kuvaus;Ilmoittaja;Rooli;Tila;Vastauksia"],i;
+      for(i=0;i<DB.items.length;i++){ var it=DB.items[i];
+        rows.push([cc(it.id),cc(fmt(it.ts)),cc(typeLabel(it.type)),cc(it.area),it.sev,cc(it.text),cc(it.by),cc(it.role),cc(STATUS[it.status]),it.responses.length].join(";")); }
+      download("\ufeff"+rows.join("\r\n"),"herateet.csv","text/csv;charset=utf-8"); }); }
+    var e2=document.getElementById("expAll2");
+    if(e2){ e2.addEventListener("click", function(){ download(JSON.stringify(DB,null,2),"herateet_ja_loki.json","application/json"); }); }
+    var w=document.getElementById("wipe");
+    if(w){ w.addEventListener("click", function(){ if(window.confirm("Tyhjennetäänkö kaikki herätteet ja loki? Tätä ei voi perua.")){ DB={items:[],log:[]}; save(); render(); } }); }
+  }
+
+  // ================= APU =================
+  function cc(s){ return String(s==null?"":s).replace(/;/g," ").replace(/[\r\n]+/g," "); }
+  function download(text,name,mime){
+    try{ var b=new Blob([text],{type:mime}),u=URL.createObjectURL(b),a=document.createElement("a");
+      a.href=u; a.download=name; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(u); },1000); }
+    catch(e){ flash("Lataus ei onnistunut.","err"); }
+  }
+
+  // ================= ROUTER =================
+  var TABS=[
+    { id:"herateet", label:"Herätteet", render:viewItems, bind:bindItems },
+    { id:"uusi",     label:"Uusi heräte", render:viewNew, bind:bindNew },
+    { id:"loki",     label:"Loki",      render:viewLog,  bind:bindLog },
+    { id:"tyokalut", label:"Demo & vienti", render:viewTools, bind:bindTools }
+  ];
+  function render(){
+    var el=document.getElementById("tabs"),s="",i;
+    for(i=0;i<TABS.length;i++){ s+='<button class="tab'+(TABS[i].id===current?" active":"")+'" data-tab="'+TABS[i].id+'">'+TABS[i].label+'</button>'; }
+    el.innerHTML=s;
+    el.querySelectorAll("[data-tab]").forEach(function(b){ b.addEventListener("click", function(){ current=b.getAttribute("data-tab"); flashMsg=null; render(); }); });
+    var t=null; for(i=0;i<TABS.length;i++){ if(TABS[i].id===current) t=TABS[i]; }
+    var html=t.render();
+    if(flashMsg){ html='<div class="msg '+flashMsg.k+'">'+esc(flashMsg.t)+'</div>'+html; flashMsg=null; }
+    document.getElementById("view").innerHTML=html;
+    if(t.bind) t.bind();
+    document.getElementById("note").innerHTML=
+      "Pilotti: herätteet ja loki tallentuvat vain tähän selaimeen — vie varmuuskopio säännöllisesti ja säilytä se Metropolian ympäristössä. "
+      + "Herätteissä on nimiä ja tapahtumatietoja, jotka ovat henkilötietoa. Loki on vain lisäävä, mutta selaimen tiedot voi silti tyhjentää — virallinen poikkeamakirjanpito kuuluu työnantajan järjestelmään.";
+  }
+
+  load(); render();
+})();
+</script>
+</body>
+</html>

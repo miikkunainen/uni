@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fi" class="js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pajaturvallisuuden perusta — lakiperusta, opiskelija, reilu vastuunjako</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE6DA; --paper-deep:#E4DCCC; --ink:#211C16; --ink-soft:#5A5347;
+    --wood:#B0712F; --steel:#3D4B58; --ember:#CE3F1B;
+    --rule:#C8BFAD; --rule-soft:#D8D0C0; --maxw:1020px;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:radial-gradient(1100px 540px at 82% -8%, rgba(206,63,27,.07), transparent 60%), var(--paper);
+    color:var(--ink); font-family:"Spectral",Georgia,serif; font-size:18px; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 clamp(20px,5vw,56px);}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace; font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-soft); font-weight:500;}
+  .ink-soft{color:var(--ink-soft);}
+
+  .printbar{position:fixed; top:18px; right:18px; z-index:40;}
+  .printbtn{font-family:"IBM Plex Mono",monospace; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; background:var(--ink); color:var(--paper); border:none; padding:.62em 1em; border-radius:2px; box-shadow:0 6px 22px rgba(33,28,22,.22);}
+  .printbtn:hover{background:var(--ember);}
+  .printbtn:focus-visible{outline:3px solid var(--ember); outline-offset:2px;}
+
+  /* hero */
+  .hero{padding:clamp(46px,8vw,92px) 0 clamp(26px,4vw,40px);}
+  .hero__eyebrow{display:block; margin-bottom:clamp(18px,3.5vw,30px);}
+  .hero__title{font-family:"Big Shoulders Display","Arial Narrow",sans-serif; font-weight:800; font-size:clamp(2.7rem,10vw,6.4rem); line-height:.86; letter-spacing:-.004em; text-transform:uppercase; margin:0;}
+  .hero__title span{display:block;}
+  .hero__title .ember{color:var(--ember);}
+  .hero__thesis{font-size:clamp(1.1rem,2.4vw,1.42rem); line-height:1.42; max-width:48ch; margin:clamp(24px,4vw,36px) 0 clamp(20px,3vw,28px); font-weight:500;}
+  .hero__sub{font-family:"IBM Plex Mono",monospace; font-size:.78rem; letter-spacing:.06em; color:var(--ink); display:flex; flex-wrap:wrap; gap:8px;}
+  .hero__sub span{border:1.5px solid var(--ink); border-radius:2px; padding:.45em .7em; text-transform:uppercase;}
+  .hero__sub .solid{background:var(--ink); color:var(--paper);}
+
+  /* principle band */
+  .creed{border-top:2px solid var(--ink); margin-top:clamp(30px,5vw,46px); padding:clamp(26px,4vw,40px) 0;}
+  .creed h2{font-family:"Big Shoulders Display",sans-serif; font-weight:800; text-transform:uppercase; font-size:clamp(1.8rem,5vw,2.8rem); line-height:.95; margin:0 0 .5em; color:var(--ember);}
+  .creed p{max-width:64ch; margin:0; font-size:1.05rem;}
+
+  /* sections */
+  .sec{padding:clamp(38px,6vw,64px) 0; border-top:1px solid var(--rule);}
+  .sec__head{display:grid; grid-template-columns:3.4rem 1fr; gap:clamp(14px,3vw,26px); align-items:start; margin-bottom:clamp(20px,3vw,30px);}
+  .sec__no{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:1rem; color:var(--ember); padding-top:.5rem;}
+  .sec__title{font-family:"Big Shoulders Display",sans-serif; font-weight:700; text-transform:uppercase; font-size:clamp(1.8rem,5vw,2.9rem); line-height:.96; margin:0;}
+  .sec__lead{font-size:clamp(1.05rem,2vw,1.22rem); max-width:62ch; grid-column:2; margin:.4rem 0 0;}
+  .body p{max-width:64ch; margin:0 0 1em;}
+  .body p:last-child{margin-bottom:0;}
+
+  /* legal cards */
+  .laws{display:grid; gap:clamp(12px,2vw,16px); margin-top:6px;}
+  .law{display:grid; grid-template-columns:minmax(8.5rem,11rem) 1fr; gap:clamp(12px,2.4vw,22px); background:var(--paper-deep); border:1px solid var(--rule); border-left:3px solid var(--steel); padding:clamp(15px,2.4vw,20px);}
+  .law__tag{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:.78rem; letter-spacing:.02em; color:var(--steel); line-height:1.4;}
+  .law__tag small{display:block; color:var(--ink-soft); font-weight:400; font-size:.72rem; margin-top:.2em;}
+  .law__body{font-size:1rem; line-height:1.5;}
+  .law__body b{font-weight:600;}
+  .law__so{display:block; margin-top:.5em; font-family:"IBM Plex Mono",monospace; font-size:.74rem; letter-spacing:.02em; color:var(--ember); text-transform:uppercase;}
+  .law--ember{border-left-color:var(--ember);}
+  .law--wood{border-left-color:var(--wood);}
+
+  /* arc */
+  .arc{display:flex; flex-wrap:wrap; align-items:center; gap:.6rem .9rem; margin-top:clamp(20px,3vw,28px); font-family:"IBM Plex Mono",monospace; font-size:.82rem; letter-spacing:.05em; text-transform:uppercase; font-weight:500;}
+  .arc b{font-weight:600; background:var(--paper-deep); border:1px solid var(--rule); border-left:3px solid var(--ember); padding:.55em .8em;}
+  .arc i{color:var(--ember); font-style:normal; font-size:1.1em;}
+
+  .callout{background:var(--paper-deep); border:1px solid var(--rule); border-left:3px solid var(--ember); padding:clamp(16px,2.6vw,22px); margin-top:clamp(20px,3vw,28px);}
+  .callout h4{font-family:"IBM Plex Mono",monospace; font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; margin:0 0 .5em; font-weight:600;}
+  .callout p{margin:0; max-width:64ch; font-size:.98rem;}
+  .callout p + p{margin-top:.6em;}
+
+  /* roles: two-sided fairness */
+  .roles{display:grid; gap:clamp(12px,2vw,16px); margin-top:6px;}
+  .role{border:1px solid var(--rule); background:var(--paper-deep);}
+  .role__name{font-family:"Big Shoulders Display",sans-serif; font-weight:700; text-transform:uppercase; font-size:1.3rem; padding:.5em clamp(15px,2.4vw,20px); border-bottom:1px solid var(--rule); background:rgba(61,75,88,.06);}
+  .role__cols{display:grid; grid-template-columns:1fr 1fr;}
+  .role__col{padding:clamp(14px,2.2vw,18px);}
+  .role__col:first-child{border-right:1px solid var(--rule);}
+  .role__k{font-family:"IBM Plex Mono",monospace; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; font-weight:600; margin:0 0 .5em; color:var(--ink-soft);}
+  .role__col--owe .role__k{color:var(--ember);}
+  .role__col--due .role__k{color:var(--steel);}
+  .role__col p{margin:0; font-size:.95rem; line-height:1.48;}
+
+  /* tiers */
+  .tiers{display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(12px,2vw,16px); margin-top:6px;}
+  .tier{border:1px solid var(--rule); background:var(--paper-deep); padding:clamp(16px,2.4vw,20px);}
+  .tier h4{font-family:"Big Shoulders Display",sans-serif; font-weight:700; text-transform:uppercase; font-size:1.35rem; margin:0 0 .1em;}
+  .tier .sub{font-family:"IBM Plex Mono",monospace; font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 .8em;}
+  .tier p{margin:0; font-size:.95rem; line-height:1.48;}
+  .tier--must{border-top:3px solid var(--ember);}
+  .tier--should{border-top:3px solid var(--wood);}
+  .tier--aspire{border-top:3px solid var(--steel);}
+
+  /* codesign slots */
+  .slots{list-style:none; margin:6px 0 0; padding:0; border-top:1px solid var(--rule);}
+  .slots li{border-bottom:1px solid var(--rule-soft); padding:.8em 0; padding-left:1.6em; position:relative; max-width:70ch; font-size:1rem;}
+  .slots li::before{content:"◷"; position:absolute; left:0; color:var(--steel); font-family:"IBM Plex Mono",monospace;}
+  .slots li b{font-weight:600;}
+
+  /* foot */
+  .foot{border-top:2px solid var(--ink); padding:clamp(26px,4vw,40px) 0 clamp(40px,6vw,60px);}
+  .foot__grid{display:flex; flex-wrap:wrap; justify-content:space-between; gap:18px; align-items:flex-end;}
+  .foot__brand{font-family:"Big Shoulders Display",sans-serif; font-weight:700; text-transform:uppercase; font-size:1.5rem; line-height:.95;}
+  .foot__meta{font-family:"IBM Plex Mono",monospace; font-size:.72rem; letter-spacing:.04em; color:var(--ink-soft); line-height:1.7; text-align:right;}
+  .sources{font-family:"IBM Plex Mono",monospace; font-size:.72rem; letter-spacing:.02em; color:var(--ink-soft); margin-top:clamp(20px,3vw,28px); line-height:1.7; max-width:72ch;}
+  .sources b{color:var(--ink); font-weight:600;}
+
+  /* reveal */
+  .js .reveal{opacity:0; transform:translateY(16px);}
+  .js .reveal.in{opacity:1; transform:none; transition:opacity .65s ease, transform .65s ease;}
+  .js .hero__title span{opacity:0; transform:translateY(20px);}
+  .js .hero__title span.in{opacity:1; transform:none; transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);}
+  @media (prefers-reduced-motion:reduce){ .js .reveal,.js .reveal.in,.js .hero__title span,.js .hero__title span.in{opacity:1!important; transform:none!important; transition:none!important;} }
+
+  @media (max-width:720px){
+    body{font-size:17px;}
+    .sec__head{grid-template-columns:1fr; gap:6px;} .sec__no{padding-top:0;} .sec__lead{grid-column:1;}
+    .law{grid-template-columns:1fr; gap:6px;}
+    .role__cols{grid-template-columns:1fr;} .role__col:first-child{border-right:none; border-bottom:1px solid var(--rule);}
+    .tiers{grid-template-columns:1fr;}
+  }
+
+  @media print{
+    :root{--paper:#fff; --paper-deep:#f3efe7;}
+    body{background:#fff; font-size:11pt; line-height:1.42;}
+    .printbar{display:none;}
+    .wrap{max-width:100%; padding:0 12mm;}
+    .hero{padding:4mm 0 3mm;} .hero__title{font-size:38pt;}
+    .sec{padding:6mm 0; break-inside:avoid;}
+    .law,.role,.tier,.callout,.creed{break-inside:avoid;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+  <script src="pajakuutio-nav.js"></script>
+
+<div class="printbar"><button class="printbtn" onclick="window.print()">Tulosta / PDF</button></div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <span class="hero__eyebrow eyebrow">Muotoilun työpajat · Arabian kampus · Metropolia</span>
+    <h1 class="hero__title">
+      <span>Pajatur&shy;vallisuuden</span>
+      <span class="ember">perusta</span>
+    </h1>
+    <p class="hero__thesis">Rakennettu lakiin nojaten, opiskelijan näkökulmasta toimivaksi ja jokaiselle taholle reiluksi. Tämä on perusta, jonka päälle yhteinen pelikirja kootaan.</p>
+    <div class="hero__sub">
+      <span class="solid">Lakiperusta</span>
+      <span>Opiskelijan näkökulma</span>
+      <span>Reilu vastuunjako</span>
+    </div>
+  </header>
+
+  <section class="creed reveal">
+    <h2>Isoin etu on yhteinen etu</h2>
+    <p>Jokaista tämän dokumentin kohtaa koetellaan yhdellä kysymyksellä: palveleeko se yhteistä, opiskelijakeskeistä etua — vai jonkin yksittäisen tahon asemaa, mukavuutta tai selustaa? Turvallisuutta ei rakenneta ketään vastaan eikä kenenkään puolesta, vaan yhdessä. Kaikkea ei voi hallita täydellisesti; siksi teemme avoimia, rationaalisia päätöksiä, kannamme tietyt riskit tietoisesti ja ymmärrämme niiden seuraukset.</p>
+  </section>
+
+  <!-- 01 LAKIPERUSTA -->
+  <section class="sec">
+    <div class="sec__head reveal">
+      <span class="sec__no">01</span>
+      <h2 class="sec__title">Lakiperusta</h2>
+      <p class="sec__lead">Tämä on lattia, jonka alle ei mennä — varmennettu alkulähteistä. Se ei ole mielipide vaan velvoite, ja se perustelee suuren osan pajan käytännöistä.</p>
+    </div>
+
+    <div class="laws reveal">
+      <div class="law">
+        <div class="law__tag">Työturvallisuuslaki 738/2002<small>4 § · soveltamisala</small></div>
+        <div class="law__body">Laki koskee opiskelijan käytännön työtä pajalla myös ilman työsuhdetta: koulutuksen järjestäjään sovelletaan työnantajan velvoitteita ja opiskelijaan työntekijän asemaa. Pelkkä luento- ja teoriaopetus jää soveltamisalan ulkopuolelle.
+          <span class="law__so">→ Siksi ensimmäinen päivä luokassa (2 h), ja vasta sitten pajalle.</span>
+        </div>
+      </div>
+
+      <div class="law law--ember">
+        <div class="law__tag">Oikeuskäytäntö<small>KKO 2013:56 · 2014:75</small></div>
+        <div class="law__body">Opettaja on suhteessa opiskelijoihin esimiehen asemassa, ja hänellä katsotaan olevan parhaat valmiudet havaita vaarat. Vastuu turvallisuudesta on työnantajalla ja esimiehillä — ei opiskelijalla eikä yksittäisellä ohjeen laatijalla. Korkein oikeus on tuominnut esimiehiä, kun työntekijä loukkaantui puutteellisesti suojatulla koneella.
+          <span class="law__so">→ Vastuu jaetaan ja päivitetään yhdessä, ei sysätä yksilölle.</span>
+        </div>
+      </div>
+
+      <div class="law">
+        <div class="law__tag">Työturvallisuuslaki 738/2002<small>10 § · vaarojen arviointi</small></div>
+        <div class="law__body">Työn vaarat on selvitettävä ja arvioitava järjestelmällisesti. Velvoite koskee myös oppilaitoksen harjoitustyötiloja, ja arvioinnin pohjalta ratkaistaan myös se, kuinka suuri ryhmä voi turvallisesti työskennellä tilassa.
+          <span class="law__so">→ Jokaiselle koneelle, työvaiheelle ja kemikaalille riskiluokka 1–5.</span>
+        </div>
+      </div>
+
+      <div class="law law--wood">
+        <div class="law__tag">Käyttöasetus 403/2008<small>koneturvallisuus</small></div>
+        <div class="law__body">Vaara poistetaan <b>ensisijaisesti teknisillä toimilla</b> (suojukset, pysäyttävät turvalaitteet). Vasta jos sitä ei voi poistaa, turvallisuus varmistetaan opastuksella, varoituslaitteilla, turvamerkeillä ja henkilönsuojaimilla. Koneet on pidettävä kunnossa huollolla; vaatimukset koskevat myös vanhoja, CE-merkintää edeltäviä koneita.
+          <span class="law__so">→ Suojaimet ovat viimeinen kerros, eivät ensimmäinen. Vaara hoidetaan ylävirrassa.</span>
+        </div>
+      </div>
+
+      <div class="law">
+        <div class="law__tag">Työturvallisuuslaki 738/2002<small>14 § · 14 a §</small></div>
+        <div class="law__body">Opiskelijalle on annettava opetus ja ohjaus ennen työtä — myös puhdistus-, huolto- ja korjaustöihin. Tietyt tehtävät edellyttävät osoitettua pätevyyttä.
+          <span class="law__so">→ Yleinen pajakortti + konekohtainen työlupa ennen itsenäistä työtä.</span>
+        </div>
+      </div>
+
+      <div class="law">
+        <div class="law__tag">Työturvallisuuslaki 738/2002<small>15 § · henkilönsuojaimet</small></div>
+        <div class="law__body">Työnantajan on varattava tarpeelliset henkilönsuojaimet käyttöön ja huolehdittava niiden saatavuudesta.
+          <span class="law__so">→ Suojalasit ja muut suojaimet tarjolla; linjaus niiden käytöstä erikoistiloissa.</span>
+        </div>
+      </div>
+
+      <div class="law law--ember">
+        <div class="law__tag">Vna 1267/2019 · ASA-laki 452/2020<small>syöpävaara</small></div>
+        <div class="law__body">Kovapuupöly (mm. koivu) on luokiteltu syöpävaaralliseksi; sitova raja-arvo on 2 mg/m³. Altistuvat on ilmoitettava ASA-rekisteriin. Riski koskee nimenomaisesti myös oppilaitoksia ja myös siivoojia. Sama koskee ruostumattoman teräksen hitsaushuuruja.
+          <span class="law__so">→ Kohdepoisto on pakollinen, ei valinnainen. Siivous imuroiden, ei pölyä nostaen.</span>
+        </div>
+      </div>
+
+      <div class="law law--wood">
+        <div class="law__tag">Työturvallisuuslaki 738/2002<small>23 § · työstä pidättäytyminen</small></div>
+        <div class="law__body">Työntekijällä — ja siten opiskelijalla — on oikeus pidättäytyä työstä, joka aiheuttaa vakavaa vaaraa hengelle tai terveydelle.
+          <span class="law__so">→ Turvallisuus ei ole suoritus hinnalla millä hyvänsä; epävarmana saa pysähtyä.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 OPISKELIJAN NÄKÖKULMA -->
+  <section class="sec">
+    <div class="sec__head reveal">
+      <span class="sec__no">02</span>
+      <h2 class="sec__title">Opiskelijan näkökulma</h2>
+      <p class="sec__lead">Sama lakiperusta katsottuna sen ihmisen penkiltä, jota se ensisijaisesti suojaa. Tavoite on toimiva, rauhallinen ja oppimista tukeva ympäristö — ei pelko vaan hallinta.</p>
+    </div>
+    <div class="body reveal">
+      <p>Kurssi etenee hallituin askelin, jotka huomioivat jokaisen lähtötason. Kaari on yksinkertainen ja se kantaa koko opintojen ajan:</p>
+      <div class="arc">
+        <b>Turvallisuus</b><i>→</i><b>Ohjattu tekeminen</b><i>→</i><b>Itsenäinen osaaminen</b>
+      </div>
+      <p style="margin-top:1.1em;">Kognitiivinen kuorma otetaan tosissaan: uutta ei kaadeta kerralla liikaa. Perehdytys on kaksivaiheinen ja toimii puhelimella — ensin varmistetaan <b>esitiedot</b>, sitten käydään <b>perehdytysmateriaali</b> (turvallisuus- ja työlupapaketti sekä konekohtaiset kortit) pajamestarin kanssa läpi. Turvallisuuspaketti on jäsennetty kolmeen tasoon: <b>Havaitse → Ymmärrä → Toimi</b>, ja halukkaille on tarjolla syvempää tietoa. Näin tieto on palautettavissa mieleen suoraan työpisteellä eikä se jää muistinvaraiseksi.</p>
+
+      <div class="callout">
+        <h4>Suojalasit — huolenpitoa, ei kiinniottoa</h4>
+        <p>Suojalasit kaikissa erikoistiloissa on selkeä, kuormaa keventävä sääntö ja näkyvä merkki siitä, että henkilö on perehdytetty ja osaa toimia. Jotta se on reilu, sen toteutus nojaa kahteen asiaan: tarjolla on laseja jotka eivät huurru (ja optometriapolku omiin vahvuuksiin on oikeasti olemassa), ja ilman laseja olevaa lähestytään ystävällisesti ja rennosti — kysytään, opastetaan, toivotetaan tervetulleeksi lasit silmillä. Sääntö suojaa myös sivullista: lastu tai sirpale voi tulla naapurin työstä.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 REILU VASTUUNJAKO -->
+  <section class="sec">
+    <div class="sec__head reveal">
+      <span class="sec__no">03</span>
+      <h2 class="sec__title">Reilu vastuunjako</h2>
+      <p class="sec__lead">Reiluus tarkoittaa, että jokaisella taholla on sekä vastuu että se, mihin hän on oikeutettu. Velvollisuudet eivät jakaudu yksipuolisesti.</p>
+    </div>
+
+    <div class="roles reveal">
+      <div class="role">
+        <div class="role__name">Opiskelija</div>
+        <div class="role__cols">
+          <div class="role__col role__col--owe"><p class="role__k">Vastaa</p><p>Omasta työpisteestä, suojainten käytöstä, voimassa olevista luvista ja jälkien siivoamisesta — mieluusti myös lähiympäristöstä.</p></div>
+          <div class="role__col role__col--due"><p class="role__k">On oikeutettu</p><p>Perehdytykseen, ohjaukseen, turvallisiin koneisiin ja oikeuteen pidättäytyä vaarallisesta työstä (23 §). Ei kanna järjestelmän vastuuta.</p></div>
+        </div>
+      </div>
+
+      <div class="role">
+        <div class="role__name">Ohjaava lehtori</div>
+        <div class="role__cols">
+          <div class="role__col role__col--owe"><p class="role__k">Vastaa</p><p>Perehdytyksestä ja opetuksen aikaisesta ohjauksesta sekä valvonnasta; esimiesasemasta suhteessa opiskelijoihin.</p></div>
+          <div class="role__col role__col--due"><p class="role__k">On oikeutettu</p><p>Johdon selkeään linjaan ja resursseihin — ettei kanna turvallisuustasoa yksin eikä jälkikäteen.</p></div>
+        </div>
+      </div>
+
+      <div class="role">
+        <div class="role__name">Pajamestari</div>
+        <div class="role__cols">
+          <div class="role__col role__col--owe"><p class="role__k">Vastaa</p><p>Tiloista, koneista, huolloista ja korjauksista sekä siitä, että ohjeet ovat ajan tasalla ja yksiselitteisiä.</p></div>
+          <div class="role__col role__col--due"><p class="role__k">On oikeutettu</p><p>Yhteislaadintaan — ei sanelluksi tulemiseen. Pajamestarin alueen ohjeet tehdään ja päivitetään hänen kanssaan, ja työlle annetaan valtuudet, aika ja resurssit.</p></div>
+        </div>
+      </div>
+
+      <div class="role">
+        <div class="role__name">Johto / esimies</div>
+        <div class="role__cols">
+          <div class="role__col role__col--owe"><p class="role__k">Vastaa</p><p>Turvallisuustason strategisesta valinnasta, resursoinnista ja roolien yhteensovittamisesta. Valtuuttaa matalimman huomauttamaan korkeimmalle.</p></div>
+          <div class="role__col role__col--due"><p class="role__k">On oikeutettu</p><p>Rehelliseen, reaaliaikaiseen tietoon kentältä päätöksenteon pohjaksi.</p></div>
+        </div>
+      </div>
+
+      <div class="role">
+        <div class="role__name">Siivooja</div>
+        <div class="role__cols">
+          <div class="role__col role__col--owe"><p class="role__k">Vastaa</p><p>Yleistilan ja lattioiden puhtaanapidosta imuroiden — ei työpöytäpintojen käsittelystä.</p></div>
+          <div class="role__col role__col--due"><p class="role__k">On oikeutettu</p><p>Perehdytykseen ja tietoon vaaroista (laki velvoittaa, 14 §). Ennen kaikkea siihen, ettei kohtaa turvaamattomia vaaroja: vaaran synnyttäjä siivoaa ja turvaa sen ennen poistumistaan.</p></div>
+        </div>
+      </div>
+
+      <div class="role">
+        <div class="role__name">Vierailija · ovivahti · muu kulkija</div>
+        <div class="role__cols">
+          <div class="role__col role__col--owe"><p class="role__k">Vastaa</p><p>Suojalasien käytöstä ja siitä, ettei kosketa pintoihin tai kahvoihin ilman lupaa.</p></div>
+          <div class="role__col role__col--due"><p class="role__k">On oikeutettu</p><p>Selkeään ohjeeseen jo ovella ja siihen, että käynnillä on nimetty isäntä joka vastaa turvallisuudesta.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h4>Näkymättömät turvataan ylävirrassa</h4>
+      <p>Siivooja, ovivahti ja seuraava vuoro ovat tilassa silloin kun et ole. Heitä ei suojata sillä, että annetaan yksin olevalle, vähiten perehdytetylle ihmiselle kielto "älä koske" — vaan sillä, että jokainen joka synnyttää vaaran turvaa sen ennen lähtöään. Et siivoa pistettäsi siksi että se on siistiä, vaan siksi että tänä iltana tässä huoneessa on yksin ihminen jota se mitä jätit voi vahingoittaa. Laki on tässä sinun puolellasi: koneturvallisuus ja kovapuupöly velvoittavat hoitamaan vaaran lähteellä, ja siivooja on nimenomaisesti suojattava ryhmä.</p>
+    </div>
+  </section>
+
+  <!-- 04 PORRASTUS -->
+  <section class="sec">
+    <div class="sec__head reveal">
+      <span class="sec__no">04</span>
+      <h2 class="sec__title">Porrastus — rehellisesti</h2>
+      <p class="sec__lead">Täydellistä turvallisuutta ei ole, ja viimeinen prosentti maksaa eniten ja estää työn. Siksi taso porrastetaan. Ihanteen kirjaaminen standardiksi ilman resursseja on itsessään riski — silloin on kirjattu taso jota ei pidetä yllä.</p>
+    </div>
+    <div class="tiers reveal">
+      <div class="tier tier--must">
+        <h4>Pakko</h4>
+        <p class="sub">Lain minimi · rahoita nyt</p>
+        <p>Vaarojen arviointi, konekohtaiset luvat, toimivat suojaukset ja kohdepoisto, suojaimet, perehdytys ja työlupa. Nämä eivät jousta.</p>
+      </div>
+      <div class="tier tier--should">
+        <h4>Pitäisi</h4>
+        <p class="sub">Tämä lukuvuosi</p>
+        <p>Mobiili poikkeama- ja läheltä piti -raportointi, päivitetyt konekortit, selkeät hylly- ja kaappijärjestelmät, vierailijakäytäntö.</p>
+      </div>
+      <div class="tier tier--aspire">
+        <h4>Tavoite</h4>
+        <p class="sub">Kun resurssit riittävät</p>
+        <p>Optometrian räätälöidyt suojalasit, kattava huoltokalenteri ja tehtävälista, RETAKE-virtojen täysi seuranta.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 CO-DESIGN -->
+  <section class="sec">
+    <div class="sec__head reveal">
+      <span class="sec__no">05</span>
+      <h2 class="sec__title">Mitä tämä ei vielä ole</h2>
+      <p class="sec__lead">Tämä on perusta, ei valmis operatiivinen pelikirja. Seuraavat osat kuuluvat laadittavaksi <b>yhdessä pajamestareiden kanssa</b> — ei annettavaksi ylhäältä. Se on osa reiluutta.</p>
+    </div>
+    <ul class="slots reveal">
+      <li><b>Tila- ja konekohtaiset kortit</b> — kunkin erikoistilan (puu, metalli, laser, 3D-tulostus, protostudio, kuvanveisto, jalometalli, maalaamo, varastot) vaarat, luvat ja 1–5 riskimittari.</li>
+      <li><b>Ajankäyttö ja valvontakapasiteetti</b> — miten suojatut huoltotunnit ja itsenäinen työ sovitetaan yhteen niin, että vaarallisten koneiden valvonta riittää eikä jonoa synny.</li>
+      <li><b>Poikkeamaraportointi</b> — mobiilialustan valinta ja vastuut: kuka näkee, kuka korjaa, miten edistyminen näkyy.</li>
+      <li><b>Hylly-, kaappi- ja jätejärjestelmät</b> — vakiopaikat työkaluille ja suojaimille; RETAKE-virrat ja jätehuoneen logistiikka.</li>
+      <li><b>Vuoden 2017 konelaput</b> — käydään läpi yhteisenä korjaustyönä, ei vastuunsiirtona; korjaukset pajamestarin hyväksyttäväksi.</li>
+    </ul>
+  </section>
+
+  <footer class="foot">
+    <div class="foot__grid">
+      <div class="foot__brand">Muotoilun Pajat<br>Metropolia</div>
+      <div class="foot__meta">
+        Pajaturvallisuuden perusta · Arabian kampus<br>
+        Luonnos — laaditaan loppuun yhdessä<br>
+        Lakiviittaukset tarkistettava ennen virallistamista
+      </div>
+    </div>
+    <p class="sources"><b>Lähteet (varmennettu):</b> Työturvallisuuslaki 738/2002 (Finlex). Ammatillisen oppilaitoksen turvallisuustyö (Opetushallitus). Työturvallisuuslain soveltamisopas (Työterveyslaitos). Valtioneuvoston asetus työvälineiden turvallisesta käytöstä ja tarkastamisesta 403/2008 (Finlex, Tyosuojelu.fi, Työturvallisuuskeskus). Vna syöpävaaran torjunnasta 1267/2019 ja ASA-laki 452/2020; kovapuupöly (Tyosuojelu.fi, Työterveyslaitos, Työturvallisuuskeskus). Oikeustapaukset KKO 2013:56 ja KKO 2014:75.</p>
+  </footer>
+
+</div>
+
+<script>
+  (function(){
+    "use strict";
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var lines = document.querySelectorAll(".hero__title span");
+    if(reduce){ for(var i=0;i<lines.length;i++){ lines[i].classList.add("in"); } }
+    else { lines.forEach(function(el, idx){ setTimeout(function(){ el.classList.add("in"); }, 120 + idx*150); }); }
+    var items = document.querySelectorAll(".reveal");
+    if(reduce || !("IntersectionObserver" in window)){ items.forEach(function(el){ el.classList.add("in"); }); }
+    else {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+      }, {rootMargin:"0px 0px -8% 0px", threshold:0.08});
+      items.forEach(function(el){ io.observe(el); });
+    }
+  })();
+</script>
+</body>
+</html>
