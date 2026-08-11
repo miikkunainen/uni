@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vaihe 1 · Turvallisuus — MHKS / Pajakuutio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE6DA;--paper-deep:#E4DCCC;--card:#F3EFE7;
+    --ink:#211C16;--ink-soft:#5A5347;
+    --wood:#B0712F;--steel:#3D4B58;--ember:#CE3F1B;
+    --green:#4E7A4A;--amber:#C8862C;
+    --rule:#C8BFAD;--rule-soft:#D8D0C0;
+    /* pajakuution tahkot (pastellinen) */
+    --t-vihrea:#7BA678;--t-oikeus:#6E88A6;--t-turva:#CE3F1B;
+    --t-laatu:#C8973C;--t-projekti:#8E7BA6;--t-talous:#6FA39B;
+    --maxw:980px;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:radial-gradient(1100px 520px at 84% -8%,rgba(206,63,27,.06),transparent 62%),var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(18px,4.5vw,44px);}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;}
+  h1,h2,h3,h4{font-family:"Big Shoulders Display","Arial Narrow",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:.95;margin:0;}
+  button{font-family:inherit;}
+  .hidden{display:none !important;}
+
+  /* ===== top anchor: pajakuutio ===== */
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(236,230,218,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);}
+  .topbar__in{display:flex;align-items:center;gap:14px;justify-content:space-between;padding:10px clamp(18px,4.5vw,44px);flex-wrap:wrap;}
+  .brand{display:flex;align-items:center;gap:9px;font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;font-size:1.02rem;letter-spacing:.02em;white-space:nowrap;}
+  .brand .dot{width:11px;height:11px;background:var(--ember);border-radius:2px;transform:rotate(45deg);}
+  .cube{display:flex;gap:4px;flex-wrap:wrap;align-items:center;}
+  .cube .face{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.6rem;letter-spacing:.04em;text-transform:uppercase;color:#fff;padding:.34em .55em;border-radius:2px;opacity:.42;white-space:nowrap;}
+  .cube .face.on{opacity:1;box-shadow:0 2px 8px rgba(33,28,22,.18);}
+  .f1{background:var(--t-vihrea);}.f2{background:var(--t-oikeus);}.f3{background:var(--t-turva);}
+  .f4{background:var(--t-laatu);}.f5{background:var(--t-projekti);}.f6{background:var(--t-talous);}
+  .who{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--ink-soft);text-align:right;line-height:1.35;}
+  .who b{color:var(--ink);font-weight:600;}
+  .rolelink{background:none;border:none;color:var(--ink-soft);font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;text-decoration:underline;padding:0;margin-top:.2em;}
+  .rolelink:hover{color:var(--ember);}
+
+  /* ===== generic buttons ===== */
+  .btn{font-family:"IBM Plex Mono",monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;padding:.72em 1.25em;border:none;border-radius:2px;cursor:pointer;transition:background .2s ease,color .2s ease;}
+  .btn--primary{background:var(--ink);color:var(--paper);}
+  .btn--primary:hover{background:var(--ember);}
+  .btn--ghost{background:transparent;border:1.5px solid var(--ink);color:var(--ink);}
+  .btn--ghost:hover{background:var(--ink);color:var(--paper);}
+  .btn:focus-visible{outline:3px solid var(--ember);outline-offset:2px;}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;}
+
+  /* ===== login ===== */
+  .login{max-width:480px;margin:clamp(40px,9vw,90px) auto;}
+  .login h1{font-size:clamp(2.4rem,8vw,3.4rem);}
+  .login .lead{color:var(--ink-soft);margin:.6em 0 1.6em;font-size:1.04rem;}
+  .field{margin-bottom:1em;}
+  .field label{display:block;font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:.4em;}
+  .field input{width:100%;font-family:"Spectral",serif;font-size:1.05rem;padding:.7em .85em;border:1.5px solid var(--rule);background:var(--card);border-radius:2px;color:var(--ink);}
+  .field input:focus{outline:none;border-color:var(--ember);}
+  .login__note{font-size:.86rem;color:var(--ink-soft);font-style:italic;background:var(--paper-deep);border-left:3px solid var(--steel);padding:.7em .85em;margin-bottom:1.4em;}
+
+  /* ===== overview map ===== */
+  .view{padding:clamp(26px,5vw,48px) 0 clamp(50px,8vw,80px);}
+  .view__head{margin-bottom:clamp(20px,3.5vw,32px);}
+  .view__head h1{font-size:clamp(2.2rem,7vw,3.4rem);}
+  .view__head .sub{color:var(--ink-soft);font-size:clamp(1.02rem,2vw,1.16rem);max-width:60ch;margin-top:.5em;}
+  .triad{display:flex;flex-wrap:wrap;gap:8px;margin:1.1em 0 0;}
+  .triad span{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;font-weight:600;border:1.5px solid var(--ink);border-radius:2px;padding:.4em .7em;}
+
+  .progress-line{display:flex;align-items:center;gap:10px;margin:clamp(22px,3.5vw,30px) 0 clamp(10px,2vw,16px);font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);}
+  .progress-track{flex:1;height:8px;background:var(--paper-deep);border:1px solid var(--rule);border-radius:6px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--ember);width:0;transition:width .5s ease;}
+
+  .map{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:clamp(12px,2.2vw,18px);}
+  .node{position:relative;text-align:left;background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--rule);border-radius:3px;padding:clamp(15px,2.4vw,20px);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;display:flex;flex-direction:column;gap:.5em;min-height:140px;}
+  .node:hover:not(.locked){transform:translateY(-2px);box-shadow:0 8px 22px rgba(33,28,22,.12);}
+  .node.locked{cursor:not-allowed;opacity:.6;}
+  .node.done{border-left-color:var(--green);}
+  .node.active{border-left-color:var(--ember);}
+  .node__top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .node__no{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.06em;color:var(--ink-soft);font-weight:600;}
+  .node__status{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:.28em .5em;border-radius:2px;white-space:nowrap;}
+  .st-lock{background:var(--paper-deep);color:var(--ink-soft);}
+  .st-open{background:var(--ember);color:#fff;}
+  .st-done{background:var(--green);color:#fff;}
+  .node h3{font-size:1.35rem;line-height:.98;}
+  .node p{margin:0;font-size:.88rem;color:var(--ink-soft);line-height:1.4;}
+  .node.chem{border:2px solid var(--t-turva);border-left-width:4px;background:linear-gradient(135deg,rgba(206,63,27,.07),rgba(200,151,60,.05));}
+  .node.chem h3{color:var(--t-turva);}
+  .node__tag{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--t-turva);}
+
+  /* ===== module / quiz ===== */
+  .runner{max-width:680px;margin:0 auto;}
+  .crumb{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:clamp(16px,2.5vw,22px);flex-wrap:wrap;}
+  .crumb .back{background:none;border:none;color:var(--ink-soft);font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;padding:0;}
+  .crumb .back:hover{color:var(--ember);}
+  .crumb .step{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);}
+  .mod-head h2{font-size:clamp(1.8rem,5.5vw,2.6rem);margin-bottom:.2em;}
+  .mod-head .ml{color:var(--ink-soft);font-size:1.02rem;max-width:58ch;margin:0 0 clamp(18px,3vw,26px);}
+
+  .level-pill{display:inline-flex;align-items:center;gap:.5em;font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;padding:.34em .6em;border-radius:2px;margin-bottom:1em;}
+  .lvl1{background:rgba(110,136,166,.18);color:var(--steel);}
+  .lvl2{background:rgba(200,151,60,.2);color:var(--amber);}
+  .lvl3{background:rgba(206,63,27,.14);color:var(--ember);}
+
+  .q{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:clamp(18px,3vw,26px);}
+  .q__text{font-size:clamp(1.08rem,2.1vw,1.28rem);font-weight:500;margin:0 0 1.2em;line-height:1.4;}
+  .opts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55em;}
+  .opt{display:flex;gap:12px;align-items:flex-start;padding:.8em .9em;border:1.5px solid var(--rule);border-radius:2px;background:var(--paper);cursor:pointer;transition:border-color .15s ease,background .15s ease;font-size:1rem;line-height:1.4;}
+  .opt:hover{border-color:var(--ink-soft);}
+  .opt.sel{border-color:var(--ink);background:var(--paper-deep);}
+  .opt.correct{border-color:var(--green);background:rgba(78,122,74,.12);}
+  .opt.wrong{border-color:var(--ember);background:rgba(206,63,27,.1);}
+  .opt .mark{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.8rem;color:var(--ink-soft);min-width:1.2em;}
+  .opt.locked{cursor:default;}
+
+  .fb{margin-top:1.1em;padding:clamp(13px,2.2vw,18px);border-radius:3px;font-size:.97rem;line-height:1.5;}
+  .fb b{font-weight:600;}
+  .fb--ok{background:rgba(78,122,74,.12);border-left:4px solid var(--green);}
+  .fb--ok b{color:var(--green);}
+  .fb--re{background:rgba(200,151,60,.14);border-left:4px solid var(--amber);}
+  .fb--re b{color:var(--amber);}
+  .fb__law{display:block;margin-top:.6em;font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.03em;color:var(--ink-soft);}
+  .runner__foot{margin-top:1.3em;display:flex;justify-content:flex-end;gap:10px;}
+
+  /* ===== chemical zone ===== */
+  .chemzone .banner{background:var(--t-turva);color:#fff;border-radius:4px;padding:clamp(16px,3vw,24px);margin-bottom:clamp(16px,2.6vw,22px);}
+  .chemzone .banner h2{color:#fff;font-size:clamp(1.7rem,5vw,2.4rem);}
+  .chemzone .banner p{margin:.5em 0 0;font-size:.98rem;opacity:.95;max-width:60ch;}
+  .src{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.05em;text-transform:uppercase;background:rgba(255,255,255,.18);display:inline-block;padding:.3em .55em;border-radius:2px;margin-top:.8em;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:clamp(20px,3vw,28px);}
+  .chemcard{background:var(--card);border:1px solid var(--rule);border-top:4px solid var(--t-turva);border-radius:3px;padding:clamp(14px,2.2vw,18px);}
+  .chemcard h4{font-size:1.25rem;margin-bottom:.15em;}
+  .chemcard .cas{font-family:"IBM Plex Mono",monospace;font-size:.64rem;color:var(--ink-soft);margin-bottom:.7em;}
+  .ghs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.8em;}
+  .ghs span{display:inline-flex;align-items:center;gap:.4em;font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.03em;text-transform:uppercase;font-weight:600;color:var(--t-turva);border:1.5px solid var(--t-turva);padding:.28em .5em;border-radius:2px;}
+  .ghs span::before{content:"";width:9px;height:9px;background:var(--t-turva);transform:rotate(45deg);display:inline-block;}
+  .chemcard dl{margin:0;font-size:.86rem;line-height:1.45;}
+  .chemcard dt{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-top:.6em;}
+  .chemcard dd{margin:0 0 .2em;}
+
+  /* ===== done / työlupa ===== */
+  .done{max-width:620px;margin:0 auto;text-align:center;}
+  .done .seal{width:84px;height:84px;margin:0 auto clamp(16px,2.5vw,22px);background:var(--green);border-radius:50%;display:grid;place-items:center;color:#fff;font-size:2.4rem;}
+  .done h1{font-size:clamp(2.2rem,7vw,3.2rem);}
+  .done .lead{color:var(--ink-soft);font-size:1.08rem;margin:.6em auto 1.6em;max-width:48ch;}
+  .receipt{text-align:left;background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:clamp(18px,3vw,26px);margin-bottom:1.4em;}
+  .receipt h3{font-size:1.3rem;margin-bottom:.7em;}
+  .receipt dl{display:grid;grid-template-columns:auto 1fr;gap:.4em 1em;margin:0;font-size:.92rem;}
+  .receipt dt{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;align-self:center;}
+  .receipt dd{margin:0;font-weight:500;}
+  .commit{background:var(--paper-deep);border:1px solid var(--rule);border-left:3px solid var(--ember);border-radius:2px;padding:1em 1.1em;font-style:italic;font-size:.98rem;text-align:left;margin-bottom:1.4em;}
+
+  /* ===== dashboard ===== */
+  .dash__head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:clamp(18px,3vw,26px);}
+  .dash__head h1{font-size:clamp(2rem,6vw,3rem);}
+  .dash__note{font-size:.9rem;color:var(--ink-soft);font-style:italic;background:var(--paper-deep);border-left:3px solid var(--steel);padding:.7em .85em;margin-bottom:1.2em;max-width:74ch;}
+  .table-scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:3px;}
+  table{border-collapse:collapse;width:100%;min-width:640px;background:var(--card);font-size:.9rem;}
+  thead th{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;text-align:left;color:var(--ink-soft);font-weight:600;padding:.8em .9em;border-bottom:2px solid var(--rule);}
+  tbody td{padding:.75em .9em;border-bottom:1px solid var(--rule-soft);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  .badge{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;font-weight:600;padding:.26em .5em;border-radius:2px;white-space:nowrap;}
+  .b-done{background:rgba(78,122,74,.16);color:var(--green);}
+  .b-prog{background:rgba(200,151,60,.18);color:var(--amber);}
+  .b-strong{background:rgba(110,136,166,.18);color:var(--steel);}
+  .mini-track{width:96px;height:7px;background:var(--paper-deep);border:1px solid var(--rule);border-radius:5px;overflow:hidden;display:inline-block;vertical-align:middle;}
+  .mini-fill{height:100%;background:var(--ember);}
+  .empty{padding:2.4em 1em;text-align:center;color:var(--ink-soft);font-style:italic;}
+
+  @media (max-width:560px){
+    body{font-size:17px;}
+    .who{display:none;}
+    .receipt dl{grid-template-columns:1fr;}
+    .receipt dt{margin-top:.6em;}
+  }
+  @media print{
+    .topbar,.runner__foot,.btn{display:none;}
+    body{background:#fff;}
+  }
+</style>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="mhks-icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+</head>
+<body>
+  <script src="pajakuutio-nav.js"></script>
+
+<div class="topbar">
+  <div class="topbar__in">
+    <div class="brand"><span class="dot"></span>MHKS</div>
+    <nav class="cube" aria-label="Pajakuutio — taso">
+      <span class="face f1">Vihreä siirtymä</span>
+      <span class="face f2">Oikeus</span>
+      <span class="face f3 on">Turvallisuus</span>
+      <span class="face f4">Laatu</span>
+      <span class="face f5">Projektit</span>
+      <span class="face f6">Talous</span>
+    </nav>
+    <div>
+      <div class="who" id="whoBox"></div>
+      <button class="rolelink" id="roleToggle" type="button">Ohjaajanäkymä</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="app"></main>
+
+<script>
+"use strict";
+(function(){
+
+  /* =======================================================================
+     MHKS-KYTKENTÄ
+     Aseta endpoint kun MHKS-rajapinta on käytössä. Tyhjänä työkalu tallentaa
+     vain selaimeen (localStorage) — toimii Moodlessa sellaisenaan testikäytössä.
+     Tunnistus: Moodle voi välittää opiskelijan ?sid=...&name=... -parametreina
+     (External Tool / upotus). Muuten näytetään kirjautumislomake.
+     ======================================================================= */
+  var MHKS = {
+    endpoint: "",                 // esim. "https://mhks.metropolia.fi/api/turvallisuus/vaihe1"
+    tahko: "TURVALLISUUS",
+    vaihe: "vaihe1",
+    pro24Ajo: "PRO24-ajo 06/2026" // korvataan live-haulla kun API-avain saadaan
+  };
+
+  /* ---------- pieni DOM-apuri (ei template-literaaleja) ---------- */
+  function el(tag, attrs, kids){
+    var n = document.createElement(tag), k, i, c;
+    if(attrs){ for(k in attrs){ if(!attrs.hasOwnProperty(k)) continue;
+      if(k === "class"){ n.className = attrs[k]; }
+      else if(k === "text"){ n.textContent = attrs[k]; }
+      else if(k === "html"){ n.innerHTML = attrs[k]; }
+      else if(k.slice(0,2) === "on" && typeof attrs[k] === "function"){ n.addEventListener(k.slice(2).toLowerCase(), attrs[k]); }
+      else { n.setAttribute(k, attrs[k]); }
+    }}
+    if(kids){ for(i=0;i<kids.length;i++){ c = kids[i]; if(c == null) continue;
+      n.appendChild(typeof c === "string" ? document.createTextNode(c) : c); } }
+    return n;
+  }
+  function clear(node){ while(node.firstChild){ node.removeChild(node.firstChild); } }
+  var app = document.getElementById("app");
+
+  /* ===================== SISÄLTÖ: MODUULIT ===================== */
+  /* level: 1 Havaitse · 2 Ymmärrä · 3 Toimi
+     Jokaisella kysymyksellä voi olla followups[] jotka esitetään väärän
+     vastauksen jälkeen — niihin on vastattava oikein ennen etenemistä. */
+
+  var MODULES = [
+    {
+      id:"perus", no:"01", title:"Perusasenne & suojalasit",
+      desc:"Yksi sääntö monen sijaan. Mistä tunnistat että olet pajassa, ja mitä se sinulta vaatii.",
+      lead:"Pajassa on yksi murtumaton sääntö, jonka ympärille muu rakentuu.",
+      questions:[
+        { level:1,
+          text:"Astut erikoistilaan (puupaja, metallipaja, laser, jalometalli). Milloin suojalasit ovat päässä?",
+          opts:[
+            {t:"Aina tilassa — heti ovelta, riippumatta siitä mitä teen", ok:true},
+            {t:"Vain kun itse käytän konetta", ok:false},
+            {t:"Vain kun ohjaaja muistuttaa", ok:false}
+          ],
+          ok:"Oikein. Suojalasit ovat päässä koko ajan erikoistilassa — ei poikkeusta tilan, laitteen eikä henkilön suhteen.",
+          re:"Mietitään uudestaan. Naapuripisteeltä voi lentää lastu tai kipinä silmääsi, vaikka itse et tekisi mitään.",
+          law:"Yksi selkeä sääntö keventää kuormaa ja suojaa myös sivullista.",
+          followups:[
+            { level:2,
+              text:"Miksi sääntö koskee myös sinua, kun seisot vain vieressä etkä käytä konetta?",
+              opts:[
+                {t:"Koska vaara voi tulla toisen työpisteeltä — kappale, lastu tai kipinä lentää", ok:true},
+                {t:"Koska se näyttää paremmalta", ok:false}
+              ],
+              ok:"Juuri näin. Silmävamma on usein peruuttamaton, ja vaara on tilassa, ei vain sinun käsissäsi.",
+              re:"Vaara ei pysy yhdellä pisteellä. Lastu tai kipinä kulkee ilmassa — siksi lasit pidetään koko tilan ajan."
+            }
+          ]
+        },
+        { level:3,
+          text:"Ohjaaja pyytää sinua tekemään työvaiheen, joka tuntuu sinusta selvästi vaaralliselta etkä osaa sitä. Mitä teet?",
+          opts:[
+            {t:"Kerron ett)en osaa ja pyydän opastusta — vaarallisesta työstä saa pidättäytyä", ok:true},
+            {t:"Teen silti, koska ohjaaja käski", ok:false},
+            {t:"Poistun sanomatta mitään", ok:false}
+          ],
+          ok:"Oikein. Sinulla on oikeus pysähtyä ja pyytää opastusta. Kysyminen on vastuullisuutta, ei niskoittelua.",
+          re:"Et ole velvollinen tekemään työtä, josta voi koitua vakavaa vaaraa. Pysähtyminen ja kysyminen on oikea ja sallittu valinta.",
+          law:"Työturvallisuuslaki 738/2002, 23 § — oikeus pidättäytyä vaarallisesta työstä."
+        }
+      ]
+    },
+
+    {
+      id:"suojaimet", no:"02", title:"Suojaimet",
+      desc:"Oikea suojain oikeaan työhön — ja milloin suojain muuttuu itse vaaraksi.",
+      lead:"Suojain suojaa vain oikein valittuna. Joskus väärä suojain on vaarallisempi kuin ei suojainta.",
+      questions:[
+        { level:3,
+          text:"Käytät pylväsporakonetta, jossa terä pyörii. Mitä puet käsiin?",
+          opts:[
+            {t:"En käsineitä — suojalasit kyllä", ok:true},
+            {t:"Kangaskäsineet, jotta ote on parempi", ok:false},
+            {t:"Kumihanskat", ok:false}
+          ],
+          ok:"Oikein. Pyörivän terän ääressä käsineet jätetään pois — ne voivat tarttua ja vetää käden mukaan.",
+          re:"Tärkeä paikka. Käsine voi takertua pyörivään terään ja vetää koko käden mukaansa — vamma on silloin vakava.",
+          law:"Pyörivä kone + löysä materiaali = takertumisvaara.",
+          followups:[
+            { level:2,
+              text:"Missä työssä käsineet sen sijaan ovat tarpeen?",
+              opts:[
+                {t:"Terävien levyjen tai kuumien kappaleiden käsittelyssä käsin", ok:true},
+                {t:"Aina, kaikessa työssä", ok:false}
+              ],
+              ok:"Kyllä. Käsin tehtävässä käsittelyssä (terävät reunat, kuuma metalli) käsine suojaa — pyörivän koneen ääressä ei.",
+              re:"Sääntö ei ole 'aina' eikä 'ei koskaan'. Käsin käsiteltäessä terävää tai kuumaa: kyllä. Pyörivän koneen ääressä: ei."
+            }
+          ]
+        },
+        { level:1,
+          text:"Vannesaha pitää kovaa ääntä pidemmän aikaa. Mitä tarvitset?",
+          opts:[
+            {t:"Kuulosuojaimet", ok:true},
+            {t:"Ei mitään, korvat tottuvat", ok:false}
+          ],
+          ok:"Oikein. Kuulovaurio kertyy huomaamatta ja on pysyvä — kuulosuojaimet pitkäkestoisessa melussa.",
+          re:"Korvat eivät 'totu' — melun aiheuttama kuulovaurio on pysyvä ja kertyy hiljalleen. Käytä kuulosuojaimia."
+        }
+      ]
+    },
+
+    {
+      id:"koneet", no:"03", title:"Koneturvallisuus",
+      desc:"Hätäpysäytys, takaisku, eikä koskaan yksin vaarallisen koneen kanssa.",
+      lead:"Koneet eivät anna anteeksi hetken huolimattomuutta. Tunne pysäytys ennen kuin käynnistät.",
+      questions:[
+        { level:1,
+          text:"Ennen kuin käynnistät uuden koneen ensimmäistä kertaa, mikä on tärkein asia jonka paikannat?",
+          opts:[
+            {t:"Hätäpysäytin ja miten kone pysäytetään", ok:true},
+            {t:"Mistä saa parhaan kuvan somee", ok:false},
+            {t:"Koneen valmistusvuosi", ok:false}
+          ],
+          ok:"Oikein. Pysäytys opetellaan ennen käynnistystä — silloin osaat reagoida heti jos jokin menee pieleen.",
+          re:"Käynnistys on helppoa; pysäytys ratkaisee hätätilanteessa. Paikanna hätäpysäytin aina ensin."
+        },
+        { level:2,
+          text:"Mitä 'takaisku' tarkoittaa esimerkiksi pyörösahalla, ja miten varaudut?",
+          opts:[
+            {t:"Kappale sinkoutuu yllättäen takaisin — seison sivussa terälinjasta", ok:true},
+            {t:"Kone sammuu itsestään — ei tarvitse varautua", ok:false},
+            {t:"Terä tylsyy — vaihdan terän", ok:false}
+          ],
+          ok:"Oikein. Takaisku heittää kappaleen voimalla kohti käyttäjää. Älä seiso suoraan terälinjassa ja syötä hallitusti.",
+          re:"Takaisku = kappale sinkoutuu äkillisesti taakse päin käyttäjää kohti. Suojaudut pysymällä pois terälinjasta ja syöttämällä hallitusti.",
+          law:"Käyttöasetus 403/2008 — koneiden suojukset ja turvallinen käyttö.",
+          followups:[
+            { level:3,
+              text:"Vaarallisinta konetta (esim. sorvi, jyrsin, pyörösaha) käytät...",
+              opts:[
+                {t:"vain kun pajamestari/ohjaaja on paikalla", ok:true},
+                {t:"milloin vain, kun ehdin", ok:false}
+              ],
+              ok:"Kyllä. Korkean riskin koneet vaativat ohjaajan läsnäolon — itsenäisen työn ikkunat on mitoitettu siihen.",
+              re:"Korkean riskin koneella ei työskennellä yksin. Ohjaajan läsnäolo on osa lupaa käyttää konetta."
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      id:"poly", no:"04", title:"Pöly & kohdepoisto",
+      desc:"Näkymätön vaara. Miksi koivunpöly on vakavampi kuin miltä näyttää.",
+      lead:"Puupöly ei ole vain sotkua. Osa siitä on luokiteltu syöpävaaralliseksi — ja se koskee myös tätä taloa.",
+      questions:[
+        { level:2,
+          text:"Lehtipuiden, kuten koivun, tammen ja pyökin, hienojakoinen pöly on luokiteltu...",
+          opts:[
+            {t:"syöpävaaralliseksi — sille on sitova raja-arvo", ok:true},
+            {t:"vaarattomaksi, koska se on luonnonmateriaalia", ok:false},
+            {t:"vaaralliseksi vain isoina lastuina", ok:false}
+          ],
+          ok:"Oikein. Kovapuupöly (lehtipuupöly) on syöpävaarallista; siksi sen leviäminen estetään ja altistuneet kirjataan ASA-rekisteriin.",
+          re:"Yllättävää mutta totta: lehtipuupöly (mm. koivu) on luokiteltu syöpävaaralliseksi. 'Luonnollinen' ei tarkoita vaaratonta.",
+          law:"VNa 1267/2019 · ASA-laki 452/2020 · sitova raja-arvo 2 mg/m³ (uusissa tiloissa 1 mg/m³).",
+          followups:[
+            { level:3,
+              text:"Miten estät pölyn leviämisen työstäessäsi puuta koneella?",
+              opts:[
+                {t:"Käytän konetta jossa on kohdepoisto päällä", ok:true},
+                {t:"Avaan ikkunan", ok:false}
+              ],
+              ok:"Kyllä. Kohdepoisto kerää pölyn syntypisteessä — se ei ole lisävaruste vaan vaatimus pölyävissä koneissa.",
+              re:"Ikkuna ei riitä. Pöly kerätään syntypaikalla kohdepoistolla, ennen kuin se leviää hengitysilmaan."
+            }
+          ]
+        },
+        { level:3,
+          text:"Lopetat työn ja pöytä on pölyssä. Miten siivoat?",
+          opts:[
+            {t:"Imuroin — en lakaise, ettei pöly nouse takaisin ilmaan", ok:true},
+            {t:"Lakaisen harjalla nopeasti", ok:false},
+            {t:"Puhallan paineilmalla", ok:false}
+          ],
+          ok:"Oikein. Imurointi pitää pölyn poissa hengitysilmasta. Harja ja paineilma nostavat sen takaisin leijumaan.",
+          re:"Harja ja paineilma levittävät syöpävaarallisen pölyn uudelleen ilmaan — myös seuraavan ihmisen ja siivoojan hengitettäväksi. Imuroi.",
+          law:"Siivoustapa on osa altistumisen torjuntaa — koskee myös oppilaitoksia."
+        }
+      ]
+    },
+
+    {
+      id:"kemikaalit", no:"05", title:"Kemikaaliturvallisuus", chem:true,
+      desc:"Vahva vyöhyke. Tunnista varoitusmerkit, lue käyttöturvallisuustiedote, säilytä ja toimi oikein.",
+      lead:"Kemikaalit ovat pajan vaativin osa-alue. Tämä vyöhyke käydään läpi huolella.",
+      questions:[
+        { level:1,
+          text:"Pakkauksessa on punareunainen vinoneliö, jonka sisällä liekki. Mitä se kertoo?",
+          opts:[
+            {t:"Aine on syttyvää — pois avotulesta ja kipinöistä", ok:true},
+            {t:"Aine on syötävää", ok:false},
+            {t:"Aine on kylmä", ok:false}
+          ],
+          ok:"Oikein. Liekkimerkki = syttyvä. Pidä erossa avotulesta, kipinöistä ja kuumista pinnoista.",
+          re:"Punareunainen vinoneliö on aina varoitus. Liekki tarkoittaa syttyvää ainetta — tärkein on pitää se erossa sytytyslähteistä."
+        },
+        { level:2,
+          text:"Mistä tarkistat tarkat tiedot aineen vaaroista, käsittelystä ja ensiavusta?",
+          opts:[
+            {t:"Käyttöturvallisuustiedotteesta (KTT) — pajan kemikaalirekisterissä", ok:true},
+            {t:"Arvaan hajun perusteella", ok:false},
+            {t:"Kysyn kaverilta muistinvaraisesti", ok:false}
+          ],
+          ok:"Oikein. Jokaisella kemikaalilla on KTT, joka kertoo vaarat, suojautumisen, säilytyksen ja ensiavun. Pajalla rekisteri on PRO24:ssä.",
+          re:"Hajulla tai muistilla ei arvata. Oikea lähde on käyttöturvallisuustiedote (KTT), joka löytyy pajan kemikaalirekisteristä.",
+          law:"Kemikaalirekisterin lähde tässä työkalussa: PRO24-ajo.",
+          followups:[
+            { level:3,
+              text:"Saat kemikaalia iholle. Mikä on oikea ensitoimi?",
+              opts:[
+                {t:"Huuhtelen runsaalla vedellä ja tarkistan KTT:n ohjeen", ok:true},
+                {t:"Pyyhin rätillä ja jatkan", ok:false}
+              ],
+              ok:"Kyllä. Runsas huuhtelu vedellä on useimmiten oikea ensitoimi — ja KTT kertoo aineen tarkat ohjeet.",
+              re:"Rätillä pyyhkiminen voi hieroa ainetta ihoon. Huuhtele runsaalla vedellä ja katso KTT:n ensiapuohje."
+            }
+          ]
+        },
+        { level:3,
+          text:"Miten säilytät syttyvää liuotinta työpäivän päätteeksi?",
+          opts:[
+            {t:"Suljettuna sille varatussa paikassa, pois sytytyslähteistä", ok:true},
+            {t:"Avoimena pöydällä, jotta haju haihtuu", ok:false},
+            {t:"Lämpöpatterin päällä", ok:false}
+          ],
+          ok:"Oikein. Suljettu astia oikeassa säilytyspaikassa estää höyryjen kertymisen ja syttymisen.",
+          re:"Avoin tai lämmin liuotin kerää syttyviä höyryjä ilmaan. Säilytä suljettuna, viileässä, sille varatussa paikassa."
+        }
+      ]
+    },
+
+    {
+      id:"hata", no:"06", title:"Hätätilanteet",
+      desc:"Palo, tapaturma, hälytys. Mitä teet ensimmäisten sekuntien aikana.",
+      lead:"Hätätilanteessa ei ehdi etsiä tietoa. Se osataan etukäteen.",
+      questions:[
+        { level:3,
+          text:"Sähkölaite syttyy palamaan. Millä sammutat?",
+          opts:[
+            {t:"Hiilidioksidi- (CO₂) sammuttimella — ja katkaisen virran jos turvallista", ok:true},
+            {t:"Vedellä", ok:false},
+            {t:"Peitän paperilla", ok:false}
+          ],
+          ok:"Oikein. Sähköpaloon CO₂-sammutin. Vesi johtaa sähköä — sillä ei sammuteta jännitteistä laitetta.",
+          re:"Vesi ja sähkö eivät sovi yhteen — sähköiskun vaara. Sähköpaloon käytetään hiilidioksidisammutinta.",
+          law:"Paikanna lähin CO₂-sammutin jo perehdytyksessä.",
+          followups:[
+            { level:2,
+              text:"Tilanne ei ole hallinnassa. Mihin numeroon soitat?",
+              opts:[
+                {t:"112", ok:true},
+                {t:"En soita, odotan että joku muu hoitaa", ok:false}
+              ],
+              ok:"Kyllä. Yleinen hätänumero on 112. Hälytä ajoissa — mieluummin liian aikaisin kuin liian myöhään.",
+              re:"Hätänumero on 112. Älä jää odottamaan — hälytä heti kun tilanne ei ole hallinnassa."
+            }
+          ]
+        },
+        { level:1,
+          text:"Näet pajassa läheltä piti -tilanteen tai vian koneessa. Mitä teet?",
+          opts:[
+            {t:"Ilmoitan siitä mobiilisti — pienikin tieto auttaa ehkäisemään seuraavan", ok:true},
+            {t:"En tee mitään, ei sattunut mitään", ok:false}
+          ],
+          ok:"Oikein. Läheltä piti -ilmoitus puhelimella on matala kynnys ja näkyy heti ohjaajille. Se estää seuraavan vaaran.",
+          re:"'Ei sattunut mitään' on juuri se hetki josta opitaan. Ilmoita läheltä piti -tilanne — se on helppoa ja estää pahemman."
+        }
+      ]
+    }
+  ];
+
+  /* chemical cards — PRO24-ajosta; korvataan live-haulla kun API saadaan */
+  var CHEMICALS = [
+    { name:"Asetoni", cas:"CAS 67-64-1",
+      ghs:["Syttyvä","Ärsyttävä"],
+      kaytto:"Rasvanpoisto, liimanpoisto. Käytä vetokaapissa/tuuletetussa tilassa.",
+      sailytys:"Suljettuna, viileässä, pois sytytyslähteistä.",
+      ensiapu:"Iholle: huuhtele vedellä. Silmiin: huuhtele runsaalla vedellä, hakeudu hoitoon." },
+    { name:"Epoksi (hartsi + kovetin)", cas:"Seos",
+      ghs:["Herkistävä","Terveysvaara"],
+      kaytto:"Valu ja liimaus. Käsineet (nitriili) ja hyvä ilmanvaihto — ihokosketus voi herkistää pysyvästi.",
+      sailytys:"Komponentit erikseen, suljettuna, viileässä.",
+      ensiapu:"Iholle: pese vedellä ja saippualla heti, älä liuottimella. Oireilun jatkuessa hoitoon." },
+    { name:"Liuotinohenne / tinneri", cas:"Seos",
+      ghs:["Syttyvä","Terveysvaara"],
+      kaytto:"Maalin ohennus ja työvälineiden pesu. Vain tuuletetussa tilassa.",
+      sailytys:"Suljettuna, viileässä, pois sytytyslähteistä; pidä erillään hapettimista.",
+      ensiapu:"Höyryt: raitis ilma. Iholle: pese vedellä ja saippualla. Nieltynä: älä oksennuta, hoitoon." }
+  ];
+
+  /* ===================== TILA / TALLENNUS ===================== */
+  var KEY_PREFIX = "mhks." + MHKS.vaihe + ".";
+  var INDEX_KEY = "mhks." + MHKS.vaihe + ".index"; // lista opiskelijoista (ohjaajanäkymää varten)
+  var user = null; // {id, name, source}
+  var state = null; // {modules:{id:{status, comprehension}}, signedAt}
+
+  function loadState(uid){
+    var raw = null;
+    try { raw = localStorage.getItem(KEY_PREFIX + uid); } catch(e){}
+    if(raw){ try { return JSON.parse(raw); } catch(e){} }
+    var s = { modules:{}, signedAt:null, updatedAt:null };
+    for(var i=0;i<MODULES.length;i++){ s.modules[MODULES[i].id] = { status:"locked", comprehension:null }; }
+    s.modules[MODULES[0].id].status = "open";
+    return s;
+  }
+
+  function persist(){
+    state.updatedAt = new Date().toISOString();
+    try { localStorage.setItem(KEY_PREFIX + user.id, JSON.stringify(state)); } catch(e){}
+    // ylläpidä opiskelijaindeksiä
+    try {
+      var idx = JSON.parse(localStorage.getItem(INDEX_KEY) || "{}");
+      idx[user.id] = { name:user.name, updatedAt:state.updatedAt };
+      localStorage.setItem(INDEX_KEY, JSON.stringify(idx));
+    } catch(e){}
+    pushToMHKS();
+  }
+
+  function pushToMHKS(){
+    if(!MHKS.endpoint){ return; } // ei rajapintaa -> vain paikallinen
+    var payload = {
+      tahko: MHKS.tahko, vaihe: MHKS.vaihe,
+      studentId: user.id, name: user.name,
+      modules: state.modules, signedAt: state.signedAt,
+      updatedAt: state.updatedAt
+    };
+    try {
+      fetch(MHKS.endpoint, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(function(){ /* hiljainen — paikallinen tallennus on jo tehty */ });
+    } catch(e){}
+  }
+
+  /* ===================== TUNNISTUS ===================== */
+  function detectIdentity(){
+    var p;
+    try { p = new URLSearchParams(window.location.search); } catch(e){ return null; }
+    var id = p.get("sid") || p.get("studentId");
+    var name = p.get("name");
+    if(id && name){ return { id:String(id), name:String(name), source:"moodle" }; }
+    return null;
+  }
+
+  /* ===================== NÄKYMIEN OHJAUS ===================== */
+  function start(){
+    var u = detectIdentity();
+    if(u){ user = u; state = loadState(u.id); renderWho(); renderOverview(); }
+    else { renderLogin(); }
+    document.getElementById("roleToggle").addEventListener("click", function(){
+      renderDashboard();
+    });
+  }
+
+  function renderWho(){
+    var box = document.getElementById("whoBox");
+    clear(box);
+    if(!user){ return; }
+    box.appendChild(el("div", {}, [ el("b", { text:user.name }) ]));
+    box.appendChild(el("div", { text:"Opisk. " + user.id + (user.source==="moodle" ? " · Moodle" : " · testi") }));
+  }
+
+  /* ---------- kirjautuminen ---------- */
+  function renderLogin(){
+    clear(app);
+    var idIn = el("input", { type:"text", id:"in_id", autocomplete:"off", placeholder:"esim. AB1234" });
+    var nameIn = el("input", { type:"text", id:"in_name", autocomplete:"off", placeholder:"Etunimi Sukunimi" });
+    var box = el("section", { class:"login" }, [
+      el("span", { class:"eyebrow", text:"MHKS · Turvallisuus · Vaihe 1" }),
+      el("h1", { text:"Esitiedot" }),
+      el("p", { class:"lead", text:"Varmistetaan ennen pajaan pääsyä, että turvallisuuden perusasiat ovat hallussa. Ei pelkkää muistia — vaan ymmärrystä siitä, mitä tieto tarkoittaa ja miten sen mukaan toimitaan." }),
+      el("p", { class:"login__note", text:"Metropoliassa kirjaudut Moodlen kautta ja tunnistus tulee automaattisesti. Testikäyttöä varten syötä tiedot alle." }),
+      el("div", { class:"field" }, [ el("label", { for:"in_id", text:"Opiskelijanumero" }), idIn ]),
+      el("div", { class:"field" }, [ el("label", { for:"in_name", text:"Nimi" }), nameIn ]),
+      el("button", { class:"btn btn--primary", onclick:function(){
+        var id = idIn.value.trim(), nm = nameIn.value.trim();
+        if(!id || !nm){ idIn.style.borderColor = id ? "" : "var(--ember)"; nameIn.style.borderColor = nm ? "" : "var(--ember)"; return; }
+        user = { id:id, name:nm, source:"testi" };
+        state = loadState(id);
+        renderWho(); renderOverview();
+      }, text:"Aloita" })
+    ]);
+    app.appendChild(box);
+  }
+
+  /* ---------- yleiskuva / kartta ---------- */
+  function moduleStatus(id){ return state.modules[id].status; }
+
+  function refreshGating(){
+    // avaa seuraava lukittu moduuli kun edellinen on valmis
+    for(var i=0;i<MODULES.length;i++){
+      var m = MODULES[i], st = state.modules[m.id];
+      if(i === 0 && st.status === "locked"){ st.status = "open"; }
+      if(st.status === "done" && MODULES[i+1]){
+        var nx = state.modules[MODULES[i+1].id];
+        if(nx.status === "locked"){ nx.status = "open"; }
+      }
+    }
+  }
+
+  function countDone(){ var c=0; for(var i=0;i<MODULES.length;i++){ if(state.modules[MODULES[i].id].status==="done") c++; } return c; }
+
+  function renderOverview(){
+    refreshGating();
+    clear(app);
+    var done = countDone(), total = MODULES.length;
+    var pct = Math.round(done/total*100);
+
+    var head = el("div", { class:"view__head" }, [
+      el("span", { class:"eyebrow", text:"MHKS · Turvallisuus-tahko · Vaihe 1 esitiedot" }),
+      el("h1", { text:"Turvallisuuden perusta" }),
+      el("p", { class:"sub", text:"Kuusi lyhyttä osaa. Etene järjestyksessä — jokainen aukeaa, kun edellinen on ymmärretty. Väärä vastaus ei kaada vaan opettaa: saat lisäkysymyksiä, kunnes asia on varmasti hallussa." }),
+      el("div", { class:"triad" }, [
+        el("span", { text:"Havaitse" }), el("span", { text:"Ymmärrä" }), el("span", { text:"Toimi" })
+      ])
+    ]);
+
+    var prog = el("div", {}, [
+      el("div", { class:"progress-line" }, [
+        el("span", { text:"Edistyminen" }),
+        el("div", { class:"progress-track" }, [ el("div", { class:"progress-fill" }) ]),
+        el("span", { text: done + " / " + total })
+      ])
+    ]);
+
+    var map = el("div", { class:"map" });
+    for(var i=0;i<MODULES.length;i++){
+      (function(m){
+        var st = state.modules[m.id].status;
+        var cls = "node" + (m.chem ? " chem" : "") + (st==="locked"?" locked":"") + (st==="done"?" done":"") + (st==="open"?" active":"");
+        var statusEl;
+        if(st==="done"){ statusEl = el("span", { class:"node__status st-done", text:"Valmis" }); }
+        else if(st==="open"){ statusEl = el("span", { class:"node__status st-open", text:"Avoinna" }); }
+        else { statusEl = el("span", { class:"node__status st-lock", text:"Lukittu" }); }
+
+        var kids = [
+          el("div", { class:"node__top" }, [
+            el("span", { class:"node__no", text:"OSA " + m.no }),
+            statusEl
+          ]),
+          m.chem ? el("span", { class:"node__tag", text:"◆ Vahva vyöhyke" }) : null,
+          el("h3", { text:m.title }),
+          el("p", { text:m.desc })
+        ];
+        if(st==="done" && state.modules[m.id].comprehension){
+          kids.push(el("span", { class:"node__no", text:"Ymmärrys: " + state.modules[m.id].comprehension }));
+        }
+        var node = el("button", { class:cls, type:"button", onclick:function(){
+          if(st==="locked"){ return; }
+          openModule(m.id);
+        } }, kids);
+        if(st==="locked"){ node.setAttribute("aria-disabled","true"); }
+        map.appendChild(node);
+      })(MODULES[i]);
+    }
+
+    var view = el("section", { class:"view" }, [ head, prog, map ]);
+
+    if(done === total){
+      view.appendChild(el("div", { style:"margin-top:clamp(22px,3.5vw,32px);text-align:center;" }, [
+        el("button", { class:"btn btn--primary", onclick:renderDone, text:"Siirry sitoumukseen ja vahvistukseen →" })
+      ]));
+    }
+
+    app.appendChild(view);
+    // animoi palkki
+    setTimeout(function(){ var f = view.querySelector(".progress-fill"); if(f){ f.style.width = pct + "%"; } }, 60);
+    window.scrollTo(0,0);
+  }
+
+  /* ---------- moduulin suoritus (tilakone) ---------- */
+  function openModule(id){
+    var m = null; for(var i=0;i<MODULES.length;i++){ if(MODULES[i].id===id){ m=MODULES[i]; break; } }
+    if(!m){ return; }
+
+    // rakenna kysymysjono (kopiot) + seuranta
+    var queue = m.questions.map(function(q){ return q; });
+    var ptr = 0;
+    var firstTryAllCorrect = true;
+    var injectedFor = {}; // estä followupien tuplainjektointi
+
+    function done(){
+      var comp = firstTryAllCorrect ? "Vahva" : "Varmistettu";
+      state.modules[m.id].status = "done";
+      state.modules[m.id].comprehension = comp;
+      persist();
+      renderOverview();
+    }
+
+    function renderQ(){
+      clear(app);
+      var q = queue[ptr];
+      var lvlCls = q.level===1?"lvl1":(q.level===2?"lvl2":"lvl3");
+      var lvlTxt = q.level===1?"Havaitse":(q.level===2?"Ymmärrä":"Toimi");
+
+      var crumb = el("div", { class:"crumb" }, [
+        el("button", { class:"back", type:"button", onclick:function(){ renderOverview(); }, text:"← Yleiskuva" }),
+        el("span", { class:"step", text:"Osa " + m.no + " · " + m.title })
+      ]);
+
+      var optsWrap = el("ul", { class:"opts" });
+      var chosen = { i:-1 };
+      var locked = false;
+      var optEls = [];
+
+      q.opts.forEach(function(o, i){
+        var letter = String.fromCharCode(65+i);
+        var optEl = el("li", { class:"opt", onclick:function(){
+          if(locked){ return; }
+          chosen.i = i;
+          optEls.forEach(function(e){ e.classList.remove("sel"); });
+          optEl.classList.add("sel");
+          submitBtn.removeAttribute("disabled");
+        } }, [ el("span", { class:"mark", text:letter }), el("span", { text:o.t }) ]);
+        optEls.push(optEl); optsWrap.appendChild(optEl);
+      });
+
+      var fbSlot = el("div");
+      var foot = el("div", { class:"runner__foot" });
+      var submitBtn = el("button", { class:"btn btn--primary", disabled:"disabled", onclick:function(){
+        if(locked || chosen.i < 0){ return; }
+        locked = true;
+        var o = q.opts[chosen.i];
+        optEls.forEach(function(e){ e.classList.add("locked"); });
+        optEls[chosen.i].classList.add(o.ok ? "correct" : "wrong");
+        // merkitse oikea jos väärä valittiin
+        if(!o.ok){ q.opts.forEach(function(oo,ii){ if(oo.ok){ optEls[ii].classList.add("correct"); } }); }
+
+        clear(fbSlot); clear(foot);
+        if(o.ok){
+          var fb = el("div", { class:"fb fb--ok" }, [ el("b", { text:"Oikein. " }), document.createTextNode(q.ok) ]);
+          if(q.law){ fb.appendChild(el("span", { class:"fb__law", text:q.law })); }
+          fbSlot.appendChild(fb);
+          foot.appendChild(el("button", { class:"btn btn--primary", onclick:advance, text: (ptr>=queue.length-1 ? "Osa valmis →" : "Seuraava →") }));
+        } else {
+          firstTryAllCorrect = false;
+          var rf = el("div", { class:"fb fb--re" }, [ el("b", { text:"Tarkennetaan. " }), document.createTextNode(q.re) ]);
+          if(q.law){ rf.appendChild(el("span", { class:"fb__law", text:q.law })); }
+          fbSlot.appendChild(rf);
+          // injektoi followupit jos on ja ei vielä tehty
+          var hasF = q.followups && q.followups.length && !injectedFor[ptr];
+          if(hasF){
+            injectedFor[ptr] = true;
+            // lisää followupit heti nykyisen perään
+            var args = [ptr+1, 0].concat(q.followups);
+            Array.prototype.splice.apply(queue, args);
+            foot.appendChild(el("button", { class:"btn btn--primary", onclick:advance, text:"Jatka — varmistetaan ymmärrys →" }));
+          } else {
+            // ei followuppeja (tai jo käyty): pakota yritä uudelleen ennen etenemistä
+            foot.appendChild(el("button", { class:"btn btn--ghost", onclick:function(){ renderQ(); }, text:"Yritä uudelleen" }));
+          }
+        }
+      }, text: "Vastaa" });
+      foot.appendChild(submitBtn);
+
+      var card = el("div", { class:"runner" }, [
+        crumb,
+        el("div", { class:"mod-head" }, [
+          el("span", { class:"level-pill " + lvlCls, text:lvlTxt }),
+          el("h2", { text:m.title }),
+          (ptr===0 ? el("p", { class:"ml", text:m.lead }) : null)
+        ]),
+        el("div", { class:"q" }, [
+          el("span", { class:"node__no", text:"Kysymys " + (ptr+1) }),
+          el("p", { class:"q__text", text:q.text }),
+          optsWrap, fbSlot
+        ]),
+        foot
+      ]);
+      app.appendChild(card);
+      window.scrollTo(0,0);
+    }
+
+    function advance(){
+      ptr++;
+      if(ptr >= queue.length){ done(); }
+      else { renderQ(); }
+    }
+
+    renderQ();
+  }
+
+  /* ---------- kemikaalikortit upotettuna kemikaalimoduuliin ---------- */
+  // korttien näyttö liitetään moduulin alkuun
+  var _origOpen = openModule;
+  openModule = function(id){
+    if(id !== "kemikaalit"){ return _origOpen(id); }
+    // näytä ensin kemikaalikortit, sitten kysymykset
+    renderChemIntro(function(){ _origOpen("kemikaalit"); });
+  };
+
+  function renderChemIntro(next){
+    clear(app);
+    var crumb = el("div", { class:"crumb" }, [
+      el("button", { class:"back", type:"button", onclick:function(){ renderOverview(); }, text:"← Yleiskuva" }),
+      el("span", { class:"step", text:"Osa 05 · Kemikaaliturvallisuus" })
+    ]);
+    var banner = el("div", { class:"banner" }, [
+      el("h2", { text:"Kemikaaliturvallisuus" }),
+      el("p", { text:"Tutustu ensin pajalla käytössä oleviin kemikaaleihin ja niiden tietoihin. Sen jälkeen varmistetaan, että osaat tunnistaa varoitukset, löytää oikean tiedon ja toimia turvallisesti." }),
+      el("span", { class:"src", text:"Lähde: " + MHKS.pro24Ajo + " · live-haku PRO24-rajapinnasta tulossa" })
+    ]);
+    var cards = el("div", { class:"cards" });
+    CHEMICALS.forEach(function(c){
+      var ghs = el("div", { class:"ghs" });
+      c.ghs.forEach(function(g){ ghs.appendChild(el("span", { text:g })); });
+      cards.appendChild(el("div", { class:"chemcard" }, [
+        el("h4", { text:c.name }),
+        el("div", { class:"cas", text:c.cas }),
+        ghs,
+        el("dl", {}, [
+          el("dt", { text:"Käyttö" }), el("dd", { text:c.kaytto }),
+          el("dt", { text:"Säilytys" }), el("dd", { text:c.sailytys }),
+          el("dt", { text:"Ensiapu" }), el("dd", { text:c.ensiapu })
+        ])
+      ]));
+    });
+    var foot = el("div", { class:"runner__foot" }, [
+      el("button", { class:"btn btn--primary", onclick:next, text:"Olen tutustunut — jatka kysymyksiin →" })
+    ]);
+    app.appendChild(el("section", { class:"view chemzone" }, [ crumb, banner, cards, foot ]));
+    window.scrollTo(0,0);
+  }
+
+  /* ---------- valmis / työlupa-sitoumus ---------- */
+  function renderDone(){
+    clear(app);
+    if(!state.signedAt){ state.signedAt = new Date().toISOString(); persist(); }
+    var d = new Date(state.signedAt);
+    var dateStr = d.toLocaleDateString("fi-FI") + " " + d.toLocaleTimeString("fi-FI",{hour:"2-digit",minute:"2-digit"});
+
+    // koosta ymmärrystasot
+    var rows = [];
+    for(var i=0;i<MODULES.length;i++){
+      var m = MODULES[i];
+      rows.push(el("dt", { text:"Osa " + m.no }));
+      rows.push(el("dd", { text:m.title + " — " + (state.modules[m.id].comprehension || "valmis") }));
+    }
+
+    var sec = el("section", { class:"view" }, [
+      el("div", { class:"done" }, [
+        el("div", { class:"seal", text:"✓" }),
+        el("span", { class:"eyebrow", text:"MHKS · Turvallisuus · Vaihe 1" }),
+        el("h1", { text:"Esitiedot suoritettu" }),
+        el("p", { class:"lead", text:"Olet osoittanut ymmärtäväsi turvallisuuden perusasiat. Vaihe 2 (perehdytys ja työlupa) avautuu pajamestarin kanssa." }),
+        el("div", { class:"commit", text:"Sitoudun pitämään suojalasit erikoistilassa, kysymään kun en ole varma, käyttämään kohdepoistoa ja oikeita suojaimia, käsittelemään kemikaalit käyttöturvallisuustiedotteen mukaan ja ilmoittamaan läheltä piti -tilanteet. Tieto velvoittaa toimimaan sen mukaan." }),
+        el("div", { class:"receipt" }, [
+          el("h3", { text:"Suoritusmerkintä" }),
+          el("dl", {}, [
+            el("dt", { text:"Opiskelija" }), el("dd", { text:user.name }),
+            el("dt", { text:"Numero" }), el("dd", { text:user.id }),
+            el("dt", { text:"Suoritettu" }), el("dd", { text:dateStr })
+          ].concat(rows))
+        ]),
+        el("div", { style:"display:flex;gap:10px;justify-content:center;flex-wrap:wrap;" }, [
+          el("button", { class:"btn btn--ghost", onclick:renderOverview, text:"← Takaisin yleiskuvaan" }),
+          el("button", { class:"btn btn--primary", onclick:function(){ window.print(); }, text:"Tulosta merkintä / PDF" })
+        ])
+      ])
+    ]);
+    app.appendChild(sec);
+    window.scrollTo(0,0);
+  }
+
+  /* ---------- ohjaajanäkymä (lehtori / pajamestari) ---------- */
+  function renderDashboard(){
+    clear(app);
+    var idx = {};
+    try { idx = JSON.parse(localStorage.getItem(INDEX_KEY) || "{}"); } catch(e){}
+    var ids = Object.keys(idx);
+
+    var head = el("div", { class:"dash__head" }, [
+      el("div", {}, [
+        el("span", { class:"eyebrow", text:"MHKS · Turvallisuus · Ohjaajanäkymä" }),
+        el("h1", { text:"Vaihe 1 — tilanne" })
+      ]),
+      el("button", { class:"btn btn--ghost", onclick:function(){ if(user){ renderWho(); renderOverview(); } else { renderLogin(); } }, text: user ? "← Opiskelijanäkymä" : "← Kirjautuminen" })
+    ]);
+
+    var note = el("p", { class:"dash__note", text:"Tämä testinäkymä lukee tämän laitteen tallennetut suoritukset. MHKS-rajapintaan kytkettynä sama näkymä näyttää kaikkien opiskelijoiden etenemisen reaaliaikaisesti — kuka on missä, millä ymmärrystasolla ja milloin päivitetty." });
+
+    var sec = el("section", { class:"view" }, [ head, note ]);
+
+    if(ids.length === 0){
+      sec.appendChild(el("div", { class:"empty", text:"Ei vielä suorituksia tällä laitteella." }));
+      app.appendChild(sec); window.scrollTo(0,0); return;
+    }
+
+    var thead = el("thead", {}, [ el("tr", {}, [
+      el("th", { text:"Opiskelija" }), el("th", { text:"Numero" }),
+      el("th", { text:"Edistyminen" }), el("th", { text:"Ymmärrys (heikoin)" }),
+      el("th", { text:"Työlupa" }), el("th", { text:"Päivitetty" })
+    ]) ]);
+    var tbody = el("tbody");
+
+    ids.forEach(function(uid){
+      var s = null;
+      try { s = JSON.parse(localStorage.getItem(KEY_PREFIX + uid)); } catch(e){}
+      if(!s){ return; }
+      var done=0, weakest=null;
+      for(var i=0;i<MODULES.length;i++){
+        var ms = s.modules[MODULES[i].id];
+        if(ms && ms.status==="done"){ done++; if(ms.comprehension==="Varmistettu"){ weakest="Varmistettu"; } else if(!weakest && ms.comprehension==="Vahva"){ weakest="Vahva"; } }
+      }
+      var pct = Math.round(done/MODULES.length*100);
+      var progCell = el("td", {}, [
+        el("span", { class:"mini-track" }, [ el("span", { class:"mini-fill", style:"width:"+pct+"%" }) ]),
+        el("span", { class:"mono", style:"font-size:.72rem;margin-left:.5em;color:var(--ink-soft);", text: done+"/"+MODULES.length })
+      ]);
+      var compBadge = weakest==="Varmistettu" ? el("span",{class:"badge b-prog",text:"Varmistettu"}) :
+                      (weakest==="Vahva" ? el("span",{class:"badge b-strong",text:"Vahva"}) : el("span",{class:"mono",style:"color:var(--ink-soft);font-size:.72rem;",text:"—"}));
+      var lupa = s.signedAt ? el("span",{class:"badge b-done",text:"Allekirjoitettu"}) : el("span",{class:"mono",style:"color:var(--ink-soft);font-size:.72rem;",text:"kesken"});
+      var upd = s.updatedAt ? new Date(s.updatedAt).toLocaleString("fi-FI",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) : "—";
+
+      tbody.appendChild(el("tr", {}, [
+        el("td", {}, [ el("b", { text: (idx[uid] && idx[uid].name) || uid }) ]),
+        el("td", { class:"mono", text:uid }),
+        progCell,
+        el("td", {}, [ compBadge ]),
+        el("td", {}, [ lupa ]),
+        el("td", { class:"mono", style:"font-size:.74rem;color:var(--ink-soft);", text:upd })
+      ]));
+    });
+
+    sec.appendChild(el("div", { class:"table-scroll" }, [ el("table", {}, [ thead, tbody ]) ]));
+    app.appendChild(sec);
+    window.scrollTo(0,0);
+  }
+
+  /* ===================== KÄYNNISTYS ===================== */
+  start();
+
+})();
+</script>
+<script src="paja-footer.js"></script>
+</body>
+</html>
