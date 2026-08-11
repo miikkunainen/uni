@@ -74,7 +74,7 @@ DOKUMENTIT
   orientaatiokurssi_moodle.html .... Kuvitettava kurssidokumentti
 
 TEKNISET (älä poista)
-  pajakuutio-nav.js ......... Jaettu navigointipalkki
+  pajakuutio-nav.js ......... Jaettu hallintapalkki + murupolku
   paja-footer.js ............ Jaettu alatunniste (tietosuojalinkki)
   manifest.json ............. Sovellustiedot puhelinasennukseen
   sw.js ..................... Offline-välimuisti
