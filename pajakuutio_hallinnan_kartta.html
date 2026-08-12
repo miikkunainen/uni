@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="fi" class="js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hallinnan kartta — Pajakuution perusta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE6DA;--paper-deep:#E4DCCC;--ink:#211C16;--ink-soft:#5A5347;
+    --ember:#CE3F1B;--rule:#C8BFAD;--rule-soft:#D8D0C0;
+    --c-vihrea:#5E8C5A;--c-oikeus:#4F6E92;--c-turva:#C25A3E;
+    --c-laatu:#BE8A2E;--c-projekti:#6E5A93;--c-talous:#4E8C84;
+    --maxw:720px;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:radial-gradient(1100px 560px at 84% -8%,rgba(206,63,27,.06),transparent 62%),var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:19px;line-height:1.7;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,40px);}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;}
+  h1,h2,h3,h4{font-family:"Big Shoulders Display","Arial Narrow",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:.95;margin:0;}
+
+  .printbar{position:fixed;top:18px;right:18px;z-index:40;}
+  .printbtn{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;background:var(--ink);color:var(--paper);border:none;padding:.62em 1em;border-radius:2px;box-shadow:0 6px 22px rgba(33,28,22,.22);}
+  .printbtn:hover{background:var(--ember);}
+
+  /* hero */
+  .hero{padding:clamp(54px,10vw,110px) 0 clamp(30px,5vw,46px);}
+  .hero__eyebrow{display:block;margin-bottom:clamp(20px,4vw,34px);}
+  .hero__title{font-size:clamp(3.2rem,15vw,8rem);line-height:.82;}
+  .hero__title span{display:block;}
+  .hero__title .ember{color:var(--ember);}
+  .hero__epi{font-family:"Spectral",serif;font-style:italic;font-size:clamp(1.2rem,2.8vw,1.7rem);line-height:1.4;max-width:30ch;margin:clamp(26px,4vw,38px) 0 clamp(22px,3vw,30px);color:var(--ink);}
+  .hero__lead{font-size:1.06rem;max-width:60ch;color:var(--ink-soft);}
+  .hero__meta{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.06em;color:var(--ink-soft);margin-top:clamp(22px,3vw,30px);}
+
+  /* contents */
+  .toc{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:clamp(22px,3.5vw,30px) 0;margin-top:clamp(24px,4vw,38px);}
+  .toc h3{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:1em;}
+  .toc ol{list-style:none;margin:0;padding:0;counter-reset:toc;display:grid;grid-template-columns:1fr 1fr;gap:.45em 2em;}
+  .toc li{counter-increment:toc;display:flex;gap:.7em;align-items:baseline;font-size:.98rem;}
+  .toc li::before{content:counter(toc,upper-roman);font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ember);min-width:2.2em;}
+  .toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid transparent;}
+  .toc a:hover{border-bottom-color:var(--ember);}
+  @media (max-width:600px){.toc ol{grid-template-columns:1fr;}}
+
+  /* chapter */
+  .chapter{padding:clamp(40px,7vw,72px) 0;border-top:1px solid var(--rule);}
+  .ch-head{margin-bottom:clamp(22px,3.5vw,34px);}
+  .ch-num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ember);display:block;margin-bottom:.5em;}
+  .ch-title{font-size:clamp(2.2rem,6.5vw,3.6rem);}
+  .ch-body p{margin:0 0 1.15em;}
+  .ch-body p:last-child{margin-bottom:0;}
+  .ch-body > p:first-of-type::first-letter{float:left;font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:3.6em;line-height:.74;padding:.04em .1em 0 0;color:var(--ember);}
+  .lede-pairs{margin:1.2em 0;}
+  .lede-pairs .lp{padding:.55em 0;border-top:1px solid var(--rule-soft);}
+  .lede-pairs .lp:first-child{border-top:none;}
+  .lede-pairs .lp b{font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:1.05rem;font-style:normal;display:inline-block;margin-right:.4em;}
+
+  .pull{margin:clamp(28px,4vw,40px) 0;padding:0 0 0 clamp(18px,2.5vw,26px);border-left:4px solid var(--ember);font-family:"Spectral",serif;font-style:italic;font-size:clamp(1.35rem,3.2vw,1.9rem);line-height:1.32;color:var(--ink);}
+
+  figure{margin:clamp(28px,4vw,40px) 0;text-align:center;}
+  figure svg{width:100%;height:auto;display:block;margin:0 auto;}
+  .fig-narrow{max-width:440px;margin-left:auto;margin-right:auto;}
+  figcaption{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.04em;color:var(--ink-soft);margin-top:.9em;line-height:1.5;text-align:center;}
+
+  /* maxims */
+  .maxims{list-style:none;counter-reset:mx;margin:clamp(8px,2vw,16px) 0 0;padding:0;}
+  .maxims li{counter-increment:mx;border-top:1px solid var(--rule-soft);padding:1.05em 0 1.05em 3.2em;position:relative;}
+  .maxims li::before{content:counter(mx);position:absolute;left:0;top:1.05em;font-family:"IBM Plex Mono",monospace;font-size:.9rem;font-weight:600;color:var(--ember);}
+  .maxims h4{font-size:1.25rem;margin-bottom:.2em;}
+  .maxims p{margin:0;font-size:.98rem;color:var(--ink-soft);line-height:1.5;}
+
+  .closing{padding:clamp(40px,7vw,72px) 0 clamp(60px,9vw,100px);border-top:2px solid var(--ink);}
+  .closing .ch-body p:first-of-type::first-letter{color:var(--ink);}
+  .colophon{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.05em;color:var(--ink-soft);margin-top:clamp(28px,4vw,40px);line-height:1.8;}
+
+  /* reveal */
+  .js .reveal{opacity:0;transform:translateY(16px);}
+  .js .reveal.in{opacity:1;transform:none;transition:opacity .7s ease,transform .7s ease;}
+  .js .hero__title span{opacity:0;transform:translateY(22px);}
+  .js .hero__title span.in{opacity:1;transform:none;transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);}
+  @media (prefers-reduced-motion:reduce){.js .reveal,.js .reveal.in,.js .hero__title span,.js .hero__title span.in{opacity:1!important;transform:none!important;transition:none!important;}}
+
+  @media (max-width:600px){body{font-size:18px;}}
+
+  @media print{
+    :root{--paper:#fff;--paper-deep:#f3efe7;}
+    body{background:#fff;font-size:11.5pt;line-height:1.5;}
+    .printbar{display:none;}
+    .wrap{max-width:100%;}
+    .chapter,.closing{break-inside:avoid-page;}
+    figure,.pull,.maxims li{break-inside:avoid;}
+    .js .reveal{opacity:1!important;transform:none!important;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="mhks-icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-180.png">
+</head>
+<body>
+  <script src="pajakuutio-nav.js"></script>
+
+<div class="printbar"><button class="printbtn" onclick="window.print()">Tulosta / PDF</button></div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <span class="hero__eyebrow eyebrow">Pajakuution perusta · Metropolia · Muotoilun pajat</span>
+    <h1 class="hero__title">
+      <span>Hallinnan</span>
+      <span class="ember">kartta</span>
+    </h1>
+    <p class="hero__epi">Osat eivät kerro kokonaisuutta. Kenttä kertoo.</p>
+    <p class="hero__lead">Perusta-teksti pajatoiminnan ymmärtämiselle ja johtamiselle. Ei sääntökirja vaan kartta voimista ja niiden suhteista — kirjoitettu Sodankäynnin taidon hengessä, mutta pajan kieltä puhuen.</p>
+    <p class="hero__meta">Luettavaksi ja muokattavaksi yhdessä · v. 1</p>
+
+    <nav class="toc reveal">
+      <h3>Sisältö</h3>
+      <ol>
+        <li><a href="#luku1">Kenttä</a></li>
+        <li><a href="#luku2">Yksi</a></li>
+        <li><a href="#kunnioitus">Kunnioitus</a></li>
+        <li><a href="#luku3">Kolme akselia</a></li>
+        <li><a href="#luku4">Kuusi tahkoa</a></li>
+        <li><a href="#luku5">Viisitoista suhdetta</a></li>
+        <li><a href="#luku6">Ristiinkytkennät</a></li>
+        <li><a href="#luku7">Kokonaisuus</a></li>
+        <li><a href="#luku8">Hallinnan periaatteet</a></li>
+      </ol>
+    </nav>
+  </header>
+
+  <!-- ESIPUHE -->
+  <section class="chapter reveal" id="esipuhe">
+    <div class="ch-head"><span class="ch-num">Esipuhe</span><h2 class="ch-title">Miksi kartta</h2></div>
+    <div class="ch-body">
+      <p>Tämä ei ole sääntökirja. Se on kartta.</p>
+      <p>Sunzin Sodankäynnin taito ei luettele temppuja. Se opettaa, miten maasto, sää, johtajuus ja menetelmä liittyvät toisiinsa — jotta kokonaisuus voidaan nähdä ennen kuin yksikään liike tehdään. Se joka näkee kentän, ei häviä yksittäisessä kohdassa.</p>
+      <p>Paja on samanlainen kenttä. Ei luetteloa irrallisista tehtävistä, vaan voimien verkosto: kun kosket yhteen, liikahtavat muutkin. Tämä dokumentti ei kerro, mitä tehdä jokaisessa tilanteessa — niitä on ääretön määrä. Se kertoo, miten pajan voimat liittyvät toisiinsa, jotta kuka tahansa — opiskelija, pajamestari, siivooja, johtaja — voi pitää kokonaisuuden mielessään ja toimia viisaasti sen sisällä.</p>
+      <p>Yksi periaate kantaa kaiken yli: kokonaisuus on enemmän kuin osiensa summa, ja se enemmän asuu suhteissa. Ja sen takana vielä yksi: isoin etu on aina yhteinen etu.</p>
+    </div>
+  </section>
+
+  <!-- I KENTTÄ -->
+  <section class="chapter" id="luku1">
+    <div class="ch-head reveal"><span class="ch-num">Luku I</span><h2 class="ch-title">Kenttä</h2></div>
+    <div class="ch-body reveal">
+      <p>Mikään pajassa ei seiso yksin. Päätös hinnasta koskettaa turvallisuutta. Päätös määräajasta koskettaa kestävyyttä. Terävä taltta on sekä laatua että turvaa. Olemme tottuneet hallitsemaan osia — yhtä konetta, yhtä kurssia, yhtä laskua — mutta todellisuus käyttäytyy kenttänä, jossa jokainen voima vetää useaan suuntaan kerralla.</p>
+      <p>Hallita hyvin tarkoittaa nähdä kenttä, ei vain kädessä oleva pala. Ja kenttää voi oppia katsomaan asteittain. Ensin on yksi: yhteinen päämäärä. Se jakautuu kolmeen jännitteeseen. Jännitteillä on kuusi päätä, jotka voi ottaa käteen. Kuusi päätä kohtaavat toisensa viidellätoista tavalla. Ja näiden suhteiden välillä syntyy vielä uusi kerros — kenttä kenttien sisällä. Tämä teksti kulkee tämän tikapuun ylös.</p>
+
+      <figure class="reveal" aria-label="Emergenssin tikkaat: yksi, kolme, kuusi, viisitoista, kenttä">
+        <svg viewBox="0 0 620 120" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" stroke="#211C16" stroke-width="2">
+            <!-- 1 -->
+            <circle cx="50" cy="46" r="9" fill="#211C16" stroke="none"/>
+            <!-- arrow -->
+            <line x1="86" y1="46" x2="116" y2="46" stroke="#CE3F1B"/>
+            <path d="M116 46 l-7 -4 v8 z" fill="#CE3F1B" stroke="none"/>
+            <!-- 3 axes -->
+            <g transform="translate(170,46)" stroke="#211C16">
+              <line x1="0" y1="-26" x2="0" y2="26"/>
+              <line x1="-23" y1="-13" x2="23" y2="13"/>
+              <line x1="-23" y1="13" x2="23" y2="-13"/>
+            </g>
+            <line x1="206" y1="46" x2="236" y2="46" stroke="#CE3F1B"/>
+            <path d="M236 46 l-7 -4 v8 z" fill="#CE3F1B" stroke="none"/>
+            <!-- 6 dots hexagon -->
+            <g transform="translate(296,46)" fill="#211C16" stroke="none">
+              <circle cx="0" cy="-26" r="5"/><circle cx="22" cy="-13" r="5"/><circle cx="22" cy="13" r="5"/>
+              <circle cx="0" cy="26" r="5"/><circle cx="-22" cy="13" r="5"/><circle cx="-22" cy="-13" r="5"/>
+            </g>
+            <line x1="332" y1="46" x2="362" y2="46" stroke="#CE3F1B"/>
+            <path d="M362 46 l-7 -4 v8 z" fill="#CE3F1B" stroke="none"/>
+            <!-- 15 edges -->
+            <g transform="translate(422,46)" stroke="#B6A99A" stroke-width="1">
+              <polygon points="0,-26 22,-13 22,13 0,26 -22,13 -22,-13" fill="none"/>
+              <line x1="0" y1="-26" x2="0" y2="26"/><line x1="22" y1="-13" x2="-22" y2="13"/><line x1="22" y1="13" x2="-22" y2="-13"/>
+              <line x1="0" y1="-26" x2="22" y2="13"/><line x1="22" y1="-13" x2="0" y2="26"/><line x1="22" y1="13" x2="-22" y2="13"/>
+              <line x1="0" y1="26" x2="-22" y2="-13"/><line x1="-22" y1="13" x2="0" y2="-26"/><line x1="-22" y1="-13" x2="22" y2="-13"/>
+            </g>
+            <line x1="458" y1="46" x2="488" y2="46" stroke="#CE3F1B"/>
+            <path d="M488 46 l-7 -4 v8 z" fill="#CE3F1B" stroke="none"/>
+            <!-- kenttä: glow + web -->
+            <g transform="translate(548,46)">
+              <circle cx="0" cy="0" r="30" fill="#CE3F1B" opacity="0.12" stroke="none"/>
+              <polygon points="0,-26 22,-13 22,13 0,26 -22,13 -22,-13" fill="none" stroke="#CE3F1B" stroke-width="1.4"/>
+              <line x1="0" y1="-26" x2="0" y2="26" stroke="#CE3F1B" stroke-width="1.4"/>
+              <line x1="22" y1="-13" x2="-22" y2="13" stroke="#CE3F1B" stroke-width="1.4"/>
+              <line x1="22" y1="13" x2="-22" y2="-13" stroke="#CE3F1B" stroke-width="1.4"/>
+            </g>
+          </g>
+          <g fill="#5A5347" font-family="'IBM Plex Mono',monospace" font-size="10" text-anchor="middle">
+            <text x="50" y="92">YKSI</text>
+            <text x="170" y="92">KOLME</text>
+            <text x="296" y="92">KUUSI</text>
+            <text x="422" y="92">15 SUHDETTA</text>
+            <text x="548" y="92">KENTTÄ</text>
+          </g>
+        </svg>
+        <figcaption>Emergenssin tikkaat — yksinkertaisesta kohti kenttää, jossa kokonaisuus ylittää summan.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- II YKSI -->
+  <section class="chapter" id="luku2">
+    <div class="ch-head reveal"><span class="ch-num">Luku II</span><h2 class="ch-title">Yksi</h2></div>
+    <div class="ch-body reveal">
+      <p>Ennen kuutta on yksi. Kaiken jaon alla on yksi päämäärä: turvallinen oppiminen ja toimiva paja. Jokainen myöhempi erottelu palvelee tätä yhtä. Kun jännitteet kiristyvät ja edut näyttävät törmäävän, yksi pitää kentän kasassa: isoin etu on aina yhteinen etu.</p>
+      <p>Yhteen kuuluu myös se, mikä jää näkymättömäksi. Siivooja, joka tulee tyhjään pajaan illalla; kiinteistöhuolto, joka käy ilman perehdytystä; vieras, joka astuu ovesta. He ovat eniten alttiina ja vähiten varoitettuja — ja silti osa samaa yhtä. Kenttä, joka unohtaa heidät, ei ole kokonainen. Siksi vaara turvataan ylävirrassa: se joka sen synnyttää, sammuttaa sen ennen poistumistaan.</p>
+      <blockquote class="pull reveal">Isoin etu on aina yhteinen etu.</blockquote>
+    </div>
+  </section>
+
+  <!-- III KUNNIOITUS -->
+  <section class="chapter" id="kunnioitus">
+    <div class="ch-head reveal"><span class="ch-num">Luku III</span><h2 class="ch-title">Kunnioitus</h2></div>
+    <div class="ch-body reveal">
+      <p>Kentän tärkein voima ei ole kone eikä menetelmä. Se on ihminen. Ja ihmistä koskee yksi totuus, joka on samalla turvallisuuden ydin: kukaan ei ole enempää kuin sen, mitä hän on omalla tasollaan ja aitona itsenään. Tämä ei ole rajoitus vaan vapautus — kun saa olla juuri siinä missä on, ei tarvitse esittää.</p>
+      <p>Vaara astuu sisään silloin, kun joku haluaa korostaa osaamista, jota hänellä ei vielä ole. Teeskennelty pätevyys on pajan vaarallisin tila: se vie koneen ääreen ilman sitä ymmärrystä, joka pitää sormet tallella. Siksi nöyryys ei ole heikkoutta vaan suojaa. Se joka uskaltaa sanoa "en vielä osaa", on turvassa; se joka peittää sen, on altis.</p>
+      <p>Tästä syntyy ohjaajan lupaus. En osoita sitä, mitä et osaa — annan sinulle kaiken tilan, jonka oppiminen vaatii. Mutta minun on tiedettävä, että ymmärrät, sillä se on sekä sinun että toisten turva. Ja sen varmistuksen teen kunnioittaen ja sinua ihaillen, en tutkien vaan saattaen. Tarkistus ei ole epäluottamusta; se on huolenpitoa. Tähän nojaa esitietojen varmistus: emme etsi sitä mitä et tiedä, vaan varmistamme yhdessä, että tieto on muuttunut ymmärrykseksi ja ymmärrys osaamiseksi.</p>
+      <p>Suhteemme on konkreettista osaamista — ja sinun kykyäsi toteuttaa omaa elämääsi niin kuin maailma on sen mahdollistanut. Kasva siemenestä: tee ensin sirkkalehti, sitten kuki, ja kasvata lopulta siivet, joilla lennät kohti sitä todellisuutta, jossa kykysi ja tahtosi kohtaavat. Ohjaajan tehtävä ei ole tehdä sinusta omaa kuvaansa, vaan antaa maaperä, valo ja aika, jotta sinusta tulee se, mikä sinussa jo oli.</p>
+
+      <figure class="reveal" aria-label="Kasvun vaiheet: siemen, sirkkalehti, kukinta, lento">
+        <svg viewBox="0 0 520 150" xmlns="http://www.w3.org/2000/svg">
+          <line x1="24" y1="104" x2="360" y2="104" stroke="#C8BFAD" stroke-width="1.5"/>
+          <ellipse cx="56" cy="92" rx="8" ry="11" fill="#211C16"/>
+          <path d="M56 80 V70" stroke="#CE3F1B" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="98" y1="88" x2="120" y2="88" stroke="#CE3F1B" stroke-width="1.6"/>
+          <path d="M120 88 l-7 -4 v8 z" fill="#CE3F1B"/>
+          <path d="M178 104 V66" stroke="#211C16" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M178 72 Q160 60 154 71 Q168 74 178 72 Z" fill="#5E8C5A"/>
+          <path d="M178 72 Q196 60 202 71 Q188 74 178 72 Z" fill="#5E8C5A"/>
+          <line x1="220" y1="84" x2="242" y2="84" stroke="#CE3F1B" stroke-width="1.6"/>
+          <path d="M242 84 l-7 -4 v8 z" fill="#CE3F1B"/>
+          <path d="M300 104 V50" stroke="#211C16" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M300 86 Q284 78 280 88 Q292 90 300 86 Z" fill="#5E8C5A"/>
+          <path d="M300 80 Q316 72 320 82 Q308 84 300 80 Z" fill="#5E8C5A"/>
+          <circle cx="300" cy="44" r="9" fill="none" stroke="#CE3F1B" stroke-width="2"/>
+          <circle cx="300" cy="44" r="3.2" fill="#CE3F1B"/>
+          <line x1="360" y1="82" x2="392" y2="64" stroke="#CE3F1B" stroke-width="1.6"/>
+          <path d="M392 64 l-8 -1 4 7 z" fill="#CE3F1B"/>
+          <path d="M420 62 Q444 44 452 60 Q460 44 484 62" stroke="#211C16" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="452" cy="60" r="2.6" fill="#211C16"/>
+          <g fill="#5A5347" font-family="'IBM Plex Mono',monospace" font-size="10" text-anchor="middle">
+            <text x="56" y="130">SIEMEN</text>
+            <text x="178" y="130">SIRKKALEHTI</text>
+            <text x="300" y="130">KUKINTA</text>
+            <text x="452" y="130">LENTO</text>
+          </g>
+        </svg>
+        <figcaption>Kasva siemenestä lentoon — ohjaaja antaa maaperän, valon ja ajan, ei valmista muotoa.</figcaption>
+      </figure>
+
+      <blockquote class="pull reveal">Kasva siemenestä: tee sirkkalehti, kuki, ja kasvata siivet, joilla lennät.</blockquote>
+
+      <p>Elämä on etuoikeus — tila, joka meille on suotu. Pieni on se aika, jonka yhdessä kuljemme. Toivon, että löydät elämääsi suunnan, joka oli siellä jo valmiina odottamassa; että saat toteuttaa itseäsi, saavuttaa, ja rohkaista seuraavia omalla kukinnallasi. Niin kenttä jatkaa kasvuaan yli meidän aikamme.</p>
+      <p>Tämä on kentän inhimillinen perusta: jokaista kunnioitetaan hänen omalla tasollaan, jokaiselle annetaan tila kasvaa, eikä keneltäkään vaadita esittämään muuta kuin on. Kun ihmistä kohdellaan näin, koko kartta kantaa.</p>
+    </div>
+  </section>
+
+  <!-- IV KOLME AKSELIA -->
+  <section class="chapter" id="luku3">
+    <div class="ch-head reveal"><span class="ch-num">Luku IV</span><h2 class="ch-title">Kolme akselia</h2></div>
+    <div class="ch-body reveal">
+      <p>Yksi paljastuu ensin kolmena jännitteenä. Ne eivät ole ongelmia ratkaistavaksi vaan tasapainoja pidettäväksi.</p>
+      <div class="lede-pairs">
+        <div class="lp"><b>Rima</b> — Oikeus ja Laatu. Sama vaatimustaso ihmisille ja työn jäljelle; taso, jota ei lasketa kummastakaan.</div>
+        <div class="lp"><b>Aikajänne</b> — Vihreä siirtymä ja Projektit. Tämä hetki ja se mikä jää; lyhyt tekeminen ja pitkä jälki.</div>
+        <div class="lp"><b>Vastuu rajallisesta</b> — Turvallisuus ja Talous. Ihmiset ja varat; vaikein vaihtokauppa.</div>
+      </div>
+      <p>Nämä kolme ovat toisistaan riippumattomia suuntia — kohtisuorassa toisiaan vastaan. Yhdessä ne määräävät tilan, jossa jokainen päätös elää. Mikään oikea valinta ei ole yhdellä akselilla; se sijaitsee jossakin kaikkien kolmen välissä.</p>
+
+      <figure class="reveal" aria-label="Kolme kohtisuoraa akselia ja niiden keskus">
+        <svg viewBox="0 0 380 320" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gVert" gradientUnits="userSpaceOnUse" x1="190" y1="40" x2="190" y2="280">
+              <stop offset="0" stop-color="#5E8C5A"/><stop offset="1" stop-color="#6E5A93"/>
+            </linearGradient>
+            <linearGradient id="gRima" gradientUnits="userSpaceOnUse" x1="90" y1="90" x2="290" y2="230">
+              <stop offset="0" stop-color="#4F6E92"/><stop offset="1" stop-color="#BE8A2E"/>
+            </linearGradient>
+            <linearGradient id="gVastuu" gradientUnits="userSpaceOnUse" x1="290" y1="90" x2="90" y2="230">
+              <stop offset="0" stop-color="#C25A3E"/><stop offset="1" stop-color="#4E8C84"/>
+            </linearGradient>
+          </defs>
+          <g stroke-width="3" stroke-linecap="round">
+            <line x1="190" y1="40" x2="190" y2="280" stroke="url(#gVert)"/>
+            <line x1="90" y1="90" x2="290" y2="230" stroke="url(#gRima)"/>
+            <line x1="290" y1="90" x2="90" y2="230" stroke="url(#gVastuu)"/>
+          </g>
+          <circle cx="190" cy="160" r="6" fill="#211C16"/>
+          <g stroke="#ECE6DA" stroke-width="2">
+            <circle cx="190" cy="40" r="7" fill="#5E8C5A"/>
+            <circle cx="190" cy="280" r="7" fill="#6E5A93"/>
+            <circle cx="90" cy="90" r="7" fill="#4F6E92"/>
+            <circle cx="290" cy="230" r="7" fill="#BE8A2E"/>
+            <circle cx="290" cy="90" r="7" fill="#C25A3E"/>
+            <circle cx="90" cy="230" r="7" fill="#4E8C84"/>
+          </g>
+          <g fill="#211C16" font-family="'Big Shoulders Display',sans-serif" font-weight="700" font-size="12">
+            <text x="190" y="28" text-anchor="middle">VIHREÄ SIIRTYMÄ</text>
+            <text x="190" y="298" text-anchor="middle">PROJEKTIT</text>
+            <text x="80" y="84" text-anchor="end">OIKEUS</text>
+            <text x="300" y="236" text-anchor="start">LAATU</text>
+            <text x="300" y="84" text-anchor="start">TURVALLISUUS</text>
+            <text x="80" y="236" text-anchor="end">TALOUS</text>
+          </g>
+          <text x="190" y="178" text-anchor="middle" fill="#5A5347" font-family="'IBM Plex Mono',monospace" font-size="9">yhteinen etu</text>
+        </svg>
+        <figcaption>Kolme akselia — kolme riippumatonta suuntaa. Jokainen päätös sijaitsee niiden välisessä tilassa.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- IV KUUSI TAHKOA -->
+  <section class="chapter" id="luku4">
+    <div class="ch-head reveal"><span class="ch-num">Luku V</span><h2 class="ch-title">Kuusi tahkoa</h2></div>
+    <div class="ch-body reveal">
+      <p>Kolmella akselilla on kuusi päätä. Päät ovat tahkot — ne pinnat, joihin voi todella tarttua: aikatauluttaa, opettaa, tarkastaa, ostaa. Abstrakti jännite muuttuu konkreettiseksi toiminnaksi.</p>
+      <p>Kuutio on muoto, joka pitää kolme jännitettä kuutena työstettävänä pintana. Jokainen tahko on oman arkensa alue, ja jokaisella on vastapinta, joka pitää sen tasapainossa: Oikeus vastapäätä Laatua, Vihreä siirtymä vastapäätä Projekteja, Turvallisuus vastapäätä Taloutta. Kuution kätevyys on juuri tässä — kuusi käteen sopivaa pintaa, jotka eivät irtoa toisistaan.</p>
+    </div>
+  </section>
+
+  <!-- V VIISITOISTA SUHDETTA -->
+  <section class="chapter" id="luku5">
+    <div class="ch-head reveal"><span class="ch-num">Luku VI</span><h2 class="ch-title">Viisitoista suhdetta</h2></div>
+    <div class="ch-body reveal">
+      <p>Mutta tahkotkaan eivät toimi erillään. Jokainen tahko kohtaa jokaisen toisen: viisitoista suhdetta. Kolme niistä on syviä vastakkainasetteluja — pääakselit, jotka lävistävät kuution keskeltä. Kaksitoista on arjen naapureita — reuna-akseleita, jotka jakavat yhteisen särmän.</p>
+      <p>Jokainen suhde on oma pieni kenttänsä: paikka, jossa kaksi voimaa kohtaa ja ne on sovitettava yhteen. Juuri tässä hallinta oikeasti tapahtuu — ei pinnoilla, vaan niiden välisillä viivoilla. Konekortti elää Turvallisuuden ja Laadun viivalla. Hankinta elää Projektien ja Talouden viivalla. Kohdepoisto elää Vihreän siirtymän ja Turvallisuuden viivalla.</p>
+
+      <figure class="fig-narrow reveal" aria-label="Akselikartta: kuusi tahkoa ja kaikki 15 akselia">
+        <svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="#C8BFAD" stroke-width="1.3">
+            <line x1="180" y1="40" x2="275" y2="95"/><line x1="275" y1="95" x2="275" y2="205"/>
+            <line x1="275" y1="205" x2="180" y2="260"/><line x1="180" y1="260" x2="85" y2="205"/>
+            <line x1="85" y1="205" x2="85" y2="95"/><line x1="85" y1="95" x2="180" y2="40"/>
+            <line x1="180" y1="40" x2="275" y2="205"/><line x1="275" y1="95" x2="180" y2="260"/>
+            <line x1="275" y1="205" x2="85" y2="205"/><line x1="180" y1="260" x2="85" y2="95"/>
+            <line x1="85" y1="205" x2="180" y2="40"/><line x1="85" y1="95" x2="275" y2="95"/>
+          </g>
+          <g stroke="#211C16" stroke-width="3" stroke-linecap="round">
+            <line x1="180" y1="40" x2="180" y2="260"/><line x1="275" y1="95" x2="85" y2="205"/><line x1="275" y1="205" x2="85" y2="95"/>
+          </g>
+          <g stroke="#ECE6DA" stroke-width="2.5">
+            <circle cx="180" cy="40" r="10" fill="#5E8C5A"/><circle cx="275" cy="95" r="10" fill="#BE8A2E"/>
+            <circle cx="275" cy="205" r="10" fill="#4E8C84"/><circle cx="180" cy="260" r="10" fill="#6E5A93"/>
+            <circle cx="85" cy="205" r="10" fill="#4F6E92"/><circle cx="85" cy="95" r="10" fill="#C25A3E"/>
+          </g>
+          <g fill="#211C16" font-family="'Big Shoulders Display',sans-serif" font-weight="700" font-size="11">
+            <text x="180" y="28" text-anchor="middle">VIHREÄ SIIRTYMÄ</text>
+            <text x="283" y="99" text-anchor="start">LAATU</text>
+            <text x="283" y="209" text-anchor="start">TALOUS</text>
+            <text x="180" y="282" text-anchor="middle">PROJEKTIT</text>
+            <text x="77" y="209" text-anchor="end">OIKEUS</text>
+            <text x="77" y="99" text-anchor="end">TURVALLISUUS</text>
+          </g>
+        </svg>
+        <figcaption>Akselikartta · kolme läpäisevää pääakselia (paksut) ja kaksitoista reuna-akselia (ohuet).</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- VI RISTIINKYTKENNÄT -->
+  <section class="chapter" id="luku6">
+    <div class="ch-head reveal"><span class="ch-num">Luku VII</span><h2 class="ch-title">Ristiinkytkennät</h2></div>
+    <div class="ch-body reveal">
+      <p>Tässä kartta syvenee kerroksen, jota harva piirtää: suhteet itse vaikuttavat toisiinsa.</p>
+      <p>Yhtäkään akselia ei voi liikuttaa liikuttamatta muita. Nosta rimaa — vaadi korkeampaa laatua ja reilumpaa prosessia — ja painat Vastuun akselia: se maksaa enemmän ja vaatii enemmän huolta. Venytä aikajännettä kohti kestävyyttä, ja se painaa Projekteja ja Taloutta. Kolme pääakselia ovat kytketyt: liike yhdessä on liike kaikissa.</p>
+      <p>Niiden pareittaiset kytkennät muodostavat kolme kenttää:</p>
+      <div class="lede-pairs">
+        <div class="lp"><b>Rima × Aikajänne</b> — kuinka korkea taso, pidettynä kuinka kestävästi. Laatu joka kestää käytössä on jo ekologinen teko.</div>
+        <div class="lp"><b>Rima × Vastuu</b> — kuinka korkea taso, jonka voimme rahoittaa ja pitää turvallisena. Tässä asuu porrastus: pakko, pitäisi, tavoite.</div>
+        <div class="lp"><b>Aikajänne × Vastuu</b> — kuinka panostaa nyt myöhempää varten, varojen ja turvan rajoissa. Kohdepoisto on tämän kentän ydin: tämän päivän kustannus, joka suojaa huomisen terveyttä.</div>
+      </div>
+      <p>Ja siellä, missä kaikki kolme kenttää leikkaavat, on jokainen todellinen päätös — kaikkien jännitteiden vetämänä yhtä aikaa. Tämä leikkauspiste on yhteinen etu. Hyvä päätös ei voita yhtä akselia; se löytää pisteen, joka palvelee kokonaisuutta.</p>
+      <p>Kaksitoista reuna-akselia ovat näiden kytkentöjen arkiset kahvat — sama syvä kenttä, käteen sopivassa muodossa.</p>
+
+      <figure class="fig-narrow reveal" aria-label="Kolme kytkentäkenttää leikkaavat yhteiseksi eduksi">
+        <svg viewBox="0 0 360 330" xmlns="http://www.w3.org/2000/svg">
+          <g>
+            <circle cx="180" cy="118" r="92" fill="#4F6E92" fill-opacity="0.20" stroke="#4F6E92" stroke-width="1.5"/>
+            <circle cx="128" cy="200" r="92" fill="#5E8C5A" fill-opacity="0.20" stroke="#5E8C5A" stroke-width="1.5"/>
+            <circle cx="232" cy="200" r="92" fill="#C25A3E" fill-opacity="0.20" stroke="#C25A3E" stroke-width="1.5"/>
+          </g>
+          <circle cx="180" cy="172" r="5" fill="#211C16"/>
+          <g font-family="'Big Shoulders Display',sans-serif" font-weight="800" text-transform="uppercase">
+            <text x="180" y="56" text-anchor="middle" font-size="15" fill="#3A5170">RIMA</text>
+            <text x="74" y="262" text-anchor="middle" font-size="15" fill="#46673F">AIKAJÄNNE</text>
+            <text x="286" y="262" text-anchor="middle" font-size="15" fill="#A6432A">VASTUU</text>
+          </g>
+          <text x="180" y="190" text-anchor="middle" fill="#211C16" font-family="'IBM Plex Mono',monospace" font-size="9.5" font-weight="600">YHTEINEN ETU</text>
+          <text x="180" y="204" text-anchor="middle" fill="#5A5347" font-family="'IBM Plex Mono',monospace" font-size="8">jokainen päätös</text>
+        </svg>
+        <figcaption>Kolme kytkentäkenttää · jokainen päätös sijaitsee niiden leikkauksessa — yhteisessä edussa.</figcaption>
+      </figure>
+
+      <blockquote class="pull reveal">Liike yhdessä on liike kaikissa.</blockquote>
+    </div>
+  </section>
+
+  <!-- VII KOKONAISUUS -->
+  <section class="chapter" id="luku7">
+    <div class="ch-head reveal"><span class="ch-num">Luku VIII</span><h2 class="ch-title">Kokonaisuus</h2></div>
+    <div class="ch-body reveal">
+      <p>Laske yhteen kuusi pintaa ja viisitoista viivaa, ja sinulla ei vieläkään ole järjestelmää. Järjestelmä on kuvio, jonka ne yhdessä muodostavat — kartta.</p>
+      <p>Paja, jossa jokainen osa on paikallisesti viritetty huippuunsa, voi silti epäonnistua kokonaisuutena: täydellisen halpa ja täydellisen nopea paja, joka vahingoittaa siivoojaansa, on hävinnyt. Päinvastoin vaatimattomat osat, pidettyinä oikeissa suhteissa, tekevät jotakin kestävää ja inhimillistä. Kokonaisuus on enemmän kuin osiensa summa, koska arvo asuu suhteissa — ja suhteiden suhteissa.</p>
+      <p>Siksi hallittava asia ei ole pala vaan kartta. Sitä luetaan kokonaisuutena, ja sitä korjataan kokonaisuutena.</p>
+      <blockquote class="pull reveal">Hallittava ei ole pala, vaan kartta.</blockquote>
+    </div>
+  </section>
+
+  <!-- VIII PERIAATTEET -->
+  <section class="chapter" id="luku8">
+    <div class="ch-head reveal"><span class="ch-num">Luku IX</span><h2 class="ch-title">Hallinnan periaatteet</h2></div>
+    <div class="ch-body reveal">
+      <p>Yksitoista ohjetta kentällä liikkumiseen. Ne eivät kerro mitä päättää, vaan mistä suunnasta katsoa.</p>
+      <ol class="maxims">
+        <li><h4>Näe kenttä, älä palaa</h4><p>Pidä kokonaisuus mielessä, vaikka käsittelet yhtä asiaa kerrallaan.</p></li>
+        <li><h4>Yksi ennen kuutta</h4><p>Yhteinen etu käy jokaisen yksittäisen tahkon edellä.</p></li>
+        <li><h4>Jokainen on täysi tasollaan</h4><p>Ihmistä kunnioitetaan siinä missä hän on. Annetaan tila kasvaa; ei vaadita esittämään muuta kuin on.</p></li>
+        <li><h4>Teeskennelty osaaminen on vaara</h4><p>Nöyryys suojaa. "En vielä osaa" on pajan turvallisin lause, ei sen heikoin.</p></li>
+        <li><h4>Näkymätön ensin</h4><p>Vähiten varoitettu on eniten alttiina. Turvaa vaara ylävirrassa, ennen kuin joku kohtaa sen yksin.</p></li>
+        <li><h4>Yksikään akseli ei voita</h4><p>Voitto yhdellä akselilla, joka kaataa kokonaisuuden, on tappio.</p></li>
+        <li><h4>Rima ja resurssi yhdessä</h4><p>Älä kirjaa tasoa jota et rahoita. Porrasta: pakko, pitäisi, tavoite.</p></li>
+        <li><h4>Juniori saa korjata seniorin</h4><p>Kenttä korjaantuu mistä tahansa pisteestä. Valtuuta matalin huomauttamaan korkeimmalle.</p></li>
+        <li><h4>Aika on osa jokaista päätöstä</h4><p>Jokaisella valinnalla on pitkä varjo. Punnitse jälki, älä vain hetkeä.</p></li>
+        <li><h4>Kysyminen on voimaa</h4><p>Vaarallisesta työstä saa pidättäytyä. Matala kynnys kysyä on osa järjestelmää, ei sen vika.</p></li>
+        <li><h4>Tasapaino ei ole kompromissi</h4><p>Jännitteen pitäminen ei ole erotuksen puolittamista, vaan sen pisteen löytämistä, joka palvelee yhtä.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- LOPPUSANAT -->
+  <section class="closing reveal">
+    <div class="ch-head"><span class="ch-num">Loppusanat</span><h2 class="ch-title">Kompassi</h2></div>
+    <div class="ch-body">
+      <p>Kartta ei tule koskaan valmiiksi. Se on elävä väline, yhteisesti omistettu, ja sitä tarkennetaan niiden kanssa, jotka kenttää työstävät. Kuutio on muistisääntö. Kenttä on todellisuus. Yhteinen etu on kompassi.</p>
+      <p>Kun seuraavan kerran seisot pajassa yksittäisen päätöksen edessä, älä kysy vain: mikä on tässä paras? Kysy: mikä piste palvelee kokonaisuutta? Siinä kysymyksessä on koko kartta.</p>
+      <p class="colophon">Pajakuutio · Hallinnan kartta · v. 1<br>Metropolia · Muotoilun pajat · Arabian kampus<br>Yhteissuunnittelun perusta — muokattavissa yhdessä</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  (function(){
+    "use strict";
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var lines = document.querySelectorAll(".hero__title span");
+    if(reduce){ lines.forEach(function(el){ el.classList.add("in"); }); }
+    else { lines.forEach(function(el, idx){ setTimeout(function(){ el.classList.add("in"); }, 140 + idx*150); }); }
+    var items = document.querySelectorAll(".reveal");
+    if(reduce || !("IntersectionObserver" in window)){ items.forEach(function(el){ el.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, {rootMargin:"0px 0px -8% 0px", threshold:0.06});
+    items.forEach(function(el){ io.observe(el); });
+  })();
+</script>
+<script src="paja-footer.js"></script>
+</body>
+</html>

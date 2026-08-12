@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="fi" class="js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pajapeli — Pajatilan digital twin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE6DA;--paper-deep:#E4DCCC;--card:#F3EFE7;--ink:#211C16;--ink-soft:#5A5347;
+    --ember:#CE3F1B;--rule:#C8BFAD;--rule-soft:#D8D0C0;
+    --vihrea:#5E8C5A;--oikeus:#4F6E92;--turva:#C25A3E;--laatu:#BE8A2E;--projekti:#6E5A93;--talous:#4E8C84;
+    --steel:#3D4B58;--wood:#B0712F;
+    --maxw:1100px;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:radial-gradient(1200px 600px at 85% -10%,rgba(206,63,27,.06),transparent 60%),var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(16px,4vw,36px);}
+  h1,h2,h3,h4,h5{font-family:"Big Shoulders Display","Arial Narrow",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:.95;margin:0;}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;}
+
+  .printbar{position:fixed;top:16px;right:16px;z-index:60;}
+  .printbtn{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;background:var(--ink);color:var(--paper);border:none;padding:.6em 1em;border-radius:2px;box-shadow:0 6px 20px rgba(33,28,22,.22);}
+  .printbtn:hover{background:var(--ember);}
+
+  /* HERO */
+  .hero{padding:clamp(40px,7vw,84px) 0 clamp(20px,3vw,34px);}
+  .hero__eyebrow{display:block;margin-bottom:clamp(16px,3vw,26px);}
+  .hero__title{font-size:clamp(3rem,13vw,7rem);line-height:.84;}
+  .hero__title .ember{color:var(--ember);}
+  .hero__epi{font-family:"Spectral",serif;font-style:italic;font-size:clamp(1.1rem,2.6vw,1.55rem);max-width:34ch;margin:clamp(18px,3vw,28px) 0 clamp(6px,1.5vw,12px);}
+  .hero__sub{font-size:1rem;color:var(--ink-soft);max-width:62ch;}
+
+  .section{padding:clamp(26px,4vw,44px) 0;border-top:1px solid var(--rule);}
+  .sec-head{margin-bottom:clamp(14px,2.4vw,22px);}
+  .sec-no{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ember);display:block;margin-bottom:.4em;}
+  .sec-title{font-size:clamp(1.7rem,5vw,2.6rem);}
+  .sec-lead{font-size:1rem;max-width:64ch;margin:.5em 0 0;color:var(--ink-soft);}
+
+  /* SCENARIO CHOOSER */
+  .scn-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;margin-top:6px;}
+  .scn-card{text-align:left;cursor:pointer;background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--ink-soft);border-radius:4px;padding:11px 13px;font-family:inherit;color:inherit;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease;}
+  .scn-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(33,28,22,.12);}
+  .scn-card.active{border-left-color:var(--ember);box-shadow:0 8px 22px rgba(206,63,27,.16);}
+  .scn-card .n{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.08em;color:var(--ink-soft);}
+  .scn-card h4{font-size:1.05rem;margin:.2em 0 .15em;line-height:1;}
+  .scn-card p{margin:0;font-size:.82rem;color:var(--ink-soft);line-height:1.35;}
+  .scn-card .stat{display:inline-block;margin-top:.45em;font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;padding:.18em .5em;border-radius:2px;}
+  .stat.ok{background:rgba(94,140,90,.18);color:#3c5e39;}
+  .stat.warn{background:rgba(176,113,47,.2);color:#7a4e15;}
+  .stat.risk{background:rgba(206,63,27,.16);color:#9c2f12;}
+
+  /* BOARD */
+  .boardwrap{margin-top:14px;}
+  .board{display:grid;gap:9px;grid-template-columns:repeat(4,1fr);
+    grid-template-areas:
+      "luento luento luento varasto"
+      "puu    puu    metalli metalli"
+      "puu    puu    metalli metalli"
+      "laser  proto  veisto  jalo"
+      "maalaamo maalaamo jate jate";
+    background:var(--paper-deep);border:1px solid var(--rule);border-radius:8px;padding:9px;}
+  .room{background:var(--card);border:1px solid var(--rule);border-radius:5px;padding:9px 10px 10px;min-height:104px;display:flex;flex-direction:column;cursor:default;transition:box-shadow .15s ease,border-color .15s ease,transform .15s ease;position:relative;}
+  .room.placing{cursor:pointer;}
+  .room.placing:hover{border-color:var(--ember);box-shadow:0 0 0 2px rgba(206,63,27,.18);}
+  .room.spotlight{border-color:var(--ember);box-shadow:0 0 0 2px rgba(206,63,27,.28),0 10px 26px rgba(206,63,27,.12);z-index:2;}
+  .room.kind-entry{background:#F0E7D8;border-left:4px solid var(--ember);}
+  .room.kind-tuki{background:#EFEAE0;}
+  .room-head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;}
+  .room-name{font-family:"Big Shoulders Display",sans-serif;font-weight:700;text-transform:uppercase;font-size:1rem;line-height:.95;}
+  .glassbadge{font-family:"IBM Plex Mono",monospace;font-size:.52rem;letter-spacing:.05em;text-transform:uppercase;color:var(--turva);border:1px solid var(--turva);border-radius:2px;padding:.1em .35em;white-space:nowrap;flex:none;}
+  .room-sub{font-family:"IBM Plex Mono",monospace;font-size:.56rem;color:var(--ink-soft);margin-top:.15em;line-height:1.3;}
+  .room-risk{display:flex;align-items:center;gap:6px;margin:7px 0 8px;}
+  .meter{display:inline-flex;gap:2px;}
+  .seg{width:13px;height:7px;border-radius:1px;background:var(--rule);}
+  .seg.on{background:var(--ink);}
+  .meternum{font-family:"IBM Plex Mono",monospace;font-size:.6rem;color:var(--ink-soft);}
+  .room-pieces{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto;min-height:26px;align-content:flex-start;}
+
+  .token{width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;position:relative;display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.7rem;color:#fff;padding:0;line-height:1;box-shadow:0 1px 3px rgba(33,28,22,.25);}
+  .token .lasit{position:absolute;width:9px;height:9px;border-radius:50%;right:-2px;bottom:-2px;border:1.5px solid var(--card);}
+  .token .lasit.on{background:var(--talous);}
+  .token .lasit.off{background:#9b958a;}
+  .token.hazard{box-shadow:0 0 0 2px var(--ember),0 1px 3px rgba(33,28,22,.3);}
+  .token.hazard::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--ember);animation:pulse 1.4s ease-out infinite;}
+  @keyframes pulse{0%{transform:scale(.85);opacity:.85}100%{transform:scale(1.5);opacity:0}}
+  .t-opiskelija{background:#8A7F6B;}
+  .t-lehtori{background:var(--oikeus);}
+  .t-pajamestari{background:var(--turva);}
+  .t-esimies{background:var(--steel);}
+  .t-siivooja{background:var(--vihrea);}
+  .t-kiinteisto{background:var(--talous);}
+  .t-vierailija{background:var(--wood);}
+
+  /* STATUS */
+  .statusbar{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:12px;font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);}
+  .statusbar b{color:var(--ink);font-weight:600;}
+  .haz-flag{color:var(--ember);font-weight:600;}
+
+  /* DETAIL PANEL */
+  .detail{margin-top:16px;background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:clamp(14px,2.4vw,20px);}
+  .detail.empty{border-style:dashed;color:var(--ink-soft);}
+  .detail h3{font-size:clamp(1.3rem,3.4vw,1.8rem);}
+  .detail .dsub{font-style:italic;color:var(--ink-soft);margin:.2em 0 .8em;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:.4em 0 .9em;}
+  .chip{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.05em;text-transform:uppercase;padding:.2em .55em;border-radius:2px;border:1px solid var(--rule);color:var(--ink-soft);}
+  .chip.taho{color:#fff;border:none;}
+  .chip.r-vihrea{background:var(--vihrea);}.chip.r-oikeus{background:var(--oikeus);}.chip.r-turva{background:var(--turva);}
+  .chip.r-laatu{background:var(--laatu);}.chip.r-projekti{background:var(--projekti);}.chip.r-talous{background:var(--talous);}
+  .dlabel{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);font-weight:600;margin:1.1em 0 .4em;}
+  .detail p{margin:0 0 .7em;}
+  .rulechips{display:flex;flex-wrap:wrap;gap:6px;}
+  .rulechip{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.04em;text-transform:uppercase;padding:.22em .55em;border-radius:2px;background:var(--ink);color:var(--paper);}
+  .res{list-style:none;margin:.3em 0 0;padding:0;counter-reset:rs;}
+  .res li{counter-increment:rs;position:relative;padding:0 0 .6em 2.1em;font-size:.95rem;line-height:1.45;}
+  .res li::before{content:counter(rs);position:absolute;left:0;top:0;width:1.5em;height:1.5em;background:var(--ember);color:#fff;border-radius:50%;display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-size:.66rem;font-weight:600;}
+  .outcome{margin-top:.8em;padding:.7em .9em;border-radius:4px;border-left:4px solid var(--ink-soft);font-size:.95rem;}
+  .outcome.ok{border-left-color:var(--vihrea);background:rgba(94,140,90,.1);}
+  .outcome.warn{border-left-color:var(--wood);background:rgba(176,113,47,.1);}
+  .outcome.risk{border-left-color:var(--ember);background:rgba(206,63,27,.09);}
+  .outcome .otag{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;display:block;margin-bottom:.25em;}
+
+  /* TRAY / CONTROLS */
+  .tray{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .pchip{display:flex;align-items:center;gap:7px;cursor:pointer;background:var(--card);border:1px solid var(--rule);border-radius:30px;padding:5px 12px 5px 6px;font-family:inherit;color:inherit;font-size:.86rem;transition:border-color .12s ease,box-shadow .12s ease;}
+  .pchip:hover{border-color:var(--ink-soft);}
+  .pchip.sel{border-color:var(--ember);box-shadow:0 0 0 2px rgba(206,63,27,.16);}
+  .pdot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.66rem;flex:none;}
+  .controls{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:12px;font-family:"IBM Plex Mono",monospace;font-size:.74rem;}
+  .ctl-btn{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;background:transparent;border:1px solid var(--ink);color:var(--ink);padding:.5em .9em;border-radius:3px;}
+  .ctl-btn:hover{background:var(--ink);color:var(--paper);}
+  .toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none;}
+  .toggle input{accent-color:var(--turva);width:15px;height:15px;}
+  .hint{color:var(--ink-soft);}
+
+  /* RULE CARDS */
+  .rules{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:10px;margin-top:8px;}
+  .rcard{background:var(--card);border:1px solid var(--rule);border-top:3px solid var(--turva);border-radius:5px;padding:13px 14px;}
+  .rcard.active{box-shadow:0 0 0 2px rgba(206,63,27,.3);border-top-color:var(--ember);}
+  .rcard .rk{font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.1em;color:var(--ember);font-weight:600;}
+  .rcard h4{font-size:1.12rem;margin:.2em 0 .35em;line-height:1;}
+  .rcard p{margin:0;font-size:.86rem;color:var(--ink-soft);line-height:1.45;}
+
+  /* TAHOT */
+  .tahot{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:9px;margin-top:8px;}
+  .taho{background:var(--card);border:1px solid var(--rule);border-radius:5px;padding:11px 12px;border-left:5px solid var(--ink);}
+  .taho.r-vihrea{border-left-color:var(--vihrea);}.taho.r-oikeus{border-left-color:var(--oikeus);}.taho.r-turva{border-left-color:var(--turva);}
+  .taho.r-laatu{border-left-color:var(--laatu);}.taho.r-projekti{border-left-color:var(--projekti);}.taho.r-talous{border-left-color:var(--talous);}
+  .taho .tn{font-family:"IBM Plex Mono",monospace;font-size:.55rem;letter-spacing:.06em;color:var(--ink-soft);}
+  .taho h5{font-size:1rem;margin:.15em 0 .2em;line-height:1;}
+  .taho p{margin:0;font-size:.8rem;color:var(--ink-soft);line-height:1.4;}
+
+  .foot{padding:clamp(28px,5vw,52px) 0 clamp(48px,7vw,80px);border-top:2px solid var(--ink);}
+  .foot p{margin:0 0 .6em;}
+  .colophon{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--ink-soft);line-height:1.8;margin-top:1.4em;}
+
+  @media (max-width:720px){
+    body{font-size:16px;}
+    .board{grid-template-columns:repeat(2,1fr);
+      grid-template-areas:
+        "luento luento"
+        "puu    puu"
+        "metalli metalli"
+        "laser  proto"
+        "veisto jalo"
+        "maalaamo maalaamo"
+        "jate   varasto";}
+    .room{min-height:96px;}
+  }
+
+  @media print{
+    :root{--paper:#fff;--card:#f6f2ea;}
+    body{background:#fff;font-size:11pt;}
+    .printbar,.controls,.tray{display:none;}
+    .wrap{max-width:100%;}
+    .scn-card,.rcard,.taho,.room,.detail{break-inside:avoid;}
+    .token.hazard::after{animation:none;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="mhks-icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-180.png">
+</head>
+<body>
+  <script src="pajakuutio-nav.js"></script>
+
+<div class="printbar"><button class="printbtn" onclick="window.print()">Tulosta / PDF</button></div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <span class="hero__eyebrow eyebrow">Pajakuutio · MHKS · Muotoilun pajat · Arabian kampus</span>
+    <h1 class="hero__title">Paja<span class="ember">peli</span></h1>
+    <p class="hero__epi">Pajatilamme digital twin — paikka, jossa kokonaisuus kohtaa.</p>
+    <p class="hero__sub">Kartta antoi kentän, pelikirja antoi liikkeet. Tämä on lauta: pohjapiirros tiloineen, nappulat toimijoineen, sääntökortit ja tunnistetut tilanteet pelitilanteiksi aseteltuna. Avaa tilannekortti — lauta asettuu sen mukaan. Tai napauta nappulaa ja sijoita se vapaasti. Suojalasit kulkevat jokaisen mukana: ilman niitä erikoistilassa nappula syttyy hazardiksi.</p>
+  </header>
+
+  <!-- SCENARIOS -->
+  <section class="section">
+    <div class="sec-head">
+      <span class="sec-no">Pelitilanteet</span>
+      <h2 class="sec-title">Avaa tilanne</h2>
+      <p class="sec-lead">Jokainen kortti on jo tunnistettu asetelma. Avaa se — nappulat asettuvat tiloihin, vaikutusalue korostuu, ja paneeli kertoo jännitteen, laukeavat säännöt ja ratkaisun.</p>
+    </div>
+    <div class="scn-row" id="scnRow"></div>
+  </section>
+
+  <!-- BOARD -->
+  <section class="section">
+    <div class="sec-head">
+      <span class="sec-no">Pelilauta</span>
+      <h2 class="sec-title">Pajatilan twin</h2>
+      <p class="sec-lead">Kymmenen tilaa, kukin omalla riskitasollaan (1–5, palkki ja numero — ei pelkkää väriä) ja suojalasivelvoitteellaan. Tästä eteenpäin lasit silmillä.</p>
+    </div>
+    <div class="boardwrap">
+      <div class="board" id="board"></div>
+      <div class="statusbar" id="status"></div>
+    </div>
+
+    <div id="detail" class="detail empty">Ei avattua tilannetta. Avaa tilannekortti yltä, tai sijoita nappuloita vapaasti laudalle.</div>
+
+    <div class="sec-head" style="margin-top:26px;margin-bottom:8px;">
+      <span class="sec-no">Nappulat</span>
+      <h3 class="sec-title" style="font-size:clamp(1.4rem,4vw,2rem);">Vapaa asettelu</h3>
+    </div>
+    <div class="tray" id="tray"></div>
+    <div class="controls">
+      <label class="toggle"><input type="checkbox" id="glassToggle" checked> Suojalasit päällä uusilla nappuloilla</label>
+      <button class="ctl-btn" id="clearBtn">Tyhjennä lauta</button>
+      <span class="hint">Napauta nappula → napauta tila. Poista napauttamalla nappulaa laudalla.</span>
+    </div>
+  </section>
+
+  <!-- RULE CARDS -->
+  <section class="section">
+    <div class="sec-head">
+      <span class="sec-no">Sääntökortit</span>
+      <h2 class="sec-title">Pelin säännöt</h2>
+      <p class="sec-lead">Yhdeksän korttia, joiden varassa lauta toimii. Avattu tilanne korostaa ne kortit, jotka siinä laukeavat.</p>
+    </div>
+    <div class="rules" id="rules"></div>
+  </section>
+
+  <!-- TAHOT -->
+  <section class="section">
+    <div class="sec-head">
+      <span class="sec-no">Pajakuutio</span>
+      <h2 class="sec-title">Kuusi tahkoa</h2>
+      <p class="sec-lead">Laudan arvopohja. Jokainen tilanne koskettaa muutamaa tahkoa — ne näkyvät tilannepaneelissa.</p>
+    </div>
+    <div class="tahot" id="tahot"></div>
+  </section>
+
+  <section class="foot">
+    <div class="sec-head"><span class="sec-no">Pelin idea</span><h2 class="sec-title" style="font-size:clamp(1.5rem,4vw,2.2rem);">Yksi lauta, yhteinen etu</h2></div>
+    <p>Lauta tekee näkyväksi sen, mitä pelikirja kuvaa sanoin: paja on yhteinen työpaikka, jossa myös näkymätön — siivooja, vieras, kiinteistö — on turvattava ylävirrassa. Nappula liikkuu vain suojalasit silmillä. Kun resurssi puuttuu, lautaa pienennetään: tila lukkoon, kunnes taso on kunnossa. Voitto yhdellä akselilla kokonaisuuden hinnalla on tappio.</p>
+    <p class="colophon">Pajapeli · digital twin · v. 1<br>Perusta — Hallinnan kartta — Pelikirja — Pajapeli · muokattavissa yhdessä<br>Lakipohja: Työturvallisuuslaki 738/2002 (täsm. 1.6.2023), käyttöasetus 403/2008, TTL 23 §</p>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var rooms = [
+    {id:"luento",   name:"Luentosali",          sub:"Aloitus · esitiedot · koe", risk:1, glasses:false, kind:"entry"},
+    {id:"varasto",  name:"Materiaalivarasto",   sub:"Levyt · profiilit · RETAKE", risk:2, glasses:true,  kind:"tuki"},
+    {id:"puu",      name:"Puupaja",             sub:"Sahat · höylät · jyrsimet", risk:4, glasses:true,  kind:"paja"},
+    {id:"metalli",  name:"Metallipaja",         sub:"Hitsaus · sorvi · CNC · ahjo", risk:4, glasses:true,  kind:"paja"},
+    {id:"laser",    name:"Laserointi",          sub:"2D-leikkaus · intarsia", risk:3, glasses:true,  kind:"erikois"},
+    {id:"proto",    name:"3D & Protostudio",    sub:"FDM · SLA · mitoitus", risk:2, glasses:true,  kind:"erikois"},
+    {id:"veisto",   name:"Kuvanveisto",         sub:"Kipsi · savi · muotit", risk:2, glasses:true,  kind:"erikois"},
+    {id:"jalo",     name:"Jalometalli",         sub:"Induktio · valu · emali", risk:3, glasses:true,  kind:"erikois"},
+    {id:"maalaamo", name:"Maalaamo",            sub:"Pintakäsittely · VOC · itsesyttyminen", risk:3, glasses:true,  kind:"erikois"},
+    {id:"jate",     name:"Jätehuone / RETAKE",  sub:"Jakeet · puristin · kierto", risk:2, glasses:true,  kind:"tuki"}
+  ];
+  var roomById = {};
+  rooms.forEach(function(r){ roomById[r.id] = r; });
+
+  var pieceTypes = {
+    opiskelija:  {label:"Opiskelija",          glyph:"O"},
+    lehtori:     {label:"Lehtori",             glyph:"L"},
+    pajamestari: {label:"Pajamestari",         glyph:"P"},
+    esimies:     {label:"Esimies / Johto",     glyph:"E"},
+    siivooja:    {label:"Siivooja",            glyph:"S"},
+    kiinteisto:  {label:"Kiinteistö / Ovivahti", glyph:"K"},
+    vierailija:  {label:"Vierailija",          glyph:"V"}
+  };
+  var trayOrder = ["opiskelija","lehtori","pajamestari","esimies","siivooja","kiinteisto","vierailija"];
+
+  var tahot = [
+    {id:"vihrea",   n:"Tahko 1", name:"Vihreä siirtymä", t:"Materiaalivirta, RETAKE, kierto."},
+    {id:"oikeus",   n:"Tahko 2", name:"Oikeus",          t:"Roolit, vastuut, vapaudet, reiluus."},
+    {id:"turva",    n:"Tahko 3", name:"Turvallisuus",    t:"Suojautuminen, konepassit, ennakointi."},
+    {id:"laatu",    n:"Tahko 4", name:"Laatu",           t:"Seuranta, lokikirja, poikkeamat."},
+    {id:"projekti", n:"Tahko 5", name:"Projektit",       t:"Suunnittelu, toteutus, valmistettavuus."},
+    {id:"talous",   n:"Tahko 6", name:"Talous",          t:"Resurssit, hinta, hukka, hankinta."}
+  ];
+
+  var ruleCards = [
+    {id:"lasit",   k:"Sääntö 1", name:"Suojalasit", t:"Lasit silmillä aina erikoistilassa. Ei poikkeusta tilan, laitteen eikä henkilön suhteen. Merkki perehdytyksestä ja kuulumisesta yhteisöön."},
+    {id:"passi",   k:"Sääntö 2", name:"Konepassi", t:"Riskin 4–5 koneen käynnistää vasta kun pajamestari on antanut konepassin. Lehtori neuvoo, mestari luvittaa."},
+    {id:"mittari", k:"Sääntö 3", name:"Riskimittari", t:"Jokaiselle koneelle ja työvaiheelle riski 1–5. Näytetään palkilla ja numerolla — ei pelkällä värillä, jotta myös värisokea lukee sen."},
+    {id:"valot",   k:"Sääntö 4", name:"Liikennevalot", t:"Punainen = huolto ja hallinto, ei keskeytyksiä. Vihreä = ohjaus, henkilökunta käytettävissä. Rauhoitetut ajat suojaavat työrauhan ja huollot."},
+    {id:"sijainen",k:"Sääntö 5", name:"Sijaisuus", t:"Pajaturvallisuus on henkilösidonnaista. Ilman pätevää, konekannan tuntevaa sijaista tila pidetään lukittuna. Ehdoton turvallisuuspäätös."},
+    {id:"poikkeama",k:"Sääntö 6",name:"Poikkeama", t:"Läheltä piti, vika tai ylikuorma → online-heräte heti, jokaisen puhelimesta. Luo digitaalisen jäljen ja siirtää vastuun sille tasolle, jolla on valta päättää resursseista."},
+    {id:"kielto",  k:"Sääntö 7", name:"Oikeus pidättäytyä", t:"Työturvallisuuslaki 738/2002, 23 §: oikeus pidättäytyä työstä, joka aiheuttaa vakavaa vaaraa. Jos turvaa ei voida taata, ovet lukkoon kunnes taso on kunnossa."},
+    {id:"nakymaton",k:"Sääntö 8",name:"Näkymätön ensin", t:"Siivooja, vieras ja kiinteistö ovat eniten alttiina, vähiten varoitettuja. Vaara turvataan ylävirrassa: pinnat, kemikaalit ja kuumuus eivät jää piiloon. Pöytäpintoihin ei kosketa."},
+    {id:"roolit",  k:"Sääntö 9", name:"Roolit", t:"Esimies omistaa linjan ja resurssin. Lehtori pedagogisen johdon ja valvonnan. Pajamestari tilat, laitteet ja konepassit. Tehdään kanssa, ei sanella."}
+  ];
+  var ruleById = {};
+  ruleCards.forEach(function(r){ ruleById[r.id] = r; });
+
+  var scenarios = [
+    {
+      id:"perehdytys", n:"Tilanne 0", title:"9 päivän perehdytys", short:"Onnistunut polku siemenestä konepassiin.", status:"ok",
+      tahot:["turva","oikeus","laatu","projekti"],
+      placements:[
+        {room:"puu", type:"pajamestari", count:1, glasses:true},
+        {room:"puu", type:"opiskelija", count:4, glasses:true},
+        {room:"puu", type:"lehtori", count:1, glasses:true},
+        {room:"metalli", type:"pajamestari", count:1, glasses:true},
+        {room:"metalli", type:"opiskelija", count:4, glasses:true},
+        {room:"jalo", type:"opiskelija", count:1, glasses:true}
+      ],
+      spotlight:["puu","metalli","jalo"],
+      tension:"Kurssiryhmä ajetaan yhdeksässä päivässä materiaaleihin ja pajan kulttuuriin. Lehtori alustaa teorian ja teettää esitietokokeen, sitten ryhmä jakautuu puu- ja metallipajaan. Lehtori sukkuloi tilojen välillä ja vetää erikoisvuorot: kuuman raudan taonta, hopeasormus jalometallipenkissä ja puinen korurasia, johon tulevalla 2D CAD -kurssilla suunnitellaan intarsia.",
+      rules:["lasit","passi","valot","roolit"],
+      resolution:[
+        "Esitietokoe on portti: läpäisemättä ei pajan ovesta sisään.",
+        "Pajasalissa lehtori ohjaa muodonantoa ja valvoo suojalaseja; pajamestari vastaa koneista ja antaa konepassit riskin 4–5 laitteille.",
+        "Lehtori johtaa erikoisvuorot (taonta, hopeajuotos); pajamestari varmistaa ahjon poistot, kaasut ja tulityövalmiuden.",
+        "Korurasiaan jää tarttumapinta tulevalle CAD-kurssille — opetus niveltyy eteenpäin."
+      ],
+      outcome:{status:"ok", tag:"Hallittu", text:"Roolit täydentävät toisiaan, kaikilla lasit, konepassit kunnossa. Järjestelmä tuottaa sen mitä siltä halutaan — turvallisesti."}
+    },
+    {
+      id:"saapuminen", n:"Tilanne 1", title:"Saapuminen", short:"Uusi opiskelija ei astu suoraan pajalle.", status:"ok",
+      tahot:["turva","oikeus"],
+      placements:[
+        {room:"luento", type:"lehtori", count:1, glasses:false},
+        {room:"luento", type:"opiskelija", count:5, glasses:false}
+      ],
+      spotlight:["luento","puu","metalli"],
+      tension:"Ryhmä saapuu ensimmäistä kertaa. Houkutus on mennä suoraan koneille — mutta pajan ovi pysyy kiinni, kunnes esitiedot ja ymmärrys on varmistettu.",
+      rules:["lasit","mittari","roolit"],
+      resolution:[
+        "Prosessi alkaa luentosalissa: vaarat, riskimittarin logiikka ja silmäturvallisuus.",
+        "Esitietokoe varmistaa ymmärryksen kunnioittaen — väärä vastaus opettaa, ei kaada.",
+        "Vasta hyväksytyn kokeen jälkeen lasit silmille ja ovesta sisään: lasit ovat merkki siitä, että askel on otettu."
+      ],
+      outcome:{status:"ok", tag:"Portti pitää", text:"Kukaan ei seikkaile pajalle. Lasiton tilassa on heti tunnistettava — ja ohjataan ystävällisesti lasit silmille."}
+    },
+    {
+      id:"myohastyja", n:"Tilanne 2", title:"Myöhästyjä", short:"Kaksi tuli kaksi viikkoa myöhässä — kuka vastaa?", status:"warn",
+      tahot:["oikeus","talous","laatu"],
+      placements:[
+        {room:"luento", type:"opiskelija", count:2, glasses:false},
+        {room:"puu", type:"pajamestari", count:1, glasses:true}
+      ],
+      spotlight:["luento","puu","metalli"],
+      tension:"Kaksi opiskelijaa aloitti kaksi viikkoa myöhässä ja jäi perehdytystä vaille. Opinnot edellyttävät pajaosaamista — mutta uutta perehdytystä ei synny tyhjästä.",
+      rules:["roolit","sijainen","poikkeama"],
+      resolution:[
+        "Pedagoginen vastuu opiskelijoista on lehtorilla / tuutorilla — ei pajamestarilla.",
+        "Uuden perehdytyksen resurssi (työaika, raha) on esimiehen päätös — lehtori ja mestari eivät voi sopia sitä keskenään.",
+        "Lehtori tekee esimiehelle kirjallisen resurssipyynnön: räätälöity perehdytys, asynkroninen digipolku vai siirto seuraavalle kurssille.",
+        "Pajamestari pitää ovet lukossa näiltä kahdelta, kunnes esimies on tehnyt päätöksen ja resursoinut."
+      ],
+      outcome:{status:"warn", tag:"Odottaa päätöstä", text:"Opiskelijasta vastaa lehtori, perehdytyksen maksaa esimies. Ratkaisematta jättäminen viivästyttää opintoja — ja vastuu siitä on esimiehellä."}
+    },
+    {
+      id:"sijainen", n:"Tilanne 3", title:"Sijainen puuttuu", short:"Pajamestari sairaslomalla, sijaisessa viivytellään.", status:"risk",
+      tahot:["turva","talous","laatu"],
+      placements:[
+        {room:"puu", type:"pajamestari", count:1, glasses:true},
+        {room:"puu", type:"opiskelija", count:5, glasses:true},
+        {room:"metalli", type:"opiskelija", count:5, glasses:true}
+      ],
+      spotlight:["puu","metalli"],
+      tension:"Toinen pajamestari on pitkällä sairauslomalla ja sijaisen hankinnassa viivytellään. Yksi mestari ei voi valvoa kahta salia yhtä aikaa — metallin puolella koneet käyvät ilman pätevää valvontaa.",
+      rules:["sijainen","poikkeama","kielto"],
+      resolution:[
+        "Pajaturvallisuus on henkilösidonnaista: ilman pätevää sijaista valvomaton sali pidetään lukittuna.",
+        "Mestari tekee heti online-poikkeamailmoituksen: kapasiteetti –50 %, riskitaso kriittinen, esimiehelle tiedoksi.",
+        "Esimies joko palkkaa sijaisen, porrastaa kurssit tai supistaa aukioloa — vastuu on hänellä.",
+        "Jos turvaa ei voida taata, TTL 23 §: ovet lukkoon kunnes taso on kunnossa."
+      ],
+      outcome:{status:"risk", tag:"Kapasiteetti puolittunut", text:"Venyminen vain peittää resurssipulan ja vaarantaa opiskelijat. Lautaa on pienennettävä, ei valvojaa venytettävä."}
+    },
+    {
+      id:"teorialehtori", n:"Tilanne 4", title:"Teorialehtori", short:"Lehtori on suunnittelija, ei pajaosaaja.", status:"warn",
+      tahot:["oikeus","laatu","projekti"],
+      placements:[
+        {room:"metalli", type:"opiskelija", count:5, glasses:true},
+        {room:"metalli", type:"lehtori", count:1, glasses:true},
+        {room:"metalli", type:"pajamestari", count:1, glasses:true}
+      ],
+      spotlight:["metalli","puu"],
+      tension:"Lehtori on vahva teoriassa, CAD:ssa ja muodonannossa, mutta ei hallitse koneajoa. Yksin pajasalissa hän ei tunnista koneiden vaaroja — valvonta olisi vain paperilla.",
+      rules:["roolit","passi","poikkeama"],
+      resolution:[
+        "Katvealueet kirjataan ja poistetaan: ristiinkoulutus täydentää kummankin osaamisen.",
+        "Parivaljakko saliin: lehtori johtaa projektia, muodonantoa ja CAD-porttia — ei koske koneisiin.",
+        "Pajamestari vastaa teknisestä turvasta ja antaa konepassit; lehtori ei luvita vaarallisia koneita.",
+        "Jos co-teaching-resurssia ei ole, käytännön osuus nojaa valvottuun digivalmistukseen tai siirtyy."
+      ],
+      outcome:{status:"warn", tag:"Yhdessä katettu", text:"Kumpikaan ei joudu oman osaamisensa ulkopuolelle vaarantamaan turvaa. Rajapinta lukitaan kalenteriin, ei henkilökemiaan."}
+    },
+    {
+      id:"ruuhka", n:"Tilanne 5", title:"Ruuhka", short:"Kolme kurssia samaan aikaan, yksi valvoja.", status:"risk",
+      tahot:["turva","talous","oikeus"],
+      placements:[
+        {room:"puu", type:"pajamestari", count:1, glasses:true},
+        {room:"puu", type:"opiskelija", count:6, glasses:true},
+        {room:"metalli", type:"opiskelija", count:6, glasses:true},
+        {room:"metalli", type:"opiskelija", count:1, glasses:false},
+        {room:"laser", type:"opiskelija", count:2, glasses:true}
+      ],
+      spotlight:["puu","metalli","laser"],
+      tension:"Kolme kurssia ja itsenäiset tekijät yhtä aikaa: tilassa 60–80 ihmistä yhden valvojan alla. Yksi metallipuolen opiskelija on jo lasit pöydällä — kun mestari on puupuolella, valvonta on tosiasiassa nolla.",
+      rules:["valot","passi","poikkeama","kielto"],
+      resolution:[
+        "Vain yksi kurssi kerrallaan riskin 4–5 koneille; muut tekevät matalan riskin työtä tai digivalmistusta.",
+        "Kolme kurssia = kolme lehtoria fyysisesti saliin jakamaan valvontataakka.",
+        "Itsenäinen työ evätään ruuhka-aikoina: oviin ja kalenteriin punainen valo.",
+        "Mestari kirjaa poikkeaman: aliresursoitu valvonta, riski kriittinen — esimiehen linjaus heti."
+      ],
+      outcome:{status:"risk", tag:"Volyymisokeus", text:"Yksi silmä ja korva ei valvo kolmea salia. Turvallisuus ajaa aikataulujen ohi — porrasta, miehitä tai supista."}
+    },
+    {
+      id:"esimies", n:"Tilanne 6", title:"Esimies jäätyy", short:"Linjausta ei tule — vastuu siirtyy lailla.", status:"risk",
+      tahot:["oikeus","turva","talous"],
+      placements:[
+        {room:"puu", type:"pajamestari", count:1, glasses:true},
+        {room:"puu", type:"opiskelija", count:6, glasses:true},
+        {room:"metalli", type:"opiskelija", count:5, glasses:true},
+        {room:"luento", type:"esimies", count:1, glasses:false}
+      ],
+      spotlight:["puu","metalli","luento"],
+      tension:"Pajamestarit eivät ota tulehtuneen tilanteen takia suoria ohjeita lehtorilta, joten toimitaan esimiehen kautta. Mutta esimies viivyttelee: ei resurssia, ei linjausta, ei sijaista. Opiskelijoita siirretään kalenterissa, kunnes he luovuttavat.",
+      rules:["roolit","poikkeama","kielto","sijainen"],
+      resolution:[
+        "Lehtori luovuttaa pelikirjan esimiehelle viralliseksi linjaksi — pois henkilökemioista, organisaation käskyksi.",
+        "Osaamisvajeet poistetaan esimiehen määräämällä ristiinkoulutuksella; opiskelijoiden suoritusikkunat lukitaan.",
+        "Poikkeama ja esteet kirjataan online: digitaalinen jälki siirtää vastuun sille tasolla, jolla on valta päättää.",
+        "Jos johto ei reagoi, TTL 23 §: paja suljetaan kunnes resurssit ja valvonta vastaavat lakisääteistä tasoa."
+      ],
+      outcome:{status:"risk", tag:"Vastuu nousee", text:"Kun esimies pettää, valta ja vastuu siirtyvät kovimmille nappuloille — laille ja dokumentoidulle järjestelmälle. Henkilökohtainen vastuu lukittuu sille, jolla on valta korjata."}
+    }
+  ];
+
+  // ---- state ----
+  var board = {};
+  rooms.forEach(function(r){ board[r.id] = []; });
+  var selectedType = null;
+  var placeGlasses = true;
+  var activeScn = null;
+  var spotlight = {};
+
+  // ---- helpers ----
+  function riskMeter(n){
+    var s = "", i;
+    for(i=1;i<=5;i++){ s += '<span class="seg' + (i<=n?" on":"") + '"></span>'; }
+    return '<span class="meter">' + s + '</span><span class="meternum">' + n + "/5</span>";
+  }
+
+  function piecesHTML(roomId){
+    var r = roomById[roomId];
+    var arr = board[roomId];
+    var s = "", i, p, hazard, lasit, pt;
+    for(i=0;i<arr.length;i++){
+      p = arr[i];
+      pt = pieceTypes[p.type];
+      hazard = (r.glasses && !p.glasses);
+      lasit = p.glasses ? '<i class="lasit on"></i>' : '<i class="lasit off"></i>';
+      s += '<button class="token t-' + p.type + (hazard?" hazard":"") + '" data-room="' + roomId + '" data-idx="' + i + '" title="' + pt.label + (hazard?" — ei suojalaseja!":"") + '">' + pt.glyph + lasit + "</button>";
+    }
+    return s;
+  }
+
+  function renderBoard(){
+    var el = document.getElementById("board");
+    var s = "", i, r, spot;
+    for(i=0;i<rooms.length;i++){
+      r = rooms[i];
+      spot = spotlight[r.id] ? " spotlight" : "";
+      s += '<div class="room kind-' + r.kind + spot + (selectedType?" placing":"") + '" data-room="' + r.id + '" style="grid-area:' + r.id + '">'
+         +   '<div class="room-head"><span class="room-name">' + r.name + "</span>"
+         +     (r.glasses ? '<span class="glassbadge">&#9678; lasit</span>' : "")
+         +   "</div>"
+         +   '<div class="room-sub">' + r.sub + "</div>"
+         +   '<div class="room-risk">' + riskMeter(r.risk) + "</div>"
+         +   '<div class="room-pieces" data-room="' + r.id + '">' + piecesHTML(r.id) + "</div>"
+         + "</div>";
+    }
+    el.innerHTML = s;
+    updateStatus();
+  }
+
+  function updateStatus(){
+    var total = 0, haz = 0, i, r, arr, j;
+    for(i=0;i<rooms.length;i++){
+      r = rooms[i]; arr = board[r.id]; total += arr.length;
+      if(r.glasses){ for(j=0;j<arr.length;j++){ if(!arr[j].glasses) haz++; } }
+    }
+    var s = "Laudalla <b>" + total + "</b> nappulaa";
+    if(haz>0){ s += ' &nbsp;·&nbsp; <span class="haz-flag">&#9888; ' + haz + " ilman suojalaseja erikoistilassa — hazard</span>"; }
+    else if(total>0){ s += " &nbsp;·&nbsp; kaikilla suojalasit"; }
+    document.getElementById("status").innerHTML = s;
+  }
+
+  function renderTray(){
+    var el = document.getElementById("tray");
+    var s = "", i, t, pt;
+    for(i=0;i<trayOrder.length;i++){
+      t = trayOrder[i]; pt = pieceTypes[t];
+      s += '<button class="pchip' + (selectedType===t?" sel":"") + '" data-type="' + t + '">'
+         + '<span class="pdot t-' + t + '">' + pt.glyph + "</span>" + pt.label + "</button>";
+    }
+    el.innerHTML = s;
+  }
+
+  function renderRules(){
+    var el = document.getElementById("rules");
+    var s = "", i, r, act;
+    var activeRules = activeScn ? activeScn.rules : [];
+    for(i=0;i<ruleCards.length;i++){
+      r = ruleCards[i];
+      act = (activeRules.indexOf(r.id) !== -1) ? " active" : "";
+      s += '<div class="rcard' + act + '" id="rc-' + r.id + '"><span class="rk">' + r.k + "</span>"
+         + "<h4>" + r.name + "</h4><p>" + r.t + "</p></div>";
+    }
+    el.innerHTML = s;
+  }
+
+  function renderTahot(){
+    var el = document.getElementById("tahot");
+    var s = "", i, t;
+    for(i=0;i<tahot.length;i++){
+      t = tahot[i];
+      s += '<div class="taho r-' + t.id + '"><span class="tn">' + t.n + "</span><h5>" + t.name + "</h5><p>" + t.t + "</p></div>";
+    }
+    el.innerHTML = s;
+  }
+
+  function renderScnCards(){
+    var el = document.getElementById("scnRow");
+    var s = "", i, sc;
+    for(i=0;i<scenarios.length;i++){
+      sc = scenarios[i];
+      s += '<button class="scn-card' + (activeScn && activeScn.id===sc.id?" active":"") + '" data-scn="' + sc.id + '">'
+         + '<span class="n">' + sc.n + "</span>"
+         + "<h4>" + sc.title + "</h4>"
+         + "<p>" + sc.short + "</p>"
+         + '<span class="stat ' + sc.status + '">' + (sc.status==="ok"?"hallittu":(sc.status==="warn"?"vaatii liikkeen":"kriittinen")) + "</span>"
+         + "</button>";
+    }
+    el.innerHTML = s;
+  }
+
+  function tahoChips(ids){
+    var s = "", i, t;
+    for(i=0;i<ids.length;i++){
+      t = null;
+      tahot.forEach(function(x){ if(x.id===ids[i]) t = x; });
+      if(t){ s += '<span class="chip taho r-' + t.id + '">' + t.name + "</span>"; }
+    }
+    return s;
+  }
+
+  function ruleChips(ids){
+    var s = "", i;
+    for(i=0;i<ids.length;i++){
+      if(ruleById[ids[i]]){ s += '<span class="rulechip">' + ruleById[ids[i]].name + "</span>"; }
+    }
+    return s;
+  }
+
+  function resList(steps){
+    var s = "", i;
+    for(i=0;i<steps.length;i++){ s += "<li>" + steps[i] + "</li>"; }
+    return "<ol class='res'>" + s + "</ol>";
+  }
+
+  function renderDetail(){
+    var el = document.getElementById("detail");
+    if(!activeScn){
+      el.className = "detail empty";
+      el.innerHTML = "Ei avattua tilannetta. Avaa tilannekortti yltä, tai sijoita nappuloita vapaasti laudalle.";
+      return;
+    }
+    var sc = activeScn;
+    el.className = "detail";
+    var html = "<h3>" + sc.title + "</h3>"
+      + '<div class="dsub">' + sc.short + "</div>"
+      + '<div class="chips">' + tahoChips(sc.tahot) + "</div>"
+      + '<div class="dlabel">Jännite</div><p>' + sc.tension + "</p>"
+      + '<div class="dlabel">Säännöt jotka laukeavat</div><div class="rulechips">' + ruleChips(sc.rules) + "</div>"
+      + '<div class="dlabel">Ratkaisu</div>' + resList(sc.resolution)
+      + '<div class="outcome ' + sc.outcome.status + '"><span class="otag">' + sc.outcome.tag + "</span>" + sc.outcome.text + "</div>";
+    el.innerHTML = html;
+  }
+
+  function loadScenario(id){
+    var sc = null, i;
+    for(i=0;i<scenarios.length;i++){ if(scenarios[i].id===id) sc = scenarios[i]; }
+    if(!sc) return;
+    activeScn = sc;
+    // reset board
+    rooms.forEach(function(r){ board[r.id] = []; });
+    spotlight = {};
+    sc.placements.forEach(function(pl){
+      var c, k;
+      c = pl.count || 1;
+      for(k=0;k<c;k++){ board[pl.room].push({type:pl.type, glasses:pl.glasses}); }
+    });
+    (sc.spotlight || []).forEach(function(rid){ spotlight[rid] = true; });
+    sc.placements.forEach(function(pl){ spotlight[pl.room] = true; });
+    selectedType = null;
+    renderScnCards();
+    renderTray();
+    renderBoard();
+    renderRules();
+    renderDetail();
+    var b = document.getElementById("board");
+    if(b && b.scrollIntoView){ b.scrollIntoView({behavior:"smooth", block:"center"}); }
+  }
+
+  function clearBoard(){
+    rooms.forEach(function(r){ board[r.id] = []; });
+    spotlight = {};
+    activeScn = null;
+    selectedType = null;
+    renderScnCards();
+    renderTray();
+    renderBoard();
+    renderRules();
+    renderDetail();
+  }
+
+  // ---- events ----
+  document.getElementById("scnRow").addEventListener("click", function(e){
+    var c = e.target.closest("[data-scn]");
+    if(c){ loadScenario(c.getAttribute("data-scn")); }
+  });
+
+  document.getElementById("tray").addEventListener("click", function(e){
+    var c = e.target.closest("[data-type]");
+    if(!c) return;
+    var t = c.getAttribute("data-type");
+    selectedType = (selectedType===t) ? null : t;
+    renderTray();
+    renderBoard();
+  });
+
+  document.getElementById("board").addEventListener("click", function(e){
+    var tok = e.target.closest(".token");
+    if(tok){
+      e.stopPropagation();
+      var rid = tok.getAttribute("data-room");
+      var idx = parseInt(tok.getAttribute("data-idx"), 10);
+      if(board[rid]){ board[rid].splice(idx,1); renderBoard(); }
+      return;
+    }
+    var room = e.target.closest(".room");
+    if(room && selectedType){
+      var id = room.getAttribute("data-room");
+      board[id].push({type:selectedType, glasses:placeGlasses});
+      renderBoard();
+    }
+  });
+
+  document.getElementById("glassToggle").addEventListener("change", function(e){
+    placeGlasses = e.target.checked;
+  });
+
+  document.getElementById("clearBtn").addEventListener("click", clearBoard);
+
+  // ---- init ----
+  renderScnCards();
+  renderTray();
+  renderBoard();
+  renderRules();
+  renderTahot();
+  renderDetail();
+  loadScenario("perehdytys");
+
+})();
+</script>
+<script src="paja-footer.js"></script>
+</body>
+</html>
