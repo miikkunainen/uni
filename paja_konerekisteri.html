@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Konerekisteri ja pajaälyn tietopohja — Muotoilun pajat</title>
+<meta name="theme-color" content="#CE3F1B">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="mhks-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,600&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#ECE6DA;--paper-deep:#E4DCCC;--card:#F3EFE7;--ink:#211C16;--ink-soft:#5A5347;
+    --ember:#CE3F1B;--rule:#C8BFAD;--rule-soft:#D8D0C0;--vihrea:#5E8C5A;--laatu:#BE8A2E;--steel:#3D4B58;--oikeus:#4F6E92;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 clamp(12px,3vw,26px) 60px;}
+  h1,h2,h3,h4,h5{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;text-transform:uppercase;line-height:.95;margin:0;}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+  p{margin:0 0 1em;}
+  .head{padding:clamp(20px,4vw,34px) 0 10px;}
+  .head h1{font-size:clamp(1.8rem,5vw,2.9rem);}
+  .head h1 .e{color:var(--ember);}
+  .head p{color:var(--ink-soft);font-size:.93rem;max-width:70ch;margin:.4em 0 0;}
+
+  .tabs{position:sticky;top:64px;z-index:20;background:var(--paper);display:flex;gap:4px;overflow-x:auto;padding:10px 0;border-bottom:1px solid var(--rule);}
+  .tab{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;cursor:pointer;border:1px solid var(--rule);background:var(--card);color:var(--ink-soft);padding:.55em .8em;border-radius:20px;flex:none;}
+  .tab:hover{border-color:var(--ink-soft);color:var(--ink);}
+  .tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .tab .n{background:var(--ember);color:#fff;border-radius:20px;padding:0 .4em;margin-left:.3em;font-size:.9em;}
+
+  .view{padding-top:16px;}
+  .lead{color:var(--ink-soft);font-size:.92rem;max-width:74ch;margin:0 0 14px;}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:13px 15px;margin-bottom:13px;}
+  .panel h3{font-size:1.15rem;margin-bottom:.4em;}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);font-weight:600;display:block;margin-bottom:.2em;}
+
+  .btn{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:.5em .82em;border-radius:3px;}
+  .btn:hover{background:var(--ink);color:var(--paper);}
+  .btn.primary{background:var(--ember);border-color:var(--ember);color:#fff;}
+  .btn.primary:hover{background:#b0340f;}
+  .btn.ok{background:var(--vihrea);border-color:var(--vihrea);color:#fff;}
+  .btn.ghost{border-color:var(--rule);color:var(--ink-soft);}
+  .btn.mini{font-size:.54rem;padding:.3em .55em;}
+  .btnrow{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
+
+  .field{margin:.45em 0;}
+  .field label{display:block;font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.2em;}
+  .field input,.field select,.field textarea{width:100%;font-family:"Spectral",serif;font-size:.94rem;padding:.45em .55em;border:1px solid var(--rule);border-radius:4px;background:#fff;color:var(--ink);}
+  .field textarea{resize:vertical;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--ember);border-color:var(--ember);}
+  .inline{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;}
+  .inline .field{flex:1;min-width:140px;margin:0;}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;margin-bottom:13px;}
+  .kpi{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:11px 13px;}
+  .kpi .k{font-family:"IBM Plex Mono",monospace;font-size:.54rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);}
+  .kpi .v{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;font-size:1.9rem;line-height:1;margin-top:.1em;}
+
+  .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+  .mcard{background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--steel);border-radius:8px;padding:12px 13px;cursor:pointer;}
+  .mcard:hover{border-color:var(--ink-soft);}
+  .mcard.h4,.mcard.h5{border-left-color:var(--ember);}
+  .mcard.h3{border-left-color:var(--laatu);}
+  .mcard.h1,.mcard.h2{border-left-color:var(--vihrea);}
+  .mcard h4{font-size:1.05rem;line-height:1.05;}
+  .mcard .rm{font-family:"IBM Plex Mono",monospace;font-size:.56rem;color:var(--ink-soft);margin-top:.15em;}
+  .mcard .loc{font-family:"IBM Plex Mono",monospace;font-size:.58rem;color:var(--oikeus);margin-top:.3em;}
+
+  .haz{display:flex;align-items:center;gap:6px;margin:.35em 0;}
+  .blocks{letter-spacing:-1px;font-family:"IBM Plex Mono",monospace;}
+  .blocks .on{color:var(--ember);}.blocks .off{color:var(--rule);}
+  .haz .n{font-family:"IBM Plex Mono",monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}
+  .pill{font-family:"IBM Plex Mono",monospace;font-size:.5rem;letter-spacing:.05em;text-transform:uppercase;padding:.18em .45em;border-radius:20px;display:inline-block;margin:.12em .2em .12em 0;}
+  .p-ppe{background:var(--paper-deep);color:var(--ink);border:1px solid var(--rule);}
+  .p-val{background:var(--ember);color:#fff;}
+  .p-luonnos{background:rgba(190,138,46,.25);color:#7a5a12;}
+  .p-tarkistettu{background:rgba(79,110,146,.2);color:#33506e;}
+  .p-hyvaksytty{background:rgba(94,140,90,.22);color:#3c5e39;}
+
+  .detail{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:16px 18px;margin-bottom:14px;}
+  .detail h3{font-size:1.5rem;}
+  .drow{padding:.5em 0;border-top:1px dashed var(--rule);font-size:.93rem;}
+  .drow .dl{font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:.15em;}
+  .drow ol,.drow ul{margin:.2em 0 0;padding-left:1.2em;}
+  .drow li{margin:.2em 0;}
+  .warnbox{background:rgba(206,63,27,.1);border-left:4px solid var(--ember);border-radius:4px;padding:.6em .8em;font-size:.88rem;margin:.6em 0;}
+  .okbox{background:rgba(94,140,90,.12);border-left:4px solid var(--vihrea);border-radius:4px;padding:.6em .8em;font-size:.88rem;margin:.6em 0;}
+  .infobox{background:var(--paper-deep);border-left:4px solid var(--steel);border-radius:4px;padding:.6em .8em;font-size:.88rem;margin:.6em 0;}
+
+  .tblwrap{overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;font-size:.84rem;}
+  th,td{border-bottom:1px solid var(--rule);padding:.42em .5em;text-align:left;vertical-align:top;}
+  th{font-family:"IBM Plex Mono",monospace;font-size:.54rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.85em;background:#fff;border:1px solid var(--rule);border-radius:3px;padding:.05em .35em;}
+
+  .msg{font-size:.85rem;padding:.5em .7em;border-radius:4px;margin:.5em 0;}
+  .msg.ok{background:rgba(94,140,90,.12);border-left:3px solid var(--vihrea);color:#3c5e39;}
+  .msg.err{background:rgba(206,63,27,.1);border-left:3px solid var(--ember);color:#8f2a10;}
+  .msg.info{background:var(--paper-deep);border-left:3px solid var(--steel);color:var(--ink-soft);}
+  .note{font-family:"IBM Plex Mono",monospace;font-size:.6rem;color:var(--ink-soft);line-height:1.7;margin-top:14px;border-top:1px solid var(--rule);padding-top:9px;}
+</style>
+</head>
+<body>
+<script src="paja-data.js"></script>
+<script>
+/* Varmistus: jos jaettu tietolähde ei latatunut, kerro se näkyvästi.
+   Hiljainen tyhjä lista on turvallisuustyökalussa vaarallinen. */
+(function(){
+  if(window.PAJA) return;
+  document.addEventListener("DOMContentLoaded", function(){
+    var d=document.createElement("div");
+    d.setAttribute("role","alert");
+    d.style.cssText="position:sticky;top:0;z-index:9999;background:#CE3F1B;color:#fff;padding:12px 16px;"
+      + "font-family:'IBM Plex Mono',monospace;font-size:.78rem;line-height:1.6;";
+    d.innerHTML="<b>Tietolähde puuttuu.</b> Tiedosto paja-data.js ei latautunut, joten koneet, tilat ja "
+      + "suojaimet eivät näy. Varmista että kaikki tiedostot ovat samassa kansiossa. "
+      + "Älä käytä tätä sivua ohjeena ennen kuin tieto näkyy.";
+    document.body.insertBefore(d, document.body.firstChild);
+  });
+})();
+</script>
+
+<script src="pajakuutio-nav.js"></script>
+<div class="wrap">
+
+  <header class="head">
+    <h1>Kone<span class="e">rekisteri</span></h1>
+    <p>Koneiden ja työkalujen tiedot, vaaraluokat, siivous- ja huolto-ohjeet sekä sijainnit. Tämä on se tietopohja, josta pajaäly ohjaa opiskelijaa livenä. Jokainen kortti tarkistetaan ja hyväksytään ennen käyttöä.</p>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+  <main class="view" id="view"></main>
+  <div class="note" id="note"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY="paja_konerekisteri_v1";
+  var current="koneet", openId="", q="", roomF="", statusF="";
+
+  var ROOMS=(window.PAJA?PAJA.roomNames():[]);
+  var HAZ={1:"Matala",2:"Kohtalainen",3:"Keskitaso",4:"Korkea",5:"Erittäin korkea"};
+  var PPE=(window.PAJA?PAJA.ppe():[]);
+
+  /* ---------------------------------------------------------
+     SIEMENDATA
+     Koneet on poimittu Mikan omista dokumenteista ja aiemmista
+     kurssikuvauksista. Sisältö on LUONNOS: pajamestari tarkistaa
+     ja hyväksyy jokaisen kortin ennen käyttöä.
+     --------------------------------------------------------- */
+  function seedMachines(){ return (window.PAJA?JSON.parse(JSON.stringify(PAJA.machines())):[]); }
+
+  function seedTools(){ return (window.PAJA?JSON.parse(JSON.stringify(PAJA.tools())):[]); }
+
+  var DB={machines:[],tools:[],tasks:[],log:[]};
+  function load(){ try{ var s=localStorage.getItem(KEY); if(s){ var d=JSON.parse(s);
+    DB.machines=d.machines||[]; DB.tools=d.tools||[]; DB.tasks=d.tasks||[]; DB.log=d.log||[]; } }catch(e){} }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(DB)); return true; }catch(e){ flash("Tallennus ei onnistunut.","err"); return false; } }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function nowISO(){ return new Date().toISOString(); }
+  function fmtD(iso){ if(!iso) return "–"; var d=new Date(iso); return d.getDate()+"."+(d.getMonth()+1)+"."+d.getFullYear(); }
+  function byId(id){ var a=DB.machines.filter(function(m){ return m.id===id; }); return a.length?a[0]:null; }
+  var flashMsg=null;
+  function flash(t,k){ flashMsg={t:t,k:k}; render(); }
+
+  function hazBlocks(h){
+    var on="",off="",i;
+    for(i=0;i<h;i++) on+="■"; for(i=h;i<5;i++) off+="■";
+    return '<span class="haz"><span class="blocks"><span class="on">'+on+'</span><span class="off">'+off+'</span></span><span class="n">'+h+" / 5 · "+HAZ[h]+'</span></span>';
+  }
+  function statusPill(s){
+    var lab={luonnos:"Luonnos",tarkistettu:"Tarkistettu",hyvaksytty:"Hyväksytty"};
+    return '<span class="pill p-'+s+'">'+lab[s]+'</span>';
+  }
+  function counts(){
+    var c={luonnos:0,tarkistettu:0,hyvaksytty:0},i;
+    for(i=0;i<DB.machines.length;i++){ c[DB.machines[i].status]=(c[DB.machines[i].status]||0)+1; }
+    return c;
+  }
+
+  // ================= KONEET =================
+  function viewMachines(){
+    if(DB.machines.length===0){
+      return '<div class="panel"><span class="kicker">Aloitus</span><h3>Rekisteri on tyhjä</h3>'
+        + '<p class="lead">Lataa pohja-aineisto: koneet, jotka löytyvät omista perehdytys- ja kurssidokumenteistanne, valmiiksi kortteina. Täydennä ja tarkista ne.</p>'
+        + '<div class="btnrow"><button class="btn primary" id="seed">Lataa pohja-aineisto</button></div></div>';
+    }
+    if(openId){ var m=byId(openId); if(m) return detailHTML(m)+'<div class="btnrow"><button class="btn ghost" id="closeD">Takaisin listaan</button></div>'; }
+
+    var c=counts();
+    var s='<div class="msg err"><b>Tarkistamaton sisältö ei ole käyttöohje.</b> Pohja-aineisto on koottu teidän omista dokumenteistanne ja yleisestä koneturvallisuudesta. Jokainen kortti on tarkistettava konetta vasten ja hyväksyttävä ennen kuin sitä käytetään opetuksessa tai pajaälyn tietopohjana.</div>';
+    s+='<div class="kpis">'
+      + '<div class="kpi"><div class="k">Koneita</div><div class="v">'+DB.machines.length+'</div></div>'
+      + '<div class="kpi"><div class="k">Luonnos</div><div class="v" style="color:var(--laatu)">'+(c.luonnos||0)+'</div></div>'
+      + '<div class="kpi"><div class="k">Tarkistettu</div><div class="v" style="color:var(--oikeus)">'+(c.tarkistettu||0)+'</div></div>'
+      + '<div class="kpi"><div class="k">Hyväksytty</div><div class="v" style="color:var(--vihrea)">'+(c.hyvaksytty||0)+'</div></div>'
+      + '<div class="kpi"><div class="k">Lupa vaaditaan</div><div class="v">'+DB.machines.filter(function(m){return m.permit;}).length+'</div></div></div>';
+
+    var ro='<option value="">Kaikki tilat</option>',i;
+    for(i=0;i<ROOMS.length;i++){ ro+='<option value="'+esc(ROOMS[i])+'"'+(roomF===ROOMS[i]?" selected":"")+'>'+esc(ROOMS[i])+'</option>'; }
+    var so='<option value="">Kaikki tilat</option>';
+    var st=[["luonnos","Luonnos"],["tarkistettu","Tarkistettu"],["hyvaksytty","Hyväksytty"]];
+    so='<option value="">Kaikki tilanteet</option>';
+    for(i=0;i<st.length;i++){ so+='<option value="'+st[i][0]+'"'+(statusF===st[i][0]?" selected":"")+'>'+st[i][1]+'</option>'; }
+    s+='<div class="panel"><div class="inline">'
+      + '<div class="field"><label>Hae</label><input type="text" id="fq" value="'+esc(q)+'" placeholder="Koneen nimi"></div>'
+      + '<div class="field"><label>Tila</label><select id="fr">'+ro+'</select></div>'
+      + '<div class="field"><label>Tarkistustilanne</label><select id="fs">'+so+'</select></div>'
+      + '<button class="btn ghost" id="fc">Tyhjennä</button></div></div>';
+
+    var ql=q.toLowerCase();
+    var vis=DB.machines.filter(function(m){
+      if(roomF && m.room!==roomF) return false;
+      if(statusF && m.status!==statusF) return false;
+      if(ql && m.name.toLowerCase().indexOf(ql)===-1) return false;
+      return true;
+    });
+    if(vis.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Ei osumia.</p></div>';
+
+    s+='<div class="mgrid">';
+    for(i=0;i<vis.length;i++){ var mm=vis[i];
+      s+='<div class="mcard h'+mm.haz+'" data-open="'+mm.id+'"><h4>'+esc(mm.name)+'</h4>'
+        + '<div class="rm">'+esc(mm.room)+'</div>'
+        + hazBlocks(mm.haz)
+        + (mm.permit?'<span class="pill p-val">Lupa vaaditaan</span>':'')
+        + statusPill(mm.status)
+        + '<div class="loc">'+esc(mm.loc||"—")+'</div></div>'; }
+    return s+'</div>';
+  }
+
+  function listHTML(arr,ordered){
+    if(!arr||arr.length===0) return "—";
+    var tag=ordered?"ol":"ul", s="<"+tag+">",i;
+    for(i=0;i<arr.length;i++){ s+="<li>"+esc(arr[i])+"</li>"; }
+    return s+"</"+tag+">";
+  }
+  function detailHTML(m){
+    var s='<div class="detail"><span class="kicker">Konekortti</span><h3>'+esc(m.name)+'</h3>'
+      + '<div class="mono" style="font-size:.6rem;color:var(--ink-soft);">'+esc(m.room)+' · sijainti '+esc(m.loc||"—")+'</div>'
+      + '<div style="margin-top:.5em;">'+hazBlocks(m.haz)+(m.permit?'<span class="pill p-val">Lupa vaaditaan</span>':'')+statusPill(m.status)+'</div>';
+    if(m.status!=="hyvaksytty") s+='<div class="warnbox"><b>Ei vielä hyväksytty.</b> Tätä korttia ei saa käyttää opetuksessa eikä pajaälyn tietopohjana ennen kuin pajamestari on tarkistanut sen konetta vasten.</div>';
+    else s+='<div class="okbox">Hyväksytty '+fmtD(m.approvedAt)+(m.approvedBy?" · "+esc(m.approvedBy):"")+'</div>';
+    if(m.permit) s+='<div class="warnbox">Konekohtainen perehdytys ja käyttölupa vaaditaan ennen itsenäistä käyttöä (työturvallisuuslaki 738/2002, käyttöasetus 403/2008).</div>';
+    var i,p="";
+    for(i=0;i<(m.ppe||[]).length;i++){ p+='<span class="pill p-ppe">'+esc(m.ppe[i])+'</span>'; }
+    s+='<div class="drow"><span class="dl">Käyttötarkoitus</span>'+esc(m.use||"—")+'</div>'
+      + '<div class="drow"><span class="dl">Suojaimet</span>'+(p||"—")+'</div>'
+      + '<div class="drow"><span class="dl">Käynnistys</span>'+listHTML(m.start,true)+'</div>'
+      + '<div class="drow"><span class="dl">Turvasäännöt</span>'+listHTML(m.rules,false)+'</div>'
+      + '<div class="drow"><span class="dl">Sammutus ja lopetus</span>'+listHTML(m.stop,true)+'</div>'
+      + '<div class="drow"><span class="dl">Siivous</span>'+esc(m.clean||"—")+'</div>'
+      + '<div class="drow"><span class="dl">Opiskelijan huolto</span>'+listHTML(m.maint_student,false)+'</div>'
+      + '<div class="drow"><span class="dl">Vain henkilökunta</span>'+listHTML(m.maint_staff,false)+'</div>';
+    if(m.extra) s+='<div class="infobox">'+esc(m.extra)+'</div>';
+    s+='<div class="drow"><span class="dl">Tarkistus ja hyväksyntä</span>'
+      + '<div class="inline" style="margin-top:.3em;"><div class="field"><label>Tarkistajan nimi</label><input type="text" id="apBy" value="'+esc(m.approvedBy||"")+'" placeholder="Pajamestarin nimi"></div>'
+      + '<button class="btn ok" id="apOk">Merkitse hyväksytyksi</button>'
+      + '<button class="btn ghost" id="apCheck">Merkitse tarkistetuksi</button></div></div>';
+    return s+'</div>';
+  }
+  function bindMachines(){
+    var sd=document.getElementById("seed");
+    if(sd){ sd.addEventListener("click", function(){
+      DB.machines=seedMachines(); DB.tools=seedTools();
+      DB.log.push({ts:nowISO(),text:"Pohja-aineisto ladattu: "+DB.machines.length+" konetta"});
+      save(); flash("Pohja-aineisto ladattu. Tarkista jokainen kortti.","ok"); }); }
+    document.querySelectorAll("[data-open]").forEach(function(c){ c.addEventListener("click", function(){ openId=c.getAttribute("data-open"); render(); }); });
+    var cd=document.getElementById("closeD"); if(cd){ cd.addEventListener("click", function(){ openId=""; render(); }); }
+    var fq=document.getElementById("fq");
+    if(fq){ fq.addEventListener("input", function(){ q=fq.value; var p=fq.selectionStart; render();
+      var n=document.getElementById("fq"); if(n){ n.focus(); n.setSelectionRange(p,p); } }); }
+    var fr=document.getElementById("fr"); if(fr){ fr.addEventListener("change", function(){ roomF=fr.value; render(); }); }
+    var fs=document.getElementById("fs"); if(fs){ fs.addEventListener("change", function(){ statusF=fs.value; render(); }); }
+    var fc=document.getElementById("fc"); if(fc){ fc.addEventListener("click", function(){ q=""; roomF=""; statusF=""; render(); }); }
+
+    var ok=document.getElementById("apOk");
+    if(ok){ ok.addEventListener("click", function(){
+      var m=byId(openId), by=document.getElementById("apBy").value.trim();
+      if(by.length<2){ flash("Kirjoita tarkistajan nimi.","err"); return; }
+      m.status="hyvaksytty"; m.approvedBy=by; m.approvedAt=nowISO();
+      DB.log.push({ts:nowISO(),text:"Hyväksytty: "+m.name+" ("+by+")"});
+      save(); flash(m.name+" hyväksytty.","ok"); }); }
+    var ch=document.getElementById("apCheck");
+    if(ch){ ch.addEventListener("click", function(){
+      var m=byId(openId), by=document.getElementById("apBy").value.trim();
+      if(by.length<2){ flash("Kirjoita tarkistajan nimi.","err"); return; }
+      m.status="tarkistettu"; m.approvedBy=by; m.approvedAt=nowISO();
+      DB.log.push({ts:nowISO(),text:"Tarkistettu: "+m.name+" ("+by+")"});
+      save(); flash(m.name+" merkitty tarkistetuksi.","ok"); }); }
+  }
+
+  // ================= SIJAINNIT =================
+  function viewLocations(){
+    var s='<p class="lead">Paikkakoodisto kertoo pajaälylle ja opiskelijalle, missä työkalu on. Koodi tarroitetaan kaappiin, laatikkoon ja työkalun paikalle — sama koodi molemmissa.</p>'
+      + '<div class="panel"><span class="kicker">Koodisto</span><h3>Miten paikka merkitään</h3>'
+      + '<p style="font-size:.92rem;">Muoto: <code>TILA-KAAPPI-LAATIKKO</code>. Esimerkki: <code>PUU-K3-L2</code> = Puustudio, kaappi 3, laatikko 2.</p>'
+      + '<div class="tblwrap"><table><thead><tr><th>Osa</th><th>Merkintä</th><th>Esimerkki</th></tr></thead><tbody>'
+      + '<tr><td>Tila</td><td>Kolme kirjainta</td><td>PUU, MET, LAS, CNC, JAL, MAA, TDT, YLE</td></tr>'
+      + '<tr><td>Kaappi tai taulu</td><td>K = kaappi, S = seinä/taulu, A–C = konealue</td><td>K3, S1, A2</td></tr>'
+      + '<tr><td>Laatikko tai hylly</td><td>L = laatikko, H = hylly</td><td>L2, H1</td></tr>'
+      + '</tbody></table></div>'
+      + '<div class="infobox">Vinkki tarroitukseen: sama koodi kolmeen paikkaan — kaapin oveen, laatikon etureunaan ja työkalun varjopaikkaan. Silloin palautus on yksiselitteinen eikä vaadi muistamista.</div></div>';
+
+    s+='<div class="panel"><span class="kicker">Lisää</span><h3>Uusi työkalu tai paikka</h3><div class="inline">'
+      + '<div class="field"><label>Työkalu</label><input type="text" id="tName"></div>'
+      + '<div class="field" style="max-width:150px;"><label>Paikkakoodi</label><input type="text" id="tLoc" placeholder="PUU-K3-L2"></div>'
+      + '<div class="field"><label>Huomio</label><input type="text" id="tNote"></div>'
+      + '<button class="btn primary" id="tAdd">Lisää</button></div></div>';
+
+    if(DB.tools.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Ei työkaluja. Lataa pohja-aineisto Koneet-välilehdeltä.</p></div>';
+    s+='<div class="panel"><div class="tblwrap"><table><thead><tr><th>Paikkakoodi</th><th>Työkalu</th><th>Tila</th><th>Huomio</th></tr></thead><tbody>';
+    var i,sorted=DB.tools.slice().sort(function(a,b){ return String(a.loc).localeCompare(String(b.loc)); });
+    for(i=0;i<sorted.length;i++){ var t=sorted[i];
+      s+='<tr><td><code>'+esc(t.loc)+'</code></td><td>'+esc(t.name)+'</td><td class="mono" style="font-size:.72rem;">'+esc(t.room||"")+'</td><td style="font-size:.85rem;color:var(--ink-soft);">'+esc(t.note||"")+'</td></tr>'; }
+    return s+'</tbody></table></div></div>';
+  }
+  function bindLocations(){
+    var b=document.getElementById("tAdd"); if(!b) return;
+    b.addEventListener("click", function(){
+      var n=document.getElementById("tName").value.trim(), l=document.getElementById("tLoc").value.trim().toUpperCase();
+      if(n.length<2){ flash("Kirjoita työkalun nimi.","err"); return; }
+      if(l.length<3){ flash("Anna paikkakoodi, esim. PUU-K3-L2.","err"); return; }
+      DB.tools.push({id:"t_"+Math.random().toString(36).slice(2,7),name:n,loc:l,room:"",note:document.getElementById("tNote").value.trim()});
+      save(); flash("Lisätty.","ok"); });
+  }
+
+  // ================= TEHTÄVÄKUVAUKSET =================
+  function viewTasks(){
+    var s='<p class="lead">Tehtäväkuvaus on sitä parempi, mitä vähemmän se jättää arvattavaa. Rakenne pakottaa määrittelemään vaatimukset, vaiheet, mitat ja hyväksymiskriteerit — se on se, mikä tekee itsenäisestä suorittamisesta mahdollista.</p>';
+    s+='<div class="panel"><span class="kicker">Rakenne</span><h3>Timantinkovan tehtäväkuvauksen osat</h3>'
+      + '<div class="tblwrap"><table><thead><tr><th>Osa</th><th>Mitä siinä sanotaan</th><th>Miksi</th></tr></thead><tbody>'
+      + '<tr><td>Tavoite</td><td>Mitä valmistetaan ja mitä opitaan</td><td>Opiskelija tietää mihin pyrkii</td></tr>'
+      + '<tr><td>Pätevyysvaatimus</td><td>Mitkä ajokortit vaaditaan ennen aloitusta</td><td>Turvallisuus ja lainmukaisuus</td></tr>'
+      + '<tr><td>Materiaali</td><td>Laji, mitat, määrä, mistä haetaan</td><td>Ei arvailua, ei hukkaa</td></tr>'
+      + '<tr><td>Työkalut ja koneet</td><td>Nimet ja paikkakoodit</td><td>Löytyy ilman kyselemistä</td></tr>'
+      + '<tr><td>Vaiheet</td><td>Numeroitu järjestys, yksi toiminto per vaihe</td><td>Kognitiivinen kuorma hallintaan</td></tr>'
+      + '<tr><td>Mitat ja toleranssit</td><td>Numerot, ei "sopivasti"</td><td>Tarkistettavuus</td></tr>'
+      + '<tr><td>Tarkistuspisteet</td><td>Missä kohdin ohjaaja katsoo</td><td>Virhe löytyy ajoissa</td></tr>'
+      + '<tr><td>Hyväksymiskriteerit</td><td>Milloin työ on valmis ja hyvä</td><td>Arviointi läpinäkyväksi</td></tr>'
+      + '<tr><td>Siivous</td><td>Mitä jätetään jälkeen</td><td>Seuraavan käyttäjän oikeus</td></tr>'
+      + '<tr><td>Yleiset virheet</td><td>Mitä tässä työssä yleensä menee pieleen</td><td>Ennakointi, ei jälkiviisaus</td></tr>'
+      + '</tbody></table></div></div>';
+
+    s+='<div class="panel"><span class="kicker">Esimerkki</span><h3>Paistinlasta — malliksi</h3>'
+      + '<div class="drow"><span class="dl">Tavoite</span>Valmistaa elintarvikekelpoinen paistinlasta. Opitaan aihion valmistus, muotosahaus ja pintakäsittely.</div>'
+      + '<div class="drow"><span class="dl">Pätevyysvaatimus</span>safety.induction (suoritettu) + wood.machines (ohjattu)</div>'
+      + '<div class="drow"><span class="dl">Materiaali</span>Koivu 25 mm, aihio n. 400 × 90 mm. Haetaan: hyllypaikka PUU-01.</div>'
+      + '<div class="drow"><span class="dl">Työkalut ja koneet</span>Vannesaha (PUU-A1), nauhahiomakone (PUU-B1), hiomatarvikkeet (PUU-K3-L1), työntömitta (PUU-K1-L1)</div>'
+      + '<div class="drow"><span class="dl">Vaiheet</span><ol>'
+      + '<li>Mittaa ja merkitse aihion mitat.</li><li>Halkaise aihio paksuuteen.</li><li>Katkaise pituuteen.</li>'
+      + '<li>Piirrä muoto kahdelta sivulta.</li><li>Sahaa muoto vannesahalla molemmilta sivuilta.</li>'
+      + '<li>Hio muoto nauhahiomakoneella.</li><li>Käsihionta karkeudet 120 → 180 → 240.</li>'
+      + '<li>Pintakäsittele elintarvikekelpoisella öljyvahalla.</li></ol></div>'
+      + '<div class="drow"><span class="dl">Mitat ja toleranssit</span>Kahvan paksuus 12 mm ±1 mm. Terän kärki 3 mm ±0,5 mm. Pinta tasainen, ei kynnellä tuntuvia uria.</div>'
+      + '<div class="drow"><span class="dl">Tarkistuspisteet</span>Ohjaaja tarkistaa: (1) aihion mitat ennen muotosahausta, (2) muoto ennen hiontaa, (3) pinta ennen öljyämistä.</div>'
+      + '<div class="drow"><span class="dl">Hyväksymiskriteerit</span>Mitat toleranssissa · pinta tasainen ja sileä · muoto symmetrinen · öljyvaha imeytynyt ja ylimäärä pyyhitty · ei teräviä reunoja.</div>'
+      + '<div class="drow"><span class="dl">Siivous</span>Koneet harjattu, hiomapöly imuroitu, työkalut paikoilleen, öljyrätti metalliastiaan.</div>'
+      + '<div class="drow"><span class="dl">Yleiset virheet</span>Liian ohut kahva (murtuu) · epäsymmetrinen muoto (sahataan vain toiselta sivulta huolella) · liikaa öljyä (tahmaa) · öljyrätti roskikseen (itsesyttymisvaara).</div>'
+      + '</div>';
+    return s;
+  }
+
+  // ================= PAJAÄLY =================
+  function viewAI(){
+    var appr=DB.machines.filter(function(m){ return m.status==="hyvaksytty"; });
+    var s='<p class="lead">Pajaäly on ohjaava avustaja, joka vastaa opiskelijalle pajalla. Se saa tietonsa tästä rekisteristä — ei muualta ja ei omasta päättelystä.</p>';
+    s+='<div class="panel"><span class="kicker">Periaate</span><h3>Vain hyväksytty tieto</h3>'
+      + '<p style="font-size:.92rem;">Vienti sisältää vain kortit, jotka pajamestari on hyväksynyt. Näin pajaäly ei voi neuvoa koneesta, jonka ohjetta ei ole tarkistettu. Tämä on tarkoituksellinen rajoite eikä sitä pidä ohittaa.</p>'
+      + '<div class="'+(appr.length?"okbox":"warnbox")+'">Hyväksyttyjä kortteja: <b>'+appr.length+'</b> / '+DB.machines.length+'. '+(appr.length?"Nämä viedään pajaälylle.":"Vientiä ei kannata tehdä ennen kuin kortteja on hyväksytty.")+'</div>'
+      + '<div class="btnrow"><button class="btn primary" id="expAI">Vie pajaälylle (JSON)</button>'
+      + '<button class="btn ghost" id="expAll">Vie koko rekisteri (JSON)</button>'
+      + '<button class="btn ghost" id="expCsv">Vie koneet (CSV)</button></div></div>';
+
+    s+='<div class="panel"><span class="kicker">Rajat</span><h3>Mitä pajaäly saa ja ei saa tehdä</h3>'
+      + '<div class="tblwrap"><table><thead><tr><th>Saa</th><th>Ei saa</th></tr></thead><tbody>'
+      + '<tr><td>Kertoa koneen käyttötarkoituksen ja vaaraluokan</td><td>Antaa käyttölupaa tai korvata perehdytystä</td></tr>'
+      + '<tr><td>Näyttää käynnistys- ja sammutusvaiheet hyväksytystä kortista</td><td>Keksiä ohjetta koneesta, jota ei ole hyväksytty</td></tr>'
+      + '<tr><td>Kertoa missä työkalu sijaitsee (paikkakoodi)</td><td>Neuvoa ohittamaan suojus tai turvalaite</td></tr>'
+      + '<tr><td>Muistuttaa suojaimista ja siivouksesta</td><td>Vahvistaa pätevyyttä opiskelijan puolesta</td></tr>'
+      + '<tr><td>Ehdottaa työmenetelmää perusteluineen</td><td>Ehdottaa menetelmää, joka ylittää opiskelijan tason</td></tr>'
+      + '<tr><td>Ohjata kysymään pajamestarilta epäselvässä tilanteessa</td><td>Antaa kemikaaliohjetta ilman käyttöturvallisuustiedotetta</td></tr>'
+      + '</tbody></table></div>'
+      + '<div class="infobox"><b>Ohjauksen sävy:</b> lempeä mutta päättäväinen. Ei nolaa, ei rankaise, mutta ei jousta turvallisuudesta. Epävarmassa tilanteessa ohjaa ihmisen puheille — se on oikea vastaus, ei epäonnistuminen.</div></div>';
+    return s;
+  }
+  function aiPayload(){
+    var appr=DB.machines.filter(function(m){ return m.status==="hyvaksytty"; });
+    return {
+      version:"1.0", generated:nowISO(), site:"Metropolia Muotoilun Pajat, Arabia",
+      note:"Vain hyväksytyt konekortit. Pajaäly ei saa antaa ohjetta koneesta, jota ei ole tässä.",
+      rules:{
+        allowed:["Käyttötarkoitus ja vaaraluokka","Hyväksytyn kortin vaiheet","Työkalun sijainti","Suojain- ja siivousmuistutus","Perusteltu menetelmäehdotus"],
+        forbidden:["Käyttöluvan myöntäminen","Ohjeen keksiminen","Suojuksen ohittaminen","Pätevyyden vahvistaminen","Kemikaaliohje ilman KTT:tä"],
+        escalate:"Epäselvässä tai turvallisuuskriittisessä tilanteessa ohjaa pajamestarin puheille."
+      },
+      machines:appr.map(function(m){
+        return { id:m.id, name:m.name, room:m.room, location:m.loc, hazard:m.haz, hazardLabel:HAZ[m.haz],
+          permitRequired:!!m.permit, ppe:m.ppe, purpose:m.use, startup:m.start, shutdown:m.stop,
+          safetyRules:m.rules, cleaning:m.clean, maintenanceStudent:m.maint_student, maintenanceStaff:m.maint_staff,
+          notes:m.extra||"", approvedBy:m.approvedBy||"", approvedAt:m.approvedAt||"" };
+      }),
+      tools:DB.tools.map(function(t){ return { name:t.name, location:t.loc, room:t.room, note:t.note }; }),
+      locationCode:{ format:"TILA-KAAPPI-LAATIKKO", example:"PUU-K3-L2",
+        rooms:(window.PAJA?PAJA.rooms().reduce(function(o,r){o[r.code]=r.name;return o;},{}):{}) }
+    };
+  }
+  function bindAI(){
+    function dl(txt,name,mime){
+      try{ var b=new Blob([txt],{type:mime}),u=URL.createObjectURL(b),a=document.createElement("a");
+        a.href=u; a.download=name; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(u); },1000);
+      }catch(e){ flash("Lataus ei onnistunut.","err"); }
+    }
+    var a=document.getElementById("expAI");
+    if(a){ a.addEventListener("click", function(){
+      var pl=aiPayload();
+      if(pl.machines.length===0){ flash("Ei hyväksyttyjä kortteja vietäväksi.","err"); return; }
+      dl(JSON.stringify(pl,null,2),"pajaaly_tietopohja.json","application/json"); }); }
+    var b=document.getElementById("expAll");
+    if(b){ b.addEventListener("click", function(){ dl(JSON.stringify(DB,null,2),"konerekisteri_kaikki.json","application/json"); }); }
+    var c=document.getElementById("expCsv");
+    if(c){ c.addEventListener("click", function(){
+      function cc(x){ return String(x==null?"":x).replace(/;/g," ").replace(/[\r\n]+/g," "); }
+      var rows=["Kone;Tila;Paikka;Vaara;Lupa;Suojaimet;Kayttotarkoitus;Siivous;Tilanne;Hyvaksyja"],i;
+      for(i=0;i<DB.machines.length;i++){ var m=DB.machines[i];
+        rows.push([cc(m.name),cc(m.room),cc(m.loc),m.haz,m.permit?"kyllä":"ei",cc((m.ppe||[]).join(", ")),
+          cc(m.use),cc(m.clean),cc(m.status),cc(m.approvedBy)].join(";")); }
+      dl("\ufeff"+rows.join("\r\n"),"konerekisteri.csv","text/csv;charset=utf-8"); }); }
+  }
+
+  // ================= ROUTER =================
+  var TABS=[
+    { id:"koneet", label:"Koneet", render:viewMachines, bind:bindMachines },
+    { id:"sijainnit", label:"Sijainnit ja työkalut", render:viewLocations, bind:bindLocations },
+    { id:"tehtavat", label:"Tehtäväkuvaukset", render:viewTasks, bind:null },
+    { id:"pajaaly", label:"Pajaäly", render:viewAI, bind:bindAI }
+  ];
+  function render(){
+    var el=document.getElementById("tabs"),s="",i;
+    var c=counts(), pend=(c.luonnos||0);
+    for(i=0;i<TABS.length;i++){
+      var extra=(TABS[i].id==="koneet"&&pend>0)?'<span class="n">'+pend+'</span>':"";
+      s+='<button class="tab'+(TABS[i].id===current?" active":"")+'" data-tab="'+TABS[i].id+'">'+TABS[i].label+extra+'</button>'; }
+    el.innerHTML=s;
+    el.querySelectorAll("[data-tab]").forEach(function(b){ b.addEventListener("click", function(){ current=b.getAttribute("data-tab"); openId=""; flashMsg=null; render(); }); });
+    var t=null; for(i=0;i<TABS.length;i++){ if(TABS[i].id===current) t=TABS[i]; }
+    var html=t.render();
+    if(flashMsg){ html='<div class="msg '+flashMsg.k+'">'+esc(flashMsg.t)+'</div>'+html; flashMsg=null; }
+    document.getElementById("view").innerHTML=html;
+    if(t.bind) t.bind();
+    document.getElementById("note").innerHTML=
+      "Konekohtainen perehdytys ja käyttölupa ovat lakisääteisiä (työturvallisuuslaki 738/2002, käyttöasetus 403/2008). "
+      + "Tämä rekisteri ei korvaa perehdytystä vaan tukee sitä. Pohja-aineisto on luonnos, joka on tarkistettava konetta vasten ennen käyttöä. "
+      + "Pilotti: tiedot tallentuvat selaimeen — vie varmuuskopio Pajaäly-välilehdeltä.";
+  }
+
+  load(); render();
+})();
+</script>
+<script src="paja-footer.js"></script>
+</body>
+</html>
