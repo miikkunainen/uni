@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Syksyn orientaatiokurssi — perehdytys, työlupa ja paja-ajokortti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE6DA;--paper-deep:#E4DCCC;--card:#F3EFE7;--ink:#211C16;--ink-soft:#5A5347;
+    --ember:#CE3F1B;--rule:#C8BFAD;--rule-soft:#D8D0C0;
+    --vihrea:#5E8C5A;--oikeus:#4F6E92;--turva:#C25A3E;--laatu:#BE8A2E;--projekti:#6E5A93;--talous:#4E8C84;
+    --steel:#3D4B58;--wood:#B0712F;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:radial-gradient(1100px 560px at 85% -8%,rgba(206,63,27,.06),transparent 60%),var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:940px;margin:0 auto;padding:0 clamp(16px,4vw,34px);}
+  h1,h2,h3,h4,h5{font-family:"Big Shoulders Display","Arial Narrow",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:.95;margin:0;}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;}
+  .ink-soft{color:var(--ink-soft);}
+  p{margin:0 0 1em;}
+
+  .printbar{position:fixed;top:16px;right:16px;z-index:40;}
+  .printbtn{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;background:var(--ink);color:var(--paper);border:none;padding:.6em 1em;border-radius:2px;box-shadow:0 6px 20px rgba(33,28,22,.22);}
+  .printbtn:hover{background:var(--ember);}
+
+  .hero{padding:clamp(38px,7vw,78px) 0 clamp(18px,3vw,30px);}
+  .hero .eyebrow{display:block;margin-bottom:clamp(14px,3vw,24px);}
+  .hero__title{font-size:clamp(2.6rem,9vw,5.4rem);line-height:.86;}
+  .hero__title .ember{color:var(--ember);}
+  .hero__epi{font-family:"Spectral",serif;font-style:italic;font-size:clamp(1.15rem,2.8vw,1.6rem);max-width:34ch;margin:clamp(16px,3vw,26px) 0 0;}
+  .hero__sub{font-size:1rem;color:var(--ink-soft);max-width:64ch;margin-top:.8em;}
+
+  .sec{padding:clamp(26px,4vw,46px) 0;border-top:1px solid var(--rule);}
+  .sec__no{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ember);display:block;margin-bottom:.4em;}
+  .sec__title{font-size:clamp(1.7rem,5vw,2.5rem);}
+  .sec__lead{font-size:1.02rem;max-width:62ch;margin:.5em 0 0;color:var(--ink-soft);}
+  .body{margin-top:1em;}
+
+  .days{list-style:none;margin:.6em 0 0;padding:0;}
+  .day{display:flex;gap:12px;padding:.5em 0;border-bottom:1px dashed var(--rule);}
+  .day__n{font-family:"IBM Plex Mono",monospace;font-size:.66rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--steel);padding:.28em .5em;border-radius:3px;height:fit-content;white-space:nowrap;flex:none;min-width:52px;text-align:center;}
+  .day__c{font-size:.92rem;}
+  .dayhead{font-size:1.15rem;margin:1.1em 0 .1em;}
+  .dayhead .pin{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);}
+  .banner{display:flex;gap:12px;padding:.7em .9em;background:var(--paper-deep);border:1px solid var(--rule);border-left:4px solid var(--ember);border-radius:5px;margin:.4em 0 0;}
+  .banner .day__n{background:var(--ember);}
+
+  .callout{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--laatu);border-radius:6px;padding:13px 15px;margin:1em 0;}
+  .callout h4{font-size:1.05rem;margin-bottom:.3em;}
+  .callout p{font-size:.9rem;margin:0;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:.6em 0;}
+  .lvl{display:flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--ink-soft);}
+  .lvl .blocks{letter-spacing:-1px;}
+  .lvl .on{color:var(--ember);}.lvl .off{color:var(--rule);}
+
+  .path{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+  .node{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.03em;text-transform:uppercase;border:1px solid var(--rule);border-radius:20px;padding:.4em .7em;color:var(--ink-soft);}
+  .node.now{background:var(--ember);color:#fff;border-color:var(--ember);}
+  .node.next{border-color:var(--ink);color:var(--ink);}
+  .arr{color:var(--rule);}
+
+  /* ---- PIPELINE ---- */
+  .pipe{background:var(--paper-deep);border:1px solid var(--rule);border-radius:10px;padding:clamp(14px,3vw,22px);margin-top:1em;}
+  .steps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+  .stepdot{flex:1;min-width:70px;font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.04em;text-transform:uppercase;text-align:center;padding:.5em .3em;border-radius:4px;background:var(--card);border:1px solid var(--rule);color:var(--ink-soft);}
+  .stepdot.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .stepdot.done{background:var(--vihrea);color:#fff;border-color:var(--vihrea);}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:7px;padding:clamp(14px,3vw,20px);}
+  .panel h3{font-size:1.3rem;margin-bottom:.4em;}
+  .panel .kicker{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);font-weight:600;display:block;margin-bottom:.3em;}
+  .panel p{font-size:.94rem;}
+  .field{margin:.7em 0;}
+  .field label{display:block;font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.3em;}
+  .field input[type=text]{width:100%;font-family:"Spectral",serif;font-size:1rem;padding:.55em .7em;border:1px solid var(--rule);border-radius:4px;background:#fff;color:var(--ink);}
+  .field input[type=text]:focus{outline:2px solid var(--ember);border-color:var(--ember);}
+
+  .q{border-top:1px solid var(--rule-soft);padding:.8em 0 .3em;}
+  .q .qt{font-weight:600;font-size:.96rem;margin-bottom:.4em;}
+  .opt{display:block;padding:.5em .7em;border:1px solid var(--rule);border-radius:5px;margin-bottom:6px;cursor:pointer;font-size:.92rem;background:#fff;}
+  .opt:hover{border-color:var(--ink-soft);}
+  .opt input{margin-right:.5em;accent-color:var(--ember);}
+  .opt.right{border-color:var(--vihrea);background:rgba(94,140,90,.1);}
+  .opt.wrong{border-color:var(--ember);background:rgba(206,63,27,.08);}
+
+  .affirm{display:flex;gap:10px;align-items:flex-start;padding:.6em 0;border-top:1px solid var(--rule-soft);}
+  .affirm input{margin-top:.3em;accent-color:var(--turva);width:18px;height:18px;flex:none;}
+  .affirm .at{font-size:.94rem;}
+  .affirm .al{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ember);display:block;margin-bottom:.15em;}
+
+  .domainpick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:.6em 0;}
+  @media (max-width:560px){.domainpick{grid-template-columns:1fr;}}
+  .dcard{border:1px solid var(--rule);border-radius:6px;padding:11px 12px;background:#fff;cursor:pointer;}
+  .dcard.sel{border-color:var(--ember);box-shadow:0 0 0 1px var(--ember);}
+  .dcard h5{font-size:1rem;margin:0 0 .2em;}
+  .dcard .did{font-family:"IBM Plex Mono",monospace;font-size:.58rem;color:var(--ink-soft);}
+  .dcard .dn{font-size:.82rem;color:var(--ink-soft);margin-top:.3em;}
+  .dcard .core{font-family:"IBM Plex Mono",monospace;font-size:.54rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ember);}
+
+  .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .btn{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:.6em .95em;border-radius:3px;}
+  .btn:hover{background:var(--ink);color:var(--paper);}
+  .btn.primary{background:var(--ember);border-color:var(--ember);color:#fff;}
+  .btn.primary:hover{background:#b0340f;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+  .btn.ghost{border-color:var(--rule);color:var(--ink-soft);}
+
+  .msg{font-size:.86rem;padding:.5em .7em;border-radius:4px;margin-top:.6em;}
+  .msg.err{background:rgba(206,63,27,.1);border-left:3px solid var(--ember);color:#8f2a10;}
+  .msg.ok{background:rgba(94,140,90,.12);border-left:3px solid var(--vihrea);color:#3c5e39;}
+
+  /* ---- AJOKORTTI ---- */
+  .ajokortti{border:2px solid var(--ink);border-radius:10px;padding:clamp(16px,3vw,24px);background:linear-gradient(160deg,#F6F2EA,#EEE7D8);}
+  .ak-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:12px;}
+  .ak-head .t{font-family:"Big Shoulders Display",sans-serif;font-weight:800;text-transform:uppercase;font-size:1.5rem;line-height:.9;}
+  .ak-head .s{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);}
+  .ak-name{font-family:"Big Shoulders Display",sans-serif;font-weight:700;font-size:1.6rem;text-transform:uppercase;line-height:1;}
+  .ak-meta{font-family:"IBM Plex Mono",monospace;font-size:.62rem;color:var(--ink-soft);margin-top:.2em;}
+  .ak-caps{list-style:none;margin:12px 0 0;padding:0;}
+  .ak-cap{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:.45em 0;border-top:1px dashed var(--rule);font-size:.92rem;}
+  .ak-cap .cd{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);}
+  .ak-lvl{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.05em;text-transform:uppercase;padding:.25em .5em;border-radius:20px;color:#fff;white-space:nowrap;}
+  .ak-lvl.independent{background:var(--vihrea);}
+  .ak-lvl.supervised{background:var(--laatu);}
+  .ak-foot{font-family:"IBM Plex Mono",monospace;font-size:.58rem;color:var(--ink-soft);margin-top:12px;border-top:1px solid var(--rule);padding-top:8px;}
+
+  .teacher{margin-top:14px;border-top:1px solid var(--rule);padding-top:12px;}
+  .teacher summary{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);cursor:pointer;}
+  .trec{font-family:"IBM Plex Mono",monospace;font-size:.72rem;padding:.35em 0;border-bottom:1px dashed var(--rule);}
+
+  .foot{padding:clamp(24px,4vw,44px) 0 clamp(40px,6vw,72px);border-top:2px solid var(--ink);margin-top:16px;}
+  .foot__grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;}
+  .foot__brand{font-family:"Big Shoulders Display",sans-serif;font-weight:800;text-transform:uppercase;font-size:1.5rem;line-height:.9;}
+  .foot__meta{font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--ink-soft);line-height:1.8;text-align:right;}
+
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}}
+
+  @media print{
+    .printbar,.pk-nav,.steps,.btnrow,.teacher,.pipe > .panel:not(.ak-wrap){display:none !important;}
+    body{background:#fff;}
+    .sec{border:none;}
+    .ajokortti{box-shadow:none;}
+    .reveal{opacity:1 !important;transform:none !important;}
+  }
+</style>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="mhks-icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-180.png">
+</head>
+<body>
+<script src="paja-data.js"></script>
+<script>
+/* Varmistus: jos jaettu tietolähde ei latatunut, kerro se näkyvästi.
+   Hiljainen tyhjä lista on turvallisuustyökalussa vaarallinen. */
+(function(){
+  if(window.PAJA) return;
+  document.addEventListener("DOMContentLoaded", function(){
+    var d=document.createElement("div");
+    d.setAttribute("role","alert");
+    d.style.cssText="position:sticky;top:0;z-index:9999;background:#CE3F1B;color:#fff;padding:12px 16px;"
+      + "font-family:'IBM Plex Mono',monospace;font-size:.78rem;line-height:1.6;";
+    d.innerHTML="<b>Tietolähde puuttuu.</b> Tiedosto paja-data.js ei latautunut, joten koneet, tilat ja "
+      + "suojaimet eivät näy. Varmista että kaikki tiedostot ovat samassa kansiossa. "
+      + "Älä käytä tätä sivua ohjeena ennen kuin tieto näkyy.";
+    document.body.insertBefore(d, document.body.firstChild);
+  });
+})();
+</script>
+
+<script src="pajakuutio-nav.js"></script>
+<div class="printbar"><button class="printbtn" onclick="window.print()">Tulosta / PDF</button></div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <span class="eyebrow">Muotoilun Pajat · Teollinen muotoilu · 1. vsk · Arabia</span>
+    <h1 class="hero__title">Syksyn<br>orientaatio<span class="ember">kurssi</span></h1>
+    <p class="hero__epi">Turvallisesti pajalle — suorita oma paja-ajokorttisi.</p>
+    <p class="hero__sub">Tämä sivu toimii sekä kurssin ohjelmana että suoritustyökaluna: käyt läpi turvallisuusperehdytyksen ja työlupaehdot, suoritat paja-ajokortin ja tallennat sen tulostettavaan muotoon. Aloita tutustumalla alla oleviin turvallisuusohjeisiin ja siirry sen jälkeen ajokorttiputkeen.</p>
+  </header>
+
+  <!-- 01 PEDAGOGINEN YDIN -->
+  <section class="sec">
+    <span class="sec__no reveal">01</span>
+    <h2 class="sec__title reveal">Pedagoginen ydin</h2>
+    <p class="sec__lead reveal">Yhdeksän päivää, kaksi pajaa ja aitoja käytännön töitä. Opit tekemällä — mutta vasta sitten, kun turvallisuusohjeet on sisäistetty. Yhteinen turvallisuus on jokaisen etu.</p>
+  </section>
+
+  <!-- 02 AIKATAULU -->
+  <section class="sec">
+    <span class="sec__no reveal">02</span>
+    <h2 class="sec__title reveal">Kierto · 9 päivää</h2>
+    <div class="body reveal">
+      <div class="banner">
+        <span class="day__n">Pv 1</span>
+        <span class="day__c"><b>Yhteinen aloitus.</b> Perehdytys ja työturvallisuusluento (1 h). Paistinlastan suunnittelu, ryhmäjako ja siirtyminen pajoille konekohtaisten korttien aloittamista varten.</span>
+      </div>
+
+      <h3 class="dayhead">Puupaja <span class="pin">— kolme työtä, neljän päivän kierto</span></h3>
+      <ul class="days">
+        <li class="day"><span class="day__n">Työ 1</span><span class="day__c"><b>Paistinlasta.</b> Aihion valmistus: halkaisu, katkaisu ja vannesahaus muotoon kahdelta sivulta. Viimeistely hiomalla ja pintakäsittely elintarvikekelpoisella öljyvahalla.</span></li>
+        <li class="day"><span class="day__n">Työ 2</span><span class="day__c"><b>Leikkuulauta.</b> Katkaisu- ja halkaisusahaus → oiko- ja tasohöyläys → liimalevyn valmistus → viimeistelyhöyläys ja hionta. Alapinnan nostouran jyrsintä, viistäminen ja pyöristäminen. Pintakäsittely elintarvikekelpoisella öljyvahalla.</span></li>
+        <li class="day"><span class="day__n">Työ 3</span><span class="day__c"><b>Intarsiakorurasia.</b> Kannellinen, puusaranoitu rasia, johon muotoillaan korupaikat poraamalla tai veistämällä. Kurssilla opitaan pylväsporakoneen käyttö, jigien rakentaminen sekä yksinkertaisen puusaranan periaate. Kanteen valmistetaan 2D CAD -kurssilla laserleikattava intarsia-aihe, jonka jokainen suunnittelee itse.</span></li>
+      </ul>
+
+      <h3 class="dayhead">Metallipaja <span class="pin">— kolme työtä, neljän päivän kierto</span></h3>
+      <ul class="days">
+        <li class="day"><span class="day__n">Työ 1</span><span class="day__c"><b>Kavaletti.</b> Kahden laipan poraus ja kierteytys, laakerin asennus sekä kokonaisuuden kokoonpano.</span></li>
+        <li class="day"><span class="day__n">Työ 2</span><span class="day__c"><b>Pikkujakkara.</b> Neliöputken vannesahaus, hionta/rälläköinti, kokoonpano, tulppahitsaus ja maalaus.</span></li>
+        <li class="day"><span class="day__n">Työ 3</span><span class="day__c"><b>Plastisen sommittelun työvälineet.</b> Muotoilu takoen ja prässäten — kylmänä ja kuumana. Huom. Taonta ja kuumatyö suoritetaan aina valvotusti.</span></li>
+      </ul>
+
+      <div class="banner" style="margin-top:1em;">
+        <span class="day__n">Pv 9</span>
+        <span class="day__c"><b>Yhteenveto ja työluvat.</b> Koko kurssin purku, valmistuneiden töiden katselmus ja työlupien virallinen luovuttaminen opiskelijoille.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 TURVALLISUUS -->
+  <section class="sec">
+    <span class="sec__no reveal">03</span>
+    <h2 class="sec__title reveal">Turvallisuus &amp; pajakortit</h2>
+    <p class="sec__lead reveal">Kurssin tärkein edellytys on ennakoivan työturvallisuuskulttuurin omaksuminen. Yhteinen ja vastuullinen toimintatapa luodaan ennen koneiden käynnistämistä.</p>
+    <div class="body reveal">
+      <p>Kurssi alkaa työturvallisuuskatsauksella: käymme läpi suojavarusteet, hätäpysäytyksen, ergonomian ja vaaratilanteiden ennaltaehkäisyn. Hyväksyt turvallisuusohjeet allekirjoituksellasi. Tämän pohjalta suoritetaan yleinen pajakortti sekä konekohtaiset luvat pajamestarien opastuksella — näin varmistetaan oikeus toimia työtiloissa turvallisesti.</p>
+      <p class="ink-soft" style="margin-bottom:.6em;">Konekohtaiset vaarallisuusluokat:</p>
+      <div class="legend">
+        <span class="lvl"><span class="blocks"><span class="on">■</span><span class="off">■■■■</span></span><span>1 · Matala</span></span>
+        <span class="lvl"><span class="blocks"><span class="on">■■</span><span class="off">■■■</span></span><span>2 · Kohtalainen</span></span>
+        <span class="lvl"><span class="blocks"><span class="on">■■■</span><span class="off">■■</span></span><span>3 · Keskitaso</span></span>
+        <span class="lvl"><span class="blocks"><span class="on">■■■■</span><span class="off">■</span></span><span>4 · Korkea</span></span>
+        <span class="lvl"><span class="blocks"><span class="on">■■■■■</span></span><span>5 · Erittäin korkea</span></span>
+      </div>
+      <p class="ink-soft">Korkeimman luokan koneita (esim. alajyrsin 5/5, sorvit ja prässi) sekä kaikkea hitsausta ja taontaa käytetään vain valvotusti. Metallipajassa suojalasien ja kuulosuojainten käyttö on pakollista.</p>
+    </div>
+  </section>
+
+  <!-- 04 PAJA-AJOKORTTI (INTERAKTIIVINEN) -->
+  <section class="sec">
+    <span class="sec__no reveal">04</span>
+    <h2 class="sec__title reveal">Paja-ajokortti</h2>
+    <p class="sec__lead reveal">Perehdytys → työlupa → paja-ajokortti. Suorita vaiheet järjestyksessä. Konekortin vahvistaa aina pajamestari osoituksena siitä, että hallitset koneen turvallisen käytön.</p>
+
+    <div class="pipe reveal" id="pipe">
+      <div class="steps" id="steps"></div>
+      <div id="panel"></div>
+    </div>
+  </section>
+
+  <!-- 05 KURSSIN JÄLKEEN -->
+  <section class="sec">
+    <span class="sec__no reveal">05</span>
+    <h2 class="sec__title reveal">Kurssin jälkeen</h2>
+    <p class="sec__lead reveal">Orientaation jälkeen sinulla on viralliset pajaluvat sekä vahva perusosaaminen puun ja metallin työstöstä.</p>
+    <div class="reveal">
+      <div class="path" style="margin-top:1em;">
+        <span class="node now">Orientaatio</span><span class="arr">→</span>
+        <span class="node next">2D CAD · intarsia + emalointi</span><span class="arr">→</span>
+        <span class="node">Esitystekniikka</span><span class="arr">→</span>
+        <span class="node">Sommittelu · 3D Rhino</span><span class="arr">→</span>
+        <span class="node">2. vsk: SolidWorks</span>
+      </div>
+      <div class="callout" style="margin-top:1.2em;">
+        <h4>Kaksi siltaa 2D CAD -kurssille</h4>
+        <p><b>Puutyö:</b> Korurasian kanteen valmistetaan intarsia laserleikkaamalla. <b>Metallityö:</b> Kupariin pakotetut muodot emaloidaan Nabertherm-uunissa koruksi tai tasotaideteokseksi.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="foot__grid">
+      <div class="foot__brand">Muotoilun Pajat<br>Metropolia</div>
+      <div class="foot__meta">
+        Teollinen muotoilu · 1. vuosikurssi<br>
+        Arabian kampus · Helsinki<br>
+        Paja-ajokortti · IKM v0.1 -yhteensopiva
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORE_KEY = "paja_ajokortti_records_v1";
+  var DRAFT_KEY = "paja_ajokortti_draft_v1";
+
+  // ---- Domain-taksonomia (v0.1) tälle kurssille ----
+  var DOMAINS = [
+    { id:"wood.machines", label:"Puuntyöstökoneet", core:true,
+      note:"Vannesaha, oiko- ja tasohöylä, katkaisu- ja pyörösaha sekä hionta. Huomioi kovapuupöly.",
+      q:{ t:"Mikä on tärkein sääntö puuntyöstökonetta käytettäessä?",
+          o:["Työskentelen nopeasti, jotta muille ei synny jonoa",
+             "Käytän aina vaadittuja suojaimia, pidän kädet turvallisella etäisyydellä terästä ja pyydän ohjausta ollessani epävarma",
+             "Poistan suojukset, jotta näen työstökohdan paremmin"], c:1 } },
+    { id:"metal.machines", label:"Metallintyöstö", core:true,
+      note:"Sorvi, jyrsin, poraus ja taonta. Suojalasit ja kuulosuojaimet ovat pakolliset.",
+      q:{ t:"Mitä suojaimia metallipajassa on aina käytettävä?",
+          o:["Suojalaseja ja kuulosuojaimia",
+             "Vain työkäsineitä",
+             "Ei suojaimia, jos kyseessä on vain lyhyt työ"], c:0 } },
+    { id:"metal.welding", label:"Hitsaus", core:false,
+      note:"Hitsaus ja kuumatöiden tekeminen on sallittu vain valvotusti. Huomioi paloturvallisuus.",
+      q:{ t:"Miten hitsausta ja taontaa harjoitellaan?",
+          o:["Itsenäisesti aina kun pajassa on tilaa",
+             "Ainoastaan pajamestarin valvonnassa omassa opetusjaksossaan",
+             "Silloin kun muut ovat jo lähteneet pajalta"], c:1 } },
+    { id:"laser.co2", label:"CO2-laser", core:false,
+      note:"Materiaalirajoitukset, kohdepoiston toiminta ja paloturvallisuus.",
+      q:{ t:"Mitä varmistat ennen CO2-laserleikkurin käynnistämistä?",
+          o:["Varmistan, että materiaali on sallittu, kohdepoisto on päällä enkä jätä laitetta valvomatta",
+             "Varmistan vain, että leikkuutiedosto on oikeassa muodossa",
+             "Varmistan, että ehdin saada työn valmiiksi ennen taukoa"], c:0 } }
+  ];
+
+  // ---- Perehdytyksen kysymykset ----
+  var INDUCTION_Q = [
+    { t:"Ennen koneen käynnistämistä:",
+      o:["Varmistan, että osaan pysäyttää koneen ja että pajamestari on todennut osaamiseni",
+         "Käynnistän koneen ja kokeilen miten se toimii",
+         "Odotan, että joku muu käynnistää koneen puolestani"], c:0 },
+    { t:"Korkeimman vaaraluokan koneita (kuten sorvia, alajyrsintä ja prässiä) sekä hitsauslaitteita käytetään:",
+      o:["Aina kun laite on vapaana","Ainoastaan valvotusti","Jos olen käyttänyt vastaavaa laitetta aiemmin muualla"], c:1 },
+    { t:"Jos et ymmärrä annettua ohjetta tai tunnet olosi epävarmaksi:",
+      o:["Jatkan työtä silti, jotta en hidastaisi muita","Kysyn neuvoa ja pyydän ohjausta ennen jatkamista","Arvaan toimintatavan parhaan kykyni mukaan"], c:1 },
+    { t:"Pajan siisteys ja jätteiden asianmukainen lajittelu:",
+      o:["On pelkästään viihtyvyyskysymys","Suojaa myös siivoojia, vierailijoita ja seuraavia käyttäjiä","Kuuluu ainoastaan pajamestarin vastuulle"], c:1 }
+  ];
+
+  var LEVEL_LABEL = { independent:"Itsenäinen", supervised:"Ohjattu", observed:"Havainnoitu", instructor:"Ohjaava" };
+
+  var state = { step:0, name:"", group:"", pseudoId:"", inductionOk:false, permitOk:false, permitAt:"", picks:{} };
+
+  function save(){ try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(state)); }catch(e){} }
+  function loadDraft(){ try{ var s=localStorage.getItem(DRAFT_KEY); if(s){ state = JSON.parse(s); } }catch(e){} }
+  function records(){ try{ var s=localStorage.getItem(STORE_KEY); return s?JSON.parse(s):[]; }catch(e){ return []; } }
+  function saveRecord(rec){ try{ var r=records(); r.push(rec); localStorage.setItem(STORE_KEY, JSON.stringify(r)); }catch(e){} }
+
+  function pseudo(){ return "p-" + Math.random().toString(36).slice(2,6).toUpperCase(); }
+  function todayISO(){ return new Date().toISOString(); }
+  function plusYears(n){ var d=new Date(); d.setFullYear(d.getFullYear()+n); return d.toISOString().slice(0,10); }
+  function fiDate(iso){ var d=new Date(iso); return d.getDate()+"."+(d.getMonth()+1)+"."+d.getFullYear(); }
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  var STEP_NAMES = ["Tunnistus","Perehdytys","Työlupa","Ajokortit","Valmis"];
+
+  function renderSteps(){
+    var el=document.getElementById("steps"), s="", i;
+    for(i=0;i<STEP_NAMES.length;i++){
+      var cls="stepdot"; if(i===state.step) cls+=" active"; else if(i<state.step) cls+=" done";
+      s += '<div class="'+cls+'">'+(i+1)+". "+STEP_NAMES[i]+'</div>';
+    }
+    el.innerHTML=s;
+  }
+
+  function panel(){ return document.getElementById("panel"); }
+
+  // ---------- STEP 0: Tunnistus ----------
+  function renderIdentify(){
+    panel().innerHTML =
+      '<div class="panel">'
+      + '<span class="kicker">Vaihe 1 / 5</span><h3>Kuka olet?</h3>'
+      + '<p>Syöttämäsi nimi tulostuu ajokorttiisi. Vietävään IKM-tietueeseen tallennetaan vain pseudonyymitunniste, ei nimeäsi.</p>'
+      + '<div class="field"><label>Nimi</label><input type="text" id="fName" value="'+esc(state.name)+'" placeholder="Etunimi Sukunimi"></div>'
+      + '<div class="field"><label>Ryhmä (valinnainen)</label><input type="text" id="fGroup" value="'+esc(state.group)+'" placeholder="esim. TXA26"></div>'
+      + '<div id="m0"></div>'
+      + '<div class="btnrow"><button class="btn primary" id="next0">Jatka perehdytykseen &rarr;</button></div>'
+      + '</div>';
+    document.getElementById("next0").addEventListener("click", function(){
+      var n=document.getElementById("fName").value.trim();
+      state.group=document.getElementById("fGroup").value.trim();
+      if(n.length<2){ document.getElementById("m0").innerHTML='<div class="msg err">Kirjoita nimesi jatkaaksesi.</div>'; return; }
+      state.name=n; if(!state.pseudoId) state.pseudoId=pseudo();
+      state.step=1; save(); render();
+    });
+  }
+
+  // ---------- Quiz helper ----------
+  function quizHTML(prefix, questions){
+    var s="", i, j;
+    for(i=0;i<questions.length;i++){
+      var q=questions[i];
+      s += '<div class="q"><div class="qt">'+esc(q.t)+'</div>';
+      for(j=0;j<q.o.length;j++){
+        s += '<label class="opt" data-q="'+i+'"><input type="radio" name="'+prefix+i+'" value="'+j+'">'+esc(q.o[j])+'</label>';
+      }
+      s += '</div>';
+    }
+    return s;
+  }
+  function gradeQuiz(container, prefix, questions){
+    var allRight=true, i;
+    for(i=0;i<questions.length;i++){
+      var sel=container.querySelector('input[name="'+prefix+i+'"]:checked');
+      var labels=container.querySelectorAll('label.opt[data-q="'+i+'"]');
+      labels.forEach(function(l){ l.classList.remove("right","wrong"); });
+      if(!sel){ allRight=false; continue; }
+      var v=parseInt(sel.value,10);
+      if(v===questions[i].c){ labels[v].classList.add("right"); }
+      else { labels[v].classList.add("wrong"); labels[questions[i].c].classList.add("right"); allRight=false; }
+    }
+    return allRight;
+  }
+
+  // ---------- STEP 1: Perehdytys ----------
+  function renderInduction(){
+    panel().innerHTML =
+      '<div class="panel">'
+      + '<span class="kicker">Vaihe 2 / 5 · safety.induction</span><h3>Perehdytys — turvallisuusperusta</h3>'
+      + '<p>Lue turvallisuusosio yltä ja vastaa kysymyksiin. Kaikkien vastausten on oltava oikein — kyseessä on turvallisuusasioiden varmistus ennen käytännön työn aloittamista.</p>'
+      + '<div class="callout"><h4>Muista aina</h4><p>Suojaimet · hätäpysäytys · korkean vaaraluokan koneet vain valvotusti · kysy aina epävarmana · siisteys suojaa myös näkymätöntä (siivooja, vieras, seuraava käyttäjä).</p></div>'
+      + '<div id="indq">'+quizHTML("ind", INDUCTION_Q)+'</div>'
+      + '<div id="m1"></div>'
+      + '<div class="btnrow"><button class="btn ghost" id="back1">&larr; Takaisin</button><button class="btn primary" id="next1">Tarkista ja jatka &rarr;</button></div>'
+      + '</div>';
+    document.getElementById("back1").addEventListener("click", function(){ state.step=0; save(); render(); });
+    document.getElementById("next1").addEventListener("click", function(){
+      var ok=gradeQuiz(document.getElementById("indq"),"ind",INDUCTION_Q);
+      if(ok){ state.inductionOk=true; state.step=2; save(); render(); }
+      else { document.getElementById("m1").innerHTML='<div class="msg err">Tarkista punaisella merkityt kohdat. Oikeat vastaukset näkyvät vihreällä — korjaa valintasi.</div>'; }
+    });
+  }
+
+  // ---------- STEP 2: Työlupa ----------
+  var AFFIRMS = [
+    { l:"Havaitse", t:"Tunnistan työtilan vaaratekijät: pyörivät terät, kuumat pinnat, pölyn, melun ja kemikaalit." },
+    { l:"Ymmärrä", t:"Ymmärrän sääntöjen merkityksen — ne suojaavat minua, muita ja näkymättömiä: siivoojaa, vierasta ja seuraavaa käyttäjää." },
+    { l:"Toimi", t:"Sitoudun toimimaan turvallisesti: käytän aina vaadittuja suojaimia, en käynnistä laitetta ilman opastusta, pyydän apua epävarmana ja siivoan jälkeni." }
+  ];
+  function renderPermit(){
+    var a="", i;
+    for(i=0;i<AFFIRMS.length;i++){
+      a += '<label class="affirm"><input type="checkbox" class="aff" data-a="'+i+'"><span class="at"><span class="al">'+AFFIRMS[i].l+'</span>'+esc(AFFIRMS[i].t)+'</span></label>';
+    }
+    panel().innerHTML =
+      '<div class="panel">'
+      + '<span class="kicker">Vaihe 3 / 5 · Työlupa</span><h3>Työlupa — Havaitse · Ymmärrä · Toimi</h3>'
+      + '<p>Valitse kaikki kolme kohtaa ja vahvista ne nimenselvennykselläsi. Allekirjoittamalla sitoudut noudattamaan ohjeita koko kurssin ajan.</p>'
+      + a
+      + '<div class="field" style="margin-top:1em;"><label>Allekirjoitus (nimesi)</label><input type="text" id="sig" value="'+esc(state.name)+'"></div>'
+      + '<div id="m2"></div>'
+      + '<div class="btnrow"><button class="btn ghost" id="back2">&larr; Takaisin</button><button class="btn primary" id="next2">Allekirjoita työlupa &rarr;</button></div>'
+      + '</div>';
+    document.getElementById("back2").addEventListener("click", function(){ state.step=1; save(); render(); });
+    document.getElementById("next2").addEventListener("click", function(){
+      var boxes=document.querySelectorAll(".aff"), all=true, i;
+      for(i=0;i<boxes.length;i++){ if(!boxes[i].checked) all=false; }
+      var sig=document.getElementById("sig").value.trim();
+      if(!all){ document.getElementById("m2").innerHTML='<div class="msg err">Kuittaa kaikki kolme kohtaa valituksi.</div>'; return; }
+      if(sig.length<2){ document.getElementById("m2").innerHTML='<div class="msg err">Kirjoita nimesi allekirjoituskenttään.</div>'; return; }
+      state.permitOk=true; state.permitAt=todayISO(); state.step=3; save(); render();
+    });
+  }
+
+  // ---------- STEP 3: Ajokortit ----------
+  function renderCards(){
+    var d="", i;
+    for(i=0;i<DOMAINS.length;i++){
+      var dm=DOMAINS[i]; var sel=state.picks[dm.id]?" sel":"";
+      d += '<div class="dcard'+sel+'" data-pick="'+dm.id+'">'
+         + '<h5>'+esc(dm.label)+'</h5><span class="did">'+dm.id+'</span>'
+         + (dm.core?' <span class="core">· ydin</span>':'')
+         + '<div class="dn">'+esc(dm.note)+'</div></div>';
+    }
+    panel().innerHTML =
+      '<div class="panel">'
+      + '<span class="kicker">Vaihe 4 / 5 · Paja-ajokortit</span><h3>Valitse pajat ja suorita kortit</h3>'
+      + '<p>Valitse pajat, joihin haet suoritusta (Puu ja Metalli kuuluvat ydinkurssiin). Jokainen osio sisältää varmistuskysymyksen sekä <b>pajamestarin nimikirjaimet</b> vahvistuksena. Orientaatiovaiheessa suoritustaso on <b>ohjattu</b> (valvottu työskentely).</p>'
+      + '<div class="domainpick">'+d+'</div>'
+      + '<div id="cardforms"></div>'
+      + '<div id="m3"></div>'
+      + '<div class="btnrow"><button class="btn ghost" id="back3">&larr; Takaisin</button><button class="btn primary" id="next3">Myönnä ajokortti &rarr;</button></div>'
+      + '</div>';
+
+    var picks=document.querySelectorAll("[data-pick]");
+    picks.forEach(function(p){
+      p.addEventListener("click", function(e){
+        if(e.target.closest("input")) return;
+        var id=p.getAttribute("data-pick");
+        if(state.picks[id]){ delete state.picks[id]; } else { state.picks[id]={qOk:false, assessor:""}; }
+        save(); renderCards();
+      });
+    });
+    renderCardForms();
+    document.getElementById("back3").addEventListener("click", function(){ state.step=2; save(); render(); });
+    document.getElementById("next3").addEventListener("click", tryIssue);
+  }
+
+  function renderCardForms(){
+    var host=document.getElementById("cardforms"); if(!host) return;
+    var ids=Object.keys(state.picks);
+    if(ids.length===0){ host.innerHTML='<div class="msg err" style="margin-top:.6em;">Valitse vähintään yksi paja.</div>'; return; }
+    var s="", i;
+    for(i=0;i<ids.length;i++){
+      var dm=domainById(ids[i]);
+      s += '<div class="panel" style="margin-top:10px;background:var(--paper-deep);">'
+         + '<h4 style="font-size:1.05rem;">'+esc(dm.label)+' <span class="did">'+dm.id+'</span></h4>'
+         + '<div class="q"><div class="qt">'+esc(dm.q.t)+'</div>';
+      var j; for(j=0;j<dm.q.o.length;j++){
+        s += '<label class="opt" data-dq="'+dm.id+'"><input type="radio" name="dq_'+dm.id+'" value="'+j+'">'+esc(dm.q.o[j])+'</label>';
+      }
+      s += '</div>'
+        + '<div class="field"><label>Pajamestarin nimikirjaimet (vahvistus)</label><input type="text" data-assessor="'+dm.id+'" value="'+esc(state.picks[dm.id].assessor||"")+'" placeholder="esim. MI"></div>'
+        + '</div>';
+    }
+    host.innerHTML=s;
+    host.querySelectorAll("[data-assessor]").forEach(function(inp){
+      inp.addEventListener("input", function(){ var id=inp.getAttribute("data-assessor"); if(state.picks[id]){ state.picks[id].assessor=inp.value.trim(); save(); } });
+    });
+  }
+
+  function domainById(id){ var i; for(i=0;i<DOMAINS.length;i++){ if(DOMAINS[i].id===id) return DOMAINS[i]; } return null; }
+
+  function tryIssue(){
+    var ids=Object.keys(state.picks);
+    if(ids.length===0){ document.getElementById("m3").innerHTML='<div class="msg err">Valitse vähintään yksi paja.</div>'; return; }
+    var host=document.getElementById("cardforms"), problems=[], i;
+    for(i=0;i<ids.length;i++){
+      var dm=domainById(ids[i]);
+      var sel=host.querySelector('input[name="dq_'+dm.id+'"]:checked');
+      var labels=host.querySelectorAll('label.opt[data-dq="'+dm.id+'"]');
+      labels.forEach(function(l){ l.classList.remove("right","wrong"); });
+      if(!sel){ problems.push(dm.label+": vastaa kysymykseen"); continue; }
+      var v=parseInt(sel.value,10);
+      if(v===dm.q.c){ labels[v].classList.add("right"); state.picks[dm.id].qOk=true; }
+      else { labels[v].classList.add("wrong"); labels[dm.q.c].classList.add("right"); state.picks[dm.id].qOk=false; problems.push(dm.label+": tarkista vastaus"); }
+      if(!state.picks[dm.id].assessor){ problems.push(dm.label+": pajamestarin kuittaus puuttuu"); }
+    }
+    if(problems.length>0){ document.getElementById("m3").innerHTML='<div class="msg err">'+esc(problems.join(" · "))+'</div>'; save(); return; }
+    issue();
+  }
+
+  function issue(){
+    var caps=[];
+    caps.push({ domain:"safety.induction", level:"independent", assessorRef:"", validUntil:plusYears(2) });
+    var ids=Object.keys(state.picks), i;
+    for(i=0;i<ids.length;i++){
+      caps.push({ domain:ids[i], level:"supervised", assessorRef:state.picks[ids[i]].assessor, validUntil:plusYears(2) });
+    }
+    var rec = { pseudoId:state.pseudoId, name:state.name, group:state.group, issuedAt:todayISO(),
+                permitAt:state.permitAt, capabilities:caps };
+    saveRecord(rec);
+    state.step=4; save();
+    renderDone(rec);
+  }
+
+  // ---------- STEP 4: Valmis + Ajokortti ----------
+  function renderDone(rec){
+    var caps="", i;
+    for(i=0;i<rec.capabilities.length;i++){
+      var c=rec.capabilities[i];
+      caps += '<li class="ak-cap"><span>'+esc(domainLabel(c.domain))+' <span class="cd">'+c.domain+(c.assessorRef?" · "+esc(c.assessorRef):"")+'</span></span>'
+            + '<span class="ak-lvl '+c.level+'">'+LEVEL_LABEL[c.level]+'</span></li>';
+    }
+    panel().innerHTML =
+      '<div class="panel ak-wrap">'
+      + '<span class="kicker">Vaihe 5 / 5 · Valmis</span>'
+      + '<div class="ajokortti">'
+      +   '<div class="ak-head"><div><div class="s">Muotoilun Pajat · Metropolia</div><div class="t">Paja-ajokortti</div></div><div class="s">Myönnetty<br>'+fiDate(rec.issuedAt)+'</div></div>'
+      +   '<div class="ak-name">'+esc(rec.name)+'</div>'
+      +   '<div class="ak-meta">'+(rec.group?esc(rec.group)+" · ":"")+'Tunniste '+rec.pseudoId+'</div>'
+      +   '<ul class="ak-caps">'+caps+'</ul>'
+      +   '<div class="ak-foot">Työlupa allekirjoitettu '+fiDate(rec.permitAt)+' · voimassa '+plusYears(2)+' asti · taso: ohjattu = valvottu työskentely, itsenäinen = yleinen pajakortti</div>'
+      + '</div>'
+      + '<div class="btnrow">'
+      +   '<button class="btn primary" id="printAk">Tulosta ajokortti</button>'
+      +   '<button class="btn" id="exportOne">Vie IKM-muodossa (JSON)</button>'
+      +   '<button class="btn ghost" id="restart">Uusi opiskelija</button>'
+      + '</div>'
+      + '<div class="msg ok" style="margin-top:.4em;">Suoritusmerkintä on tallennettu laitteellesi. Vie tiedot JSON-muodossa pajamestarille virallista rekisteröintiä varten.</div>'
+      + '</div>'
+      + teacherHTML();
+
+    document.getElementById("printAk").addEventListener("click", function(){ window.print(); });
+    document.getElementById("exportOne").addEventListener("click", function(){ downloadJSON(ikmFor([rec]), "ajokortti_"+rec.pseudoId+".json"); });
+    document.getElementById("restart").addEventListener("click", function(){
+      state={ step:0, name:"", group:"", pseudoId:"", inductionOk:false, permitOk:false, permitAt:"", picks:{} };
+      save(); render();
+    });
+    bindTeacher();
+  }
+
+  function domainLabel(id){ if(id==="safety.induction") return "Perusperehdytys"; var d=domainById(id); return d?d.label:id; }
+
+  // ---------- IKM Export ----------
+  function ikmFor(recs){
+    var persons=[], caps=[], i, j, seen={};
+    for(i=0;i<recs.length;i++){
+      var r=recs[i];
+      if(!seen[r.pseudoId]){ persons.push({ pseudonymousId:r.pseudoId, role:"student", consentScopes:["capability"] }); seen[r.pseudoId]=1; }
+      for(j=0;j<r.capabilities.length;j++){
+        var c=r.capabilities[j];
+        var cap={ pseudonymousId:r.pseudoId, domain:c.domain, level:c.level, validUntil:c.validUntil };
+        if(c.assessorRef) cap.assessorRef=c.assessorRef;
+        caps.push(cap);
+      }
+    }
+    return { version:"0.1", generated:todayISO(), persons:persons, capabilities:caps };
+  }
+  function downloadJSON(obj, name){
+    var blob=new Blob([JSON.stringify(obj,null,2)], {type:"application/json"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a"); a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
+
+  // ---------- Opettajan näkymä ----------
+  function teacherHTML(){
+    var recs=records();
+    var rows="", i;
+    if(recs.length===0){ rows='<div class="trec">Ei tallennettuja kortteja tällä laitteella.</div>'; }
+    else {
+      for(i=0;i<recs.length;i++){
+        var r=recs[i];
+        rows += '<div class="trec">'+esc(r.name)+" ("+r.pseudoId+") · "+fiDate(r.issuedAt)+" · "+r.capabilities.length+" korttia</div>";
+      }
+    }
+    return '<details class="teacher"><summary>Opettajan näkymä — laitteelle tallennetut kortit ('+recs.length+')</summary>'
+      + '<div style="margin-top:.5em;">'+rows+'</div>'
+      + '<div class="btnrow"><button class="btn" id="exportAll">Vie kaikki IKM-muodossa</button></div>'
+      + '<p class="ink-soft" style="font-size:.78rem;margin-top:.5em;">Pilottivaiheessa suoritusmerkinnät tallentuvat selaimen muistiin. Vie tiedot JSON-muodossa viralliseen rekisteriin (M365 / SharePoint).</p>'
+      + '</details>';
+  }
+  function bindTeacher(){
+    var b=document.getElementById("exportAll");
+    if(b){ b.addEventListener("click", function(){ downloadJSON(ikmFor(records()), "ajokortit_kaikki.json"); }); }
+  }
+
+  // ---------- Router ----------
+  function render(){
+    renderSteps();
+    if(state.step===0) renderIdentify();
+    else if(state.step===1) renderInduction();
+    else if(state.step===2) renderPermit();
+    else if(state.step===3) renderCards();
+    else if(state.step===4){
+      var recs=records(), mine=null, i;
+      for(i=recs.length-1;i>=0;i--){ if(recs[i].pseudoId===state.pseudoId){ mine=recs[i]; break; } }
+      if(mine) renderDone(mine); else { state.step=0; render(); }
+    }
+  }
+
+  // ---------- Reveal ----------
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var items = document.querySelectorAll(".reveal");
+  if(reduce || !("IntersectionObserver" in window)){ items.forEach(function(el){ el.classList.add("in"); }); }
+  else {
+    var io=new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }); }, {rootMargin:"0px 0px -8% 0px", threshold:0.08});
+    items.forEach(function(el){ io.observe(el); });
+  }
+
+  loadDraft();
+  render();
+
+})();
+</script>
+<script src="paja-footer.js"></script>
+</body>
+</html>
