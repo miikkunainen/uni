@@ -61,7 +61,10 @@ SISÄÄNKÄYNTI
   tietosuoja.html ........... Tietosuoja ja GDPR-käytänteet
 
 TYÖKALUT
-  syksyn_orientaatiokurssi.html . Kurssiohjelma + ajokorttiputki
+  orientaatio.html .......... Opiskelijan kurssisovellus: läsnäolo,
+                              materiaalit ja keskustelu (oma
+                              puhelinsovellus, orientaatio.webmanifest)
+  syksyn_orientaatiokurssi.html . Ajokorttiputki
   paja_app.html ............. Koneohjeet, jätteet, siivous, varaus
   paja_konerekisteri.html ... Konerekisteri, sijainnit, pajaälyn tietopohja
   paja_kemikaalit.html ...... Kemikaalienhallinta: ehdotus,

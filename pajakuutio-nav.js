@@ -15,7 +15,8 @@
   var PAGES = [
     {f:"index.html",                        t:"Koti"},
     {f:"kartta.html",                       t:"Kartta"},
-    {f:"syksyn_orientaatiokurssi.html",     t:"Orientaatio"},
+    {f:"orientaatio.html",                  t:"Orientaatio"},
+    {f:"syksyn_orientaatiokurssi.html",     t:"Ajokortti"},
     {f:"paja_app.html",                     t:"Paja-app"},
     {f:"paja_konerekisteri.html",           t:"Konerekisteri"},
     {f:"paja_kemikaalit.html",      t:"Kemikaalit"},
@@ -30,7 +31,8 @@
   /* Osiot: mihin kokonaisuuteen sivu kuuluu (murupolkua varten) */
   var SECTIONS = [
     { s:"Oppiminen ja pätevyys", pages:{
-        "syksyn_orientaatiokurssi.html":"Orientaatiokurssi",
+        "orientaatio.html":"Orientaatiokurssi — opiskelijan sovellus",
+        "syksyn_orientaatiokurssi.html":"Ajokorttiputki",
         "vaihe1_turvallisuus_mhks.html":"Vaihe 1 — esitiedot",
         "turvallisuus_ja_tyolupa.html":"Työlupa",
         "orientaatiokurssi_moodle.html":"Kurssidokumentti" } },

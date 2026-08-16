@@ -186,6 +186,7 @@
 
   // työkalut: sections -> tiles
   var T={
+    orientaatio:{ href:"orientaatio.html", ic:"O", c:"t-ember", h:"Orientaatiokurssi", d:"Läsnäolo, materiaalit ja keskustelu — puhelimeen" },
     kurssi:{ href:"syksyn_orientaatiokurssi.html", ic:"O", c:"t-ember", h:"Orientaatiokurssi", d:"Ohjelma, turvallisuus ja paja-ajokortti" },
     app:{ href:"paja_app.html", ic:"P", c:"t-sage", h:"Paja-app", d:"Koneiden ohjeet, jätteet, siivous, varaus" },
     kone:{ href:"paja_konerekisteri.html", ic:"K", c:"t-steel", h:"Konerekisteri", d:"Koneet, ohjeet, sijainnit ja pajaälyn tietopohja" },
@@ -204,12 +205,12 @@
 
   var LAYOUT={
     opiskelija:[
-      { s:"Päivittäin", t:["kurssi","app","mhks"] },
+      { s:"Päivittäin", t:["orientaatio","kurssi","app","mhks"] },
       { s:"Turvallisuus", t:["kemia","herate","tyolupa","kone"] },
       { s:"Ymmärrys", t:["sivukartta","asenna","peli"] }
     ],
     lehtori:[
-      { s:"Päivittäin", t:["seuranta","kurssi","app","sivukartta","asenna"] },
+      { s:"Päivittäin", t:["seuranta","orientaatio","kurssi","app","sivukartta","asenna"] },
       { s:"Turvallisuus", t:["kemia","herate","kone"] },
       { s:"Hallinta", t:["mhks"] },
       { s:"Ymmärrys", t:["peli"] }

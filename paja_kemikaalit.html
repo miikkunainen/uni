@@ -113,7 +113,14 @@
   .ccard.poistettu{opacity:.6;border-left-color:var(--ink-soft);background:var(--paper-deep);}
   .ccard h4{font-size:1.02rem;line-height:1.05;}
   .ccard .sup{font-family:"IBM Plex Mono",monospace;font-size:.55rem;color:var(--ink-soft);margin-top:.15em;}
-  .ccard .loc{font-size:.8rem;color:var(--ink-soft);margin-top:.35em;}
+  .ccard .loc{font-size:.78rem;color:var(--ink-soft);margin-top:.5em;border-top:1px dashed var(--rule);padding-top:.4em;}
+  .ccard .cinfo{margin-top:.45em;}
+  .ccard .ci{font-size:.8rem;line-height:1.35;margin-bottom:.3em;}
+  .ccard .cl{font-family:"IBM Plex Mono",monospace;font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink-soft);display:block;margin-bottom:.1em;}
+  .ccard .ci.first{background:rgba(206,63,27,.07);border-left:3px solid var(--ember);border-radius:3px;
+    padding:.35em .5em;margin-top:.4em;}
+  .ccard .ci.first .cl{color:var(--ember);font-weight:600;}
 
   .pill{font-family:"IBM Plex Mono",monospace;font-size:.5rem;letter-spacing:.05em;text-transform:uppercase;padding:.18em .45em;border-radius:20px;display:inline-block;margin:.12em .2em .12em 0;}
   .s-ehdotus{background:rgba(190,138,46,.25);color:#7a5a12;}
@@ -246,7 +253,11 @@
     {k:"use",   label:"Käyttöpaikka", test:function(c){ return !!(c.useLoc&&String(c.useLoc).trim()); },
      law:"Tilakohtainen luettelo pelastussuunnitelmaan"},
     {k:"disp",  label:"Hävitysohje", test:function(c){ return !!(c.disposal&&String(c.disposal).trim()); },
-     law:"Asianmukainen jätehuolto"}
+     law:"Asianmukainen jätehuolto"},
+    {k:"first", label:"Ensitoimet vahinkotilanteessa", test:function(c){ return !!(c.firstAid&&String(c.firstAid).trim()); },
+     law:"KTT kohta 4 — tieto oltava saatavilla käyttöpaikalla"},
+    {k:"use",   label:"Käyttötarkoitus", test:function(c){ return !!(c.use&&String(c.use).trim()); },
+     law:"Luettelosta on käytävä ilmi mihin ainetta käytetään"}
   ];
   function missing(c){ return REQUIRED.filter(function(r){ return !r.test(c); }); }
   function complete(c){ return missing(c).length===0; }
@@ -257,6 +268,8 @@
     for(i=0;i<n;i++) on+="■"; for(i=n;i<5;i++) off+="■";
     return '<span class="risk"><span class="b"><span class="on">'+on+'</span><span class="off">'+off+'</span></span>riski '+n+' / 5</span>';
   }
+  function ppePills(v){ if(!v) return "—"; var a=String(v).split(","),s="",i;
+    for(i=0;i<a.length;i++){ if(a[i].trim()) s+='<span class="pill p-ppe">'+esc(a[i].trim())+'</span>'; } return s||"—"; }
   function inUse(){ return DB.items.filter(function(c){ return c.status==="hyvaksytty"; }); }
   function pending(){ return DB.items.filter(function(c){ return c.status==="ehdotus"; }); }
 
@@ -299,7 +312,12 @@
         + (cc.asa?'<span class="pill p-asa">ASA</span>':'')
         + (cc.pro24Id?'<span class="pill p-pro">PRO24</span>':'')
         + riskBlocks(cc.risk)
-        + '<div class="loc">Säilytys: '+esc(cc.storeLoc||"—")+'<br>Käyttö: '+esc(cc.useLoc||"—")+'</div></div>'; }
+        + '<div class="cinfo">'
+        +   (cc.use?'<div class="ci"><span class="cl">Käyttö</span>'+esc(cc.use)+'</div>':'')
+        +   (cc.ppe?'<div class="ci"><span class="cl">Suojaimet</span>'+ppePills(cc.ppe)+'</div>':'')
+        +   (cc.firstAid?'<div class="ci first"><span class="cl">Vahinkotilanteessa</span>'+esc(cc.firstAid)+'</div>':'')
+        + '</div>'
+        + '<div class="loc">Säilytys: '+esc(cc.storeLoc||"—")+'<br>Tila: '+esc(cc.useLoc||"—")+'</div></div>'; }
     return s+'</div>';
   }
 
@@ -331,6 +349,10 @@
     var p="";
     if(c.ppe){ var pl=String(c.ppe).split(",");
       for(i=0;i<pl.length;i++){ if(pl[i].trim()) p+='<span class="pill p-ppe">'+esc(pl[i].trim())+'</span>'; } }
+    if(c.firstAid){
+      s+='<div class="warnbox" style="background:rgba(206,63,27,.07);"><b>Ensitoimet vahinkotilanteessa</b><br>'
+        + esc(c.firstAid)+'<br><span class="mono" style="font-size:.72em;opacity:.85;">Hätänumero 112 · silmähuuhtelupiste ja hätäsuihku on tunnettava ennen työn aloitusta.</span></div>';
+    }
     s+='<div class="drow"><span class="dl">Käyttötarkoitus</span>'+esc(c.use||"—")+'</div>'
       + '<div class="drow"><span class="dl">Vaaralausekkeet</span>'+esc(c.h||"—")+'</div>'
       + '<div class="drow"><span class="dl">Turvalausekkeet</span>'+esc(c.pStat||"—")+'</div>'
@@ -338,6 +360,7 @@
       + '<div class="drow"><span class="dl">Säilytyspaikka</span>'+esc(c.storeLoc||"—")+'</div>'
       + '<div class="drow"><span class="dl">Käyttöpaikka</span>'+esc(c.useLoc||"—")+'</div>'
       + '<div class="drow"><span class="dl">Määrä</span>'+esc(c.amount||"—")+'</div>'
+      + '<div class="drow"><span class="dl">Ensitoimet</span>'+esc(c.firstAid||"—")+'</div>'
       + '<div class="drow"><span class="dl">Hävitys</span>'+esc(c.disposal||"—")+'</div>'
       + '<div class="drow"><span class="dl">KTT päivätty</span>'+fmtD(c.sdsDate)+'</div>'
       + '<div class="drow"><span class="dl">Käyttöturvallisuustiedote</span>'
@@ -451,7 +474,8 @@
     }
     if(q.error){ s+='<div class="msg err" style="margin:.4em 0 0;">'+esc(q.error)+'</div></div>'; return s; }
     s+='<div style="margin:.3em 0;">'+mark("name","Kauppanimi")+" · "+mark("supplier","Toimittaja")+" · "
-      + mark("h","H-lausekkeet")+" · "+mark("p","P-lausekkeet")+" · "+mark("ghs","Varoitusmerkit")+" · "+mark("date","Päiväys")+'</div>';
+      + mark("h","H-lausekkeet")+" · "+mark("p","P-lausekkeet")+" · "+mark("ghs","Varoitusmerkit")+" · "
+      + mark("date","Päiväys")+" · "+mark("first","Ensitoimet")+'</div>';
     s+='<div class="inline"><div class="field"><label>Kauppanimi <span class="req">*</span></label><input type="text" data-q="'+idx+'" data-f="name" value="'+esc(q.name||"")+'"></div>'
       + '<div class="field"><label>Toimittaja</label><input type="text" data-q="'+idx+'" data-f="supplier" value="'+esc(q.supplier||"")+'"></div>'
       + '<div class="field" style="max-width:170px;"><label>KTT päivätty <span class="req">*</span></label><input type="date" data-q="'+idx+'" data-f="sdsDate" value="'+esc(q.sdsDate||"")+'"></div></div>'
@@ -462,6 +486,8 @@
       + '<div class="inline"><div class="field"><label>Säilytyspaikka <span class="req">*</span></label><input type="text" data-q="'+idx+'" data-f="storeLoc" value="'+esc(q.storeLoc||"")+'"></div>'
       + '<div class="field"><label>Käyttöpaikka <span class="req">*</span></label><select data-q="'+idx+'" data-f="useLoc">'+roomOptions(q.useLoc)+'</select></div>'
       + '<div class="field"><label>Hävitys <span class="req">*</span></label><input type="text" data-q="'+idx+'" data-f="disposal" value="'+esc(q.disposal||"")+'"></div></div>'
+      + '<div class="field"><label>Käyttötarkoitus <span class="req">*</span></label><input type="text" data-q="'+idx+'" data-f="use" value="'+esc(q.use||"")+'"></div>'
+      + '<div class="field"><label>Ensitoimet vahinkotilanteessa <span class="req">*</span></label><textarea data-q="'+idx+'" data-f="firstAid" rows="3">'+esc(q.firstAid||"")+'</textarea></div>'
       + '<div class="field"><label>KTT-linkki (jos verkossa)</label><input type="text" data-q="'+idx+'" data-f="sdsUrl" value="'+esc(q.sdsUrl||"")+'"></div>'
       + '<div class="btnrow"><button class="btn ok" data-qsave="'+idx+'">Tallenna tämä</button>'
       + '<button class="btn ghost" data-qdrop="'+idx+'">Poista jonosta</button></div></div>';
@@ -504,6 +530,13 @@
     var sp=text.match(/1\.3[^\n]{0,80}?[\n:]\s*([^\n]{3,80})/i);
     if(sp && sp[1]){ var cand=sp[1].trim().replace(/^[:\-\s]+/,"");
       if(cand.length>2 && !/^\d/.test(cand)){ q.supplier=cand; f.supplier=true; } }
+    // Ensiapu: KTT kohta 4
+    var fa=text.match(/(?:^|\n)\s*4[\.\s][^\n]{0,60}(?:ensiapu|first[- ]aid)[\s\S]{0,900}?(?=(?:\n\s*5[\.\s])|$)/i);
+    if(!fa) fa=text.match(/(?:ensiaputoimenpiteet|first[- ]aid measures)[\s\S]{0,900}?(?=(?:\n\s*5[\.\s])|$)/i);
+    if(fa){
+      var clean=fa[0].replace(/\s+/g," ").trim();
+      if(clean.length>40){ q.firstAid=clean.slice(0,600); f.first=true; }
+    }
     q.found=f;
     return q;
   }
@@ -563,7 +596,7 @@
     for(i=0;i<files.length;i++){
       (function(file){
         var q={ fileName:file.name, name:"", supplier:"", h:"", pStat:"", ghs:"", ppe:"", sdsDate:"",
-                storeLoc:"", useLoc:"", disposal:"", sdsUrl:"", sdsFile:file.name, risk:3, found:{}, progress:0 };
+                storeLoc:"", useLoc:"", disposal:"", use:"", firstAid:"", sdsUrl:"", sdsFile:file.name, risk:3, found:{}, progress:0 };
         queue.push(q);
         var done=function(){ renderAddOnly(); };
         if(/\.pdf$/i.test(file.name)) readPdf(file,q,done);
@@ -603,9 +636,12 @@
       + '<div class="inline"><div class="field"><label>Säilytyspaikka <span class="req">*</span></label><input type="text" id="pStore"></div>'
       + '<div class="field"><label>Käyttöpaikka <span class="req">*</span></label><select id="pUse">'+roomOptions("")+'</select></div>'
       + '<div class="field" style="max-width:120px;"><label>Riski 1–5</label><select id="pRisk"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div></div>'
-      + '<div class="inline"><div class="field"><label>Käyttötarkoitus</label><input type="text" id="pUseFor"></div>'
+      + '<div class="inline"><div class="field"><label>Käyttötarkoitus <span class="req">*</span></label><input type="text" id="pUseFor" placeholder="mihin ainetta käytetään"></div>'
       + '<div class="field"><label>Hävitysohje <span class="req">*</span></label><input type="text" id="pDisp"></div>'
       + '<div class="field" style="max-width:140px;"><label>Määrä</label><input type="text" id="pAmt"></div></div>'
+      + '<div class="field"><label>Ensitoimet vahinkotilanteessa <span class="req">*</span></label>'
+      + '<textarea id="pFirst" rows="3" placeholder="Iholle: ... Silmiin: ... Hengitettynä: ... Nieltynä: ..."></textarea>'
+      + '<div class="mono" style="font-size:.62rem;color:var(--ink-soft);margin-top:.2em;">Kopioi käyttöturvallisuustiedotteen kohdasta 4. Älä kirjoita muistista.</div></div>'
       + '<label class="mono" style="font-size:.7rem;display:block;margin:.5em 0;"><input type="checkbox" id="pAsa"> Syöpävaarallinen — ASA-seuranta</label>'
       + '<div class="inline"><div class="field"><label>Nimesi <span class="req">*</span></label><input type="text" id="pBy"></div>'
       + '<div class="field" style="max-width:200px;"><label>Ryhmä tai yksikkö</label><input type="text" id="pGroup"></div></div>'
@@ -677,6 +713,7 @@
         risk:parseInt(document.getElementById("pRisk").value,10),
         use:document.getElementById("pUseFor").value.trim(), disposal:document.getElementById("pDisp").value.trim(),
         amount:document.getElementById("pAmt").value.trim(), asa:document.getElementById("pAsa").checked,
+        firstAid:document.getElementById("pFirst").value.trim(),
         why:document.getElementById("pWhy").value.trim(),
         proposedBy:document.getElementById("pBy").value.trim()+" ("+document.getElementById("pGroup").value.trim()+")",
         proposedAt:nowISO(), status:"ehdotus", source:"lomake" };
@@ -742,7 +779,7 @@
 
   // ================= PRO24 =================
   var PRO24_COLS=["Kauppanimi","Toimittaja","Kayttotarkoitus","H-lausekkeet","P-lausekkeet","GHS",
-                  "Suojaimet","Sailytyspaikka","Kayttopaikka","Maara","KTT-linkki","KTT-paivays",
+                  "Suojaimet","Ensitoimet","Sailytyspaikka","Kayttopaikka","Maara","KTT-linkki","KTT-paivays",
                   "Kokonaisriski","ASA","Kampus","Tila"];
   function viewPro24(){
     if(!STAFF) return '<div class="panel"><p class="lead" style="margin:0;">Tämä osio on henkilökunnalle.</p></div>';
@@ -785,6 +822,7 @@
       use:col(["käyttöpaikka","kayttopaikka","tila","paja","location"]), ppe:col(["suojain","suojaimet","ppe"]),
       usefor:col(["käyttötark","kayttotark","tarkoitus","purpose"]), disp:col(["hävit","havit","jäte","jate","disposal"]),
       amount:col(["määrä","maara","amount","quantity"]), risk:col(["riski","vaara","risk"]), asa:col(["asa"]),
+      first:col(["ensitoim","ensiapu","first aid","firstaid","hätä","hata"]),
       pid:col(["pro24","tunnus","id"]) };
     if(ci.name===-1) return {error:"Kauppanimi-saraketta ei löytynyt otsikoista."};
     var rows=[],i;
@@ -796,7 +834,7 @@
       var asav=v(ci.asa).toLowerCase();
       rows.push({ name:nm, supplier:v(ci.sup), h:v(ci.h), pStat:v(ci.pStat), ghs:v(ci.ghs),
         sdsUrl:v(ci.url), sdsDate:v(ci.date), storeLoc:v(ci.store), useLoc:v(ci.use), ppe:v(ci.ppe),
-        use:v(ci.usefor), disposal:v(ci.disp), amount:v(ci.amount), risk:rk,
+        use:v(ci.usefor), disposal:v(ci.disp), amount:v(ci.amount), risk:rk, firstAid:v(ci.first),
         asa:(asav==="kyllä"||asav==="kylla"||asav==="x"||asav==="1"||asav==="true"),
         pro24Id:v(ci.pid) });
     }
@@ -863,7 +901,7 @@
     function pro24Rows(list){
       var rows=[PRO24_COLS.join(";")],i;
       for(i=0;i<list.length;i++){ var c=list[i];
-        rows.push([cc(c.name),cc(c.supplier),cc(c.use),cc(c.h),cc(c.pStat),cc(c.ghs),cc(c.ppe),
+        rows.push([cc(c.name),cc(c.supplier),cc(c.use),cc(c.h),cc(c.pStat),cc(c.ghs),cc(c.ppe),cc(c.firstAid),
           cc(c.storeLoc),cc(c.useLoc),cc(c.amount),cc(c.sdsUrl),cc(c.sdsDate),c.risk||"",
           c.asa?"kyllä":"ei",cc(c.campus),"käytössä"].join(";")); }
       return rows.join("\r\n");
@@ -919,12 +957,13 @@
     if(use.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Ei käytössä olevia aineita.</p></div>';
     s+='<div class="panel"><h3>Kemikaaliluettelo — '+esc(campuses().filter(function(c){return c.code===curCampus();}).map(function(c){return c.name;})[0]||"")+'</h3>'
       + '<p class="mono" style="font-size:.66rem;color:var(--ink-soft);">Tulostettu '+fmt(nowISO())+' · '+use.length+' ainetta · VNa 715/2001 mukainen</p>'
-      + '<div class="tblwrap"><table><thead><tr><th>Kauppanimi</th><th>Luokitus (H)</th><th>GHS</th><th>KTT</th><th>Päiväys</th><th>Säilytys</th><th>Käyttöpaikka</th></tr></thead><tbody>';
+      + '<div class="tblwrap"><table><thead><tr><th>Kauppanimi</th><th>Luokitus (H)</th><th>GHS</th><th>KTT</th><th>Päiväys</th><th>Säilytys</th><th>Käyttöpaikka</th><th>Ensitoimet</th></tr></thead><tbody>';
     var i; for(i=0;i<use.length;i++){ var c=use[i];
       s+='<tr><td><b>'+esc(c.name)+'</b>'+(c.asa?' <span class="pill p-asa">ASA</span>':'')+'<br><span class="mono" style="font-size:.7rem;color:var(--ink-soft);">'+esc(c.supplier||"")+'</span></td>'
         + '<td>'+esc(c.h||"—")+'</td><td>'+esc(c.ghs||"—")+'</td>'
         + '<td>'+((c.sdsUrl||c.sdsFile)?"kyllä":"<b>EI</b>")+'</td><td>'+fmtD(c.sdsDate)+'</td>'
-        + '<td>'+esc(c.storeLoc||"—")+'</td><td>'+esc(c.useLoc||"—")+'</td></tr>'; }
+        + '<td>'+esc(c.storeLoc||"—")+'</td><td>'+esc(c.useLoc||"—")+'</td>'
+        + '<td style="font-size:.9em;">'+esc(c.firstAid||"—")+'</td></tr>'; }
     s+='</tbody></table></div></div>';
 
     var asa=use.filter(function(c){ return c.asa; });

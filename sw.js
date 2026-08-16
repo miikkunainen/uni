@@ -18,6 +18,8 @@ var FILES = [
   "./pajakuutio_hallinnan_kartta.html",
   "./pajapeli_digital_twin.html",
   "./pajatoiminnan_perusta.html",
+  "./orientaatio.html",
+  "./orientaatio.webmanifest",
   "./syksyn_orientaatiokurssi.html",
   "./tietosuoja.html",
   "./turvallisuus_ja_tyolupa.html",
