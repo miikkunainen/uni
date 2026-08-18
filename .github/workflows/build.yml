@@ -1,0 +1,62 @@
+name: Build tools and SCORM packages
+
+# Kun muokkaat työkalua kansiossa src/, tämä kopioi sen docs/-kansioon
+# (GitHub Pages julkaisee sen) ja rakentaa SCORM-paketit uudelleen.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tools/**'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check the tools are complete single-file HTML
+        run: |
+          set -e
+          for f in src/studio.html src/hakuseula.html; do
+            test -f "$f" || { echo "Missing $f"; exit 1; }
+            grep -q "</html>" "$f" || { echo "$f looks truncated"; exit 1; }
+            echo "OK: $f ($(wc -c < "$f") bytes)"
+          done
+
+      - name: Check JavaScript syntax
+        run: |
+          set -e
+          python3 tools/extract_js.py src/studio.html /tmp/studio.js
+          node --check /tmp/studio.js
+          python3 tools/extract_js.py src/hakuseula.html /tmp/hakuseula.js
+          node --check /tmp/hakuseula.js
+          echo "JavaScript syntax OK in both tools"
+
+      - name: Copy tools to docs/ for GitHub Pages
+        run: |
+          cp src/studio.html docs/studio.html
+          cp src/hakuseula.html docs/hakuseula.html
+          touch docs/.nojekyll
+
+      - name: Rebuild and verify SCORM packages
+        run: bash tools/build_scorm.sh
+
+      - name: Commit updated docs/ and scorm/
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs scorm
+          if git diff --staged --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "Build: sync docs/ and rebuild SCORM packages"
+            git push
+          fi
