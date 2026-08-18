@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MHKS — Materiaali- ja kustannushallinta</title>
+<meta name="theme-color" content="#CE3F1B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MHKS">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="mhks-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ECE6DA;--paper-deep:#E4DCCC;--card:#F3EFE7;--ink:#211C16;--ink-soft:#5A5347;
+    --ember:#CE3F1B;--rule:#C8BFAD;--rule-soft:#D8D0C0;
+    --vihrea:#5E8C5A;--oikeus:#4F6E92;--turva:#C25A3E;--laatu:#BE8A2E;--projekti:#6E5A93;--talous:#4E8C84;--steel:#3D4B58;--wood:#B0712F;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4,h5{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;text-transform:uppercase;line-height:.95;margin:0;}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+  p{margin:0 0 1em;}
+  a{color:var(--ember);}
+
+  /* LOGIN */
+  .login{max-width:640px;margin:0 auto;padding:clamp(28px,7vw,64px) 18px 60px;}
+  .brandrow{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:8px;}
+  .logo{width:48px;height:48px;border-radius:10px;background:var(--ember);color:#fff;display:grid;place-items:center;font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;font-size:26px;}
+  .brandrow h1{font-size:2rem;}
+  .brandsub{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);text-align:center;margin-bottom:22px;}
+  .roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:520px){.roles{grid-template-columns:1fr;}}
+  .rolecard{background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--steel);border-radius:10px;padding:14px 15px;cursor:pointer;}
+  .rolecard:hover{border-color:var(--ink-soft);}
+  .rolecard h4{font-size:1.15rem;}
+  .rolecard .d{font-size:.85rem;color:var(--ink-soft);margin-top:.3em;}
+  .r-opiskelija{border-left-color:var(--oikeus);}
+  .r-pajamestari{border-left-color:var(--vihrea);}
+  .r-lehtori{border-left-color:var(--wood);}
+  .r-koordinaattori{border-left-color:var(--projekti);}
+
+  /* SHELL */
+  .shell{display:flex;min-height:100vh;}
+  .side{width:200px;flex:none;background:var(--paper-deep);border-right:1px solid var(--rule);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+  .side .top{padding:14px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:9px;}
+  .side .top .logo{width:32px;height:32px;font-size:18px;border-radius:7px;}
+  .side .top h2{font-size:1.15rem;line-height:1;}
+  .side .top .s{font-family:"IBM Plex Mono",monospace;font-size:.52rem;letter-spacing:.06em;color:var(--ink-soft);text-transform:uppercase;}
+  .nav{flex:1;padding:10px 8px;overflow-y:auto;}
+  .navbtn{display:flex;justify-content:space-between;align-items:center;width:100%;padding:.55em .7em;border-radius:7px;border:none;background:transparent;color:var(--ink-soft);font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.03em;text-transform:uppercase;cursor:pointer;margin-bottom:3px;text-align:left;}
+  .navbtn:hover{background:rgba(33,28,22,.05);color:var(--ink);}
+  .navbtn.active{background:var(--ink);color:var(--paper);}
+  .navbtn .n{background:var(--ember);color:#fff;border-radius:20px;padding:0 .4em;font-size:.9em;}
+  .side .bot{padding:10px 12px;border-top:1px solid var(--rule);}
+  .who{font-size:.82rem;line-height:1.2;margin-bottom:.5em;}
+  .who .r{font-family:"IBM Plex Mono",monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);}
+  .main{flex:1;min-width:0;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 18px;border-bottom:1px solid var(--rule);background:var(--paper);position:sticky;top:0;z-index:10;}
+  .topbar h3{font-size:1.2rem;}
+  .topbar .meta{font-family:"IBM Plex Mono",monospace;font-size:.6rem;color:var(--ink-soft);}
+  .content{padding:16px 18px 70px;max-width:1000px;}
+
+  @media (max-width:760px){
+    .shell{flex-direction:column;}
+    .side{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--rule);}
+    .nav{display:flex;gap:4px;overflow-x:auto;padding:8px;}
+    .navbtn{flex:none;white-space:nowrap;margin:0;}
+    .side .top{padding:10px 12px;}
+    .side .bot{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .who{margin:0;}
+    .content{padding:14px 12px 80px;}
+  }
+
+  /* PRIMITIVES */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin-bottom:14px;}
+  .kpi{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:11px 13px;}
+  .kpi .k{font-family:"IBM Plex Mono",monospace;font-size:.54rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);}
+  .kpi .v{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;font-size:1.8rem;line-height:1;margin-top:.1em;}
+  .kpi .s{font-size:.74rem;color:var(--ink-soft);}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:13px 15px;margin-bottom:13px;}
+  .panel h4{font-size:1.05rem;margin-bottom:.4em;}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);font-weight:600;display:block;margin-bottom:.2em;}
+  .lead{color:var(--ink-soft);font-size:.9rem;max-width:70ch;margin:0 0 12px;}
+
+  .bar{height:8px;background:var(--rule-soft);border-radius:4px;overflow:hidden;}
+  .bar i{display:block;height:100%;}
+  .pill{font-family:"IBM Plex Mono",monospace;font-size:.52rem;letter-spacing:.05em;text-transform:uppercase;padding:.2em .5em;border-radius:20px;display:inline-block;}
+  .p-ok{background:rgba(94,140,90,.2);color:#3c5e39;}
+  .p-low{background:rgba(190,138,46,.25);color:#7a5a12;}
+  .p-crit{background:rgba(206,63,27,.16);color:#8f2a10;}
+  .p-mut{background:var(--paper-deep);color:var(--ink-soft);}
+
+  .tblwrap{overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;font-size:.84rem;}
+  th,td{border-bottom:1px solid var(--rule);padding:.42em .5em;text-align:left;}
+  th{font-family:"IBM Plex Mono",monospace;font-size:.54rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;}
+  td.num,th.num{text-align:right;font-family:"IBM Plex Mono",monospace;}
+  tr.dim td{color:var(--ink-soft);}
+
+  .btn{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:.5em .8em;border-radius:3px;}
+  .btn:hover{background:var(--ink);color:var(--paper);}
+  .btn.primary{background:var(--ember);border-color:var(--ember);color:#fff;}
+  .btn.primary:hover{background:#b0340f;}
+  .btn.ghost{border-color:var(--rule);color:var(--ink-soft);}
+  .btn.mini{font-size:.54rem;padding:.3em .55em;}
+  .btnrow{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
+
+  .field{margin:.45em 0;}
+  .field label{display:block;font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.2em;}
+  .field input,.field select,.field textarea{width:100%;font-family:"Spectral",serif;font-size:.95rem;padding:.45em .55em;border:1px solid var(--rule);border-radius:4px;background:#fff;color:var(--ink);}
+  .field input:focus,.field select:focus{outline:2px solid var(--ember);border-color:var(--ember);}
+  .inline{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;}
+  .inline .field{flex:1;min-width:130px;margin:0;}
+
+  .msg{font-size:.84rem;padding:.5em .7em;border-radius:4px;margin:.5em 0;}
+  .msg.ok{background:rgba(94,140,90,.12);border-left:3px solid var(--vihrea);color:#3c5e39;}
+  .msg.err{background:rgba(206,63,27,.1);border-left:3px solid var(--ember);color:#8f2a10;}
+  .msg.info{background:var(--paper-deep);border-left:3px solid var(--steel);color:var(--ink-soft);}
+  .note{font-family:"IBM Plex Mono",monospace;font-size:.6rem;color:var(--ink-soft);line-height:1.7;margin-top:14px;border-top:1px solid var(--rule);padding-top:9px;}
+</style>
+</head>
+<body>
+<script src="paja-data.js"></script>
+<script>
+/* Varmistus: jos jaettu tietolähde ei latatunut, kerro se näkyvästi.
+   Hiljainen tyhjä lista on turvallisuustyökalussa vaarallinen. */
+(function(){
+  if(window.PAJA) return;
+  document.addEventListener("DOMContentLoaded", function(){
+    var d=document.createElement("div");
+    d.setAttribute("role","alert");
+    d.style.cssText="position:sticky;top:0;z-index:9999;background:#CE3F1B;color:#fff;padding:12px 16px;"
+      + "font-family:'IBM Plex Mono',monospace;font-size:.78rem;line-height:1.6;";
+    d.innerHTML="<b>Tietolähde puuttuu.</b> Tiedosto paja-data.js ei latautunut, joten koneet, tilat ja "
+      + "suojaimet eivät näy. Varmista että kaikki tiedostot ovat samassa kansiossa. "
+      + "Älä käytä tätä sivua ohjeena ennen kuin tieto näkyy.";
+    document.body.insertBefore(d, document.body.firstChild);
+  });
+})();
+</script>
+
+<script src="pajakuutio-nav.js"></script>
+<div id="app"></div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY="mhks_v1";
+
+  // ---------- MALLI ----------
+  function defaults(){
+    return {
+      people:[], materials:[], suppliers:[], tx:[], machines:[], waste:[], orders:[], log:[],
+      settings:{ delPct:8, stoPct:5, limit:50, pin:"" }
+    };
+  }
+  var DB=defaults();
+  var S={ role:null, personId:null, view:"dash" };
+  var flashMsg=null;
+
+  function load(){ try{ var s=localStorage.getItem(KEY); if(s){ var d=JSON.parse(s);
+    DB.people=d.people||[]; DB.materials=d.materials||[]; DB.suppliers=d.suppliers||[]; DB.tx=d.tx||[];
+    DB.machines=d.machines||[]; DB.waste=d.waste||[]; DB.orders=d.orders||[]; DB.log=d.log||[];
+    DB.settings=d.settings||defaults().settings; } }catch(e){} }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(DB)); return true; }catch(e){ flash("Tallennus ei onnistunut.","err"); return false; } }
+  function uid(p){ return p+Math.random().toString(36).slice(2,7); }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function nowISO(){ return new Date().toISOString(); }
+  function fmtDT(iso){ if(!iso) return "–"; var d=new Date(iso); function p(n){ return (n<10?"0":"")+n; }
+    return d.getDate()+"."+(d.getMonth()+1)+". "+p(d.getHours())+":"+p(d.getMinutes()); }
+  function fmtD(iso){ if(!iso) return "–"; var d=new Date(iso); return d.getDate()+"."+(d.getMonth()+1)+"."+d.getFullYear(); }
+  function eur(n){ return (Math.round(n*100)/100).toFixed(2).replace(".",",")+" €"; }
+  function logAdd(kind,text,by){ DB.log.push({ ts:nowISO(), kind:kind, text:text, by:by||"" }); }
+  function flash(t,k){ flashMsg={t:t,k:k}; render(); }
+  function person(id){ var a=DB.people.filter(function(p){ return p.id===id; }); return a.length?a[0]:null; }
+  function material(id){ var a=DB.materials.filter(function(m){ return m.id===id; }); return a.length?a[0]:null; }
+  function students(){ return DB.people.filter(function(p){ return p.role==="opiskelija"; }); }
+
+  // hinnan rakenne
+  function priceOf(mat,qty){
+    var base=mat.price*qty;
+    var del=base*(DB.settings.delPct/100);
+    var sto=base*(DB.settings.stoPct/100);
+    return { base:base, del:del, sto:sto, total:base+del+sto };
+  }
+  function balance(pid){
+    var own=0,course=0,i;
+    for(i=0;i<DB.tx.length;i++){ var t=DB.tx[i]; if(t.personId!==pid) continue;
+      if(t.course) course+=t.total; else if(!t.invoiced) own+=t.total; }
+    return { own:own, course:course, total:own+course };
+  }
+  function matStatus(m){ if(m.stock<=m.min*0.5) return "crit"; if(m.stock<=m.min) return "low"; return "ok"; }
+
+  // ---------- LOGIN ----------
+  var ROLE_DESC={ opiskelija:"Materiaalikortti, hinnat ja toimittajat, oma saldo",
+    pajamestari:"Inventaario, laitteet, kiertotalous, hankinnat",
+    lehtori:"Opiskelijoiden kulut ja kurssien seuranta",
+    koordinaattori:"Laskutus, toimittajat, raportit" };
+  var ROLES=(window.PAJA?PAJA.roles().filter(function(r){
+      return ["opiskelija","pajamestari","lehtori"].indexOf(r.id)>-1;
+    }).map(function(r){ return { id:r.id, label:r.name, d:ROLE_DESC[r.id]||"" }; }):[]);
+  ROLES.push({ id:"koordinaattori", label:"Vastuukoordinaattori", d:ROLE_DESC.koordinaattori });
+  function viewLogin(){
+    var s='<div class="login"><div class="brandrow"><div class="logo">M</div><h1>MHKS</h1></div>'
+      + '<div class="brandsub">Metropolia · Muotoilun pajat · Arabia</div>';
+    if(DB.people.length===0){
+      s+='<div class="msg info">Järjestelmä on tyhjä. Lataa esimerkkiaineisto, niin näet kaikki roolit ja moduulit toiminnassa.</div>'
+        + '<div class="btnrow"><button class="btn primary" id="seed">Lataa esimerkkiaineisto</button></div>';
+    }
+    s+='<div class="roles">';
+    var i; for(i=0;i<ROLES.length;i++){ var r=ROLES[i];
+      s+='<div class="rolecard r-'+r.id+'" data-role="'+r.id+'"><h4>'+esc(r.label)+'</h4><div class="d">'+esc(r.d)+'</div></div>'; }
+    s+='</div>';
+    s+='<p class="note">Demo: rooli valitaan tästä. Tuotannossa kirjautuminen tapahtuu Metropolian Haka-tunnuksilla, jolloin henkilö ja rooli tulevat automaattisesti.</p>';
+    s+='<div class="btnrow"><button class="btn ghost" id="installBtn" style="display:none;">Asenna sovellus puhelimeen</button></div>';
+    return s+'</div>';
+  }
+  function bindLogin(){
+    var sd=document.getElementById("seed"); if(sd){ sd.addEventListener("click", seed); }
+    document.querySelectorAll("[data-role]").forEach(function(c){ c.addEventListener("click", function(){
+      var role=c.getAttribute("data-role");
+      if(DB.people.length===0){ flash("Lataa ensin esimerkkiaineisto tai lisää henkilöt.","err"); return; }
+      var cand=DB.people.filter(function(p){ return p.role===role; });
+      if(cand.length===0){ flash("Tälle roolille ei ole henkilöitä.","err"); return; }
+      S.role=role; S.personId=cand[0].id; S.view="dash"; render(); }); });
+    setupInstall();
+  }
+
+  // ---------- NAV ----------
+  var NAV={
+    opiskelija:[["dash","Yhteenveto"],["card","Materiaalikortti"],["shop","Materiaalit"],["mywaste","Kiertotalous"]],
+    pajamestari:[["dash","Yhteenveto"],["inv","Inventaario"],["mach","Laitteet"],["waste","Kiertotalous"],["orders","Hankinnat"]],
+    lehtori:[["dash","Yhteenveto"],["students","Opiskelijat"]],
+    koordinaattori:[["dash","Yhteenveto"],["billing","Laskutus"],["suppliers","Toimittajat"],["reports","Raportit"]]
+  };
+  var TITLES={dash:"Yhteenveto",card:"Materiaalikortti",shop:"Materiaalit ja hinnat",mywaste:"Kiertotalous",
+    inv:"Inventaario",mach:"Laitteet ja huolto",waste:"Kiertotalous",orders:"Hankinnat",
+    students:"Opiskelijat",billing:"Laskutus",suppliers:"Toimittajat",reports:"Raportit",settings:"Asetukset"};
+
+  // ---------- OPISKELIJA ----------
+  function vStudentDash(){
+    var b=balance(S.personId), lim=DB.settings.limit;
+    var pct=Math.min(100,Math.round(b.own/lim*100));
+    var col=b.own>=lim?"#CE3F1B":(b.own>=lim*0.6?"#BE8A2E":"#5E8C5A");
+    var s='<div class="kpis">'
+      + '<div class="kpi"><div class="k">Oma saldo</div><div class="v" style="color:'+col+'">'+eur(b.own)+'</div><div class="s">raja '+eur(lim)+'</div></div>'
+      + '<div class="kpi"><div class="k">Kurssityöt</div><div class="v">'+eur(b.course)+'</div><div class="s">ei laskuteta</div></div>'
+      + '<div class="kpi"><div class="k">Tapahtumia</div><div class="v">'+DB.tx.filter(function(t){ return t.personId===S.personId; }).length+'</div></div></div>';
+    s+='<div class="panel"><span class="kicker">Laskutusraja</span><h4>Omat projektit</h4>'
+      + '<div class="bar"><i style="width:'+pct+'%;background:'+col+'"></i></div>'
+      + '<div class="mono" style="font-size:.66rem;color:var(--ink-soft);margin-top:.35em;">'+eur(b.own)+' / '+eur(lim)+'</div>'
+      + '<p style="font-size:.86rem;margin:.6em 0 0;color:var(--ink-soft);">Kurssitöiden materiaalit maksaa koulu. Omat projektit laskutetaan, kun raja ylittyy tai opinnot päättyvät.</p></div>';
+    var mine=DB.tx.filter(function(t){ return t.personId===S.personId; }).slice(-5).reverse();
+    s+='<div class="panel"><span class="kicker">Viimeisimmät</span><h4>Tapahtumat</h4>';
+    if(mine.length===0) s+='<p class="lead" style="margin:0;">Ei vielä tapahtumia. Kirjaa materiaalin käyttö Materiaalit-välilehdeltä.</p>';
+    else { s+='<div class="tblwrap"><table><thead><tr><th>Pvm</th><th>Materiaali</th><th class="num">Yhteensä</th></tr></thead><tbody>';
+      var i; for(i=0;i<mine.length;i++){ var t=mine[i];
+        s+='<tr'+(t.course?' class="dim"':'')+'><td class="mono">'+fmtDT(t.ts)+'</td><td>'+esc(t.name)+' <span class="pill '+(t.course?"p-mut":"p-ok")+'">'+(t.course?"kurssi":"oma")+'</span></td><td class="num">'+(t.course?"koulu maksaa":eur(t.total))+'</td></tr>'; }
+      s+='</tbody></table></div>'; }
+    return s+'</div>';
+  }
+  function vStudentCard(){
+    var mine=DB.tx.filter(function(t){ return t.personId===S.personId; }).slice().reverse();
+    var s='<p class="lead">Materiaalikorttisi. Hinta muodostuu näin: hankintahinta + toimituskulun osuus ('+DB.settings.delPct+' %) + varastointikustannus ('+DB.settings.stoPct+' %). Näin näet todellisen tuotantokustannuksen.</p>';
+    if(mine.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Ei tapahtumia.</p></div>';
+    s+='<div class="panel"><div class="tblwrap"><table><thead><tr><th>Pvm</th><th>Materiaali</th><th class="num">Määrä</th><th class="num">Hankinta</th><th class="num">Toimitus</th><th class="num">Varasto</th><th class="num">Yht.</th></tr></thead><tbody>';
+    var i,own=0,crs=0;
+    for(i=0;i<mine.length;i++){ var t=mine[i];
+      if(t.course) crs+=t.total; else own+=t.total;
+      s+='<tr'+(t.course?' class="dim"':'')+'><td class="mono">'+fmtDT(t.ts)+'</td>'
+        + '<td>'+esc(t.name)+'<br><span class="mono" style="font-size:.6rem;color:var(--ink-soft);">'+esc(t.supplier||"")+' · '+(t.course?"kurssityö":"oma projekti")+(t.invoiced?" · laskutettu":"")+'</span></td>'
+        + '<td class="num">'+t.qty+' '+esc(t.unit)+'</td><td class="num">'+eur(t.base)+'</td><td class="num">'+eur(t.del)+'</td><td class="num">'+eur(t.sto)+'</td>'
+        + '<td class="num"><b>'+eur(t.total)+'</b></td></tr>'; }
+    s+='</tbody></table></div>'
+      + '<div class="msg info">Omat projektit yhteensä '+eur(own)+' · kurssityöt '+eur(crs)+' (koulu maksaa).</div></div>';
+    return s;
+  }
+  function vStudentShop(){
+    var s='<p class="lead">Materiaalit, hinnat ja toimittajat. Kirjaa käyttö, niin se siirtyy materiaalikortillesi ja varastosaldo päivittyy.</p>';
+    if(DB.materials.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Ei materiaaleja.</p></div>';
+    var o="",i;
+    for(i=0;i<DB.materials.length;i++){ var m=DB.materials[i];
+      o+='<option value="'+m.id+'">'+esc(m.name)+' — '+eur(m.price)+' / '+esc(m.unit)+'</option>'; }
+    s+='<div class="panel"><span class="kicker">Kirjaa käyttö</span><h4>Uusi tapahtuma</h4><div class="inline">'
+      + '<div class="field"><label>Materiaali</label><select id="cMat">'+o+'</select></div>'
+      + '<div class="field" style="max-width:120px;"><label>Määrä</label><input type="number" id="cQty" value="1" min="0" step="0.1"></div>'
+      + '<div class="field" style="max-width:170px;"><label>Tyyppi</label><select id="cType"><option value="kurssi">Kurssityö</option><option value="oma">Oma projekti</option></select></div>'
+      + '<button class="btn primary" id="cAdd">Kirjaa</button></div>'
+      + '<div id="cPrev" class="msg info"></div></div>';
+    s+='<div class="panel"><span class="kicker">Hinnasto</span><h4>Materiaalit</h4><div class="tblwrap"><table><thead><tr><th>Materiaali</th><th>Toimittaja</th><th class="num">Hinta</th><th class="num">Saldo</th><th>Sijainti</th></tr></thead><tbody>';
+    for(i=0;i<DB.materials.length;i++){ var mm=DB.materials[i], st=matStatus(mm);
+      s+='<tr><td>'+esc(mm.name)+'</td><td class="mono" style="font-size:.7rem;">'+esc(mm.supplier)+'</td>'
+        + '<td class="num">'+eur(mm.price)+' / '+esc(mm.unit)+'</td>'
+        + '<td class="num">'+mm.stock+' <span class="pill p-'+st+'">'+(st==="ok"?"ok":(st==="low"?"vähissä":"kriittinen"))+'</span></td>'
+        + '<td class="mono" style="font-size:.7rem;">'+esc(mm.loc||"—")+'</td></tr>'; }
+    return s+'</tbody></table></div></div>';
+  }
+  function bindStudentShop(){
+    var sel=document.getElementById("cMat"), qty=document.getElementById("cQty"), prev=document.getElementById("cPrev");
+    function upd(){ if(!sel||!qty||!prev) return; var m=material(sel.value); if(!m) return;
+      var q=parseFloat(qty.value)||0, p=priceOf(m,q);
+      prev.innerHTML="Hankinta "+eur(p.base)+" + toimitus "+eur(p.del)+" + varastointi "+eur(p.sto)+" = <b>"+eur(p.total)+"</b> · toimittaja "+esc(m.supplier); }
+    if(sel){ sel.addEventListener("change",upd); } if(qty){ qty.addEventListener("input",upd); } upd();
+    var b=document.getElementById("cAdd");
+    if(b){ b.addEventListener("click", function(){
+      var m=material(sel.value); if(!m) return;
+      var q=parseFloat(qty.value)||0;
+      if(q<=0){ flash("Anna määrä.","err"); return; }
+      if(q>m.stock){ flash("Varastossa on vain "+m.stock+" "+m.unit+".","err"); return; }
+      var p=priceOf(m,q), course=(document.getElementById("cType").value==="kurssi");
+      DB.tx.push({ id:uid("t_"), ts:nowISO(), personId:S.personId, matId:m.id, name:m.name, unit:m.unit,
+        supplier:m.supplier, qty:q, base:p.base, del:p.del, sto:p.sto, total:p.total, course:course, invoiced:false });
+      m.stock=Math.round((m.stock-q)*1000)/1000;
+      logAdd("tapahtuma",person(S.personId).name+": "+m.name+" "+q+" "+m.unit+" ("+(course?"kurssi":"oma")+") "+eur(p.total),person(S.personId).name);
+      save(); flash("Kirjattu materiaalikortille.","ok"); }); }
+  }
+  function vStudentWaste(){
+    var s='<p class="lead">Jätejakeet ja niiden käsittelijät. Oikein lajiteltu materiaali palautuu kiertoon — ja osa siitä palautuu myös budjettiin.</p>';
+    if(DB.waste.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Ei kirjauksia.</p></div>';
+    var tot=0,i;
+    s+='<div class="panel"><div class="tblwrap"><table><thead><tr><th>Pvm</th><th>Jae</th><th class="num">Määrä</th><th>Käsittelijä</th><th class="num">Arvo</th></tr></thead><tbody>';
+    for(i=DB.waste.length-1;i>=0;i--){ var w=DB.waste[i]; tot+=w.value||0;
+      s+='<tr><td class="mono">'+fmtD(w.ts)+'</td><td>'+esc(w.frac)+'</td><td class="num">'+w.amount+' '+esc(w.unit)+'</td><td class="mono" style="font-size:.7rem;">'+esc(w.handler||"—")+'</td><td class="num">'+eur(w.value||0)+'</td></tr>'; }
+    return s+'</tbody></table></div><div class="msg ok">Kierrätysarvo yhteensä '+eur(tot)+'.</div></div>';
+  }
+
+  // ---------- PAJAMESTARI ----------
+  function vMasterDash(){
+    var low=DB.materials.filter(function(m){ return matStatus(m)!=="ok"; });
+    var due=DB.machines.filter(function(m){ return m.used>=m.total; });
+    var soon=DB.machines.filter(function(m){ return m.used<m.total && m.used>=m.total*0.75; });
+    var val=0,i; for(i=0;i<DB.materials.length;i++){ val+=DB.materials[i].stock*DB.materials[i].price; }
+    var s='<div class="kpis">'
+      + '<div class="kpi"><div class="k">Inventaarion arvo</div><div class="v">'+eur(val)+'</div><div class="s">'+DB.materials.length+' nimikettä</div></div>'
+      + '<div class="kpi"><div class="k">Varastoherätteet</div><div class="v" style="color:'+(low.length?"#CE3F1B":"#211C16")+'">'+low.length+'</div></div>'
+      + '<div class="kpi"><div class="k">Huolto erääntynyt</div><div class="v" style="color:'+(due.length?"#CE3F1B":"#211C16")+'">'+due.length+'</div><div class="s">'+soon.length+' lähestyy</div></div>'
+      + '<div class="kpi"><div class="k">Hankinnat</div><div class="v">'+DB.orders.filter(function(o){ return o.status==="odottaa"; }).length+'</div><div class="s">odottaa</div></div></div>';
+    if(low.length>0){ s+='<div class="panel"><span class="kicker">Heräte</span><h4>Varasto</h4>';
+      for(i=0;i<low.length;i++){ var m=low[i];
+        s+='<div class="msg '+(matStatus(m)==="crit"?"err":"info")+'"><b>'+esc(m.name)+'</b> — '+m.stock+' '+esc(m.unit)+' (min '+m.min+')</div>'; }
+      s+='</div>'; }
+    if(due.length+soon.length>0){ s+='<div class="panel"><span class="kicker">Heräte</span><h4>Huolto</h4>';
+      var all=due.concat(soon); for(i=0;i<all.length;i++){ var mm=all[i];
+        s+='<div class="msg '+(mm.used>=mm.total?"err":"info")+'"><b>'+esc(mm.name)+'</b> — '+mm.used+' / '+mm.total+' h'+(mm.used>=mm.total?" · erääntynyt":"")+'</div>'; }
+      s+='</div>'; }
+    return s;
+  }
+  function vInv(){
+    var s='<p class="lead">Varastosaldot, hinnat ja toimittajat. Saldon muutokset kirjautuvat lokiin.</p>';
+    var so="",i; for(i=0;i<DB.suppliers.length;i++){ so+='<option value="'+esc(DB.suppliers[i].name)+'">'+esc(DB.suppliers[i].name)+'</option>'; }
+    s+='<div class="panel"><span class="kicker">Lisää</span><h4>Uusi materiaali</h4><div class="inline">'
+      + '<div class="field"><label>Nimi</label><input type="text" id="mName"></div>'
+      + '<div class="field" style="max-width:100px;"><label>Yksikkö</label><input type="text" id="mUnit" value="kg"></div>'
+      + '<div class="field" style="max-width:110px;"><label>Hinta €</label><input type="number" id="mPrice" step="0.01" value="0"></div>'
+      + '<div class="field" style="max-width:110px;"><label>Saldo</label><input type="number" id="mStock" step="0.1" value="0"></div>'
+      + '<div class="field" style="max-width:100px;"><label>Min</label><input type="number" id="mMin" step="0.1" value="0"></div>'
+      + '<div class="field"><label>Toimittaja</label><select id="mSup">'+so+'</select></div>'
+      + '<div class="field" style="max-width:110px;"><label>Sijainti</label><input type="text" id="mLoc"></div>'
+      + '<button class="btn primary" id="mAdd">Lisää</button></div></div>';
+    s+='<div class="panel"><div class="tblwrap"><table><thead><tr><th>Materiaali</th><th class="num">Saldo</th><th class="num">Min</th><th class="num">Hinta</th><th>Toimittaja</th><th>Sijainti</th><th class="num">Muuta</th></tr></thead><tbody>';
+    for(i=0;i<DB.materials.length;i++){ var m=DB.materials[i], st=matStatus(m);
+      s+='<tr><td>'+esc(m.name)+' <span class="pill p-'+st+'">'+(st==="ok"?"ok":(st==="low"?"vähissä":"kriittinen"))+'</span></td>'
+        + '<td class="num">'+m.stock+' '+esc(m.unit)+'</td><td class="num">'+m.min+'</td><td class="num">'+eur(m.price)+'</td>'
+        + '<td class="mono" style="font-size:.7rem;">'+esc(m.supplier)+'</td><td class="mono" style="font-size:.7rem;">'+esc(m.loc||"—")+'</td>'
+        + '<td class="num"><input type="number" step="0.1" data-adj="'+m.id+'" style="width:70px;padding:.2em;border:1px solid var(--rule);border-radius:3px;"> <button class="btn mini" data-adjb="'+m.id+'">+ saldo</button></td></tr>'; }
+    return s+'</tbody></table></div></div>';
+  }
+  function bindInv(){
+    var a=document.getElementById("mAdd");
+    if(a){ a.addEventListener("click", function(){
+      var n=document.getElementById("mName").value.trim();
+      if(n.length<2){ flash("Kirjoita nimi.","err"); return; }
+      DB.materials.push({ id:uid("m_"), name:n, unit:document.getElementById("mUnit").value.trim()||"kpl",
+        price:parseFloat(document.getElementById("mPrice").value)||0, stock:parseFloat(document.getElementById("mStock").value)||0,
+        min:parseFloat(document.getElementById("mMin").value)||0, supplier:document.getElementById("mSup").value||"",
+        loc:document.getElementById("mLoc").value.trim() });
+      logAdd("inventaario","Materiaali lisätty: "+n,person(S.personId).name); save(); flash("Lisätty.","ok"); }); }
+    document.querySelectorAll("[data-adjb]").forEach(function(b){ b.addEventListener("click", function(){
+      var id=b.getAttribute("data-adjb"), inp=document.querySelector('[data-adj="'+id+'"]');
+      var v=parseFloat(inp.value); if(!v){ flash("Anna muutos (voi olla negatiivinen).","err"); return; }
+      var m=material(id); m.stock=Math.round((m.stock+v)*1000)/1000;
+      logAdd("inventaario","Saldo "+(v>0?"+":"")+v+" "+m.unit+": "+m.name,person(S.personId).name);
+      save(); flash("Saldo päivitetty.","ok"); }); });
+  }
+  function vMach(){
+    var s='<p class="lead">Käyttötuntiperusteinen huoltoseuranta. Kirjaa käyttötunnit ja kuittaa huolto tehdyksi.</p>'
+      + '<div class="panel"><span class="kicker">Lisää</span><h4>Uusi laite</h4><div class="inline">'
+      + '<div class="field"><label>Laite</label><input type="text" id="kName"></div>'
+      + '<div class="field" style="max-width:130px;"><label>Huoltoväli h</label><input type="number" id="kTotal" value="200"></div>'
+      + '<button class="btn primary" id="kAdd">Lisää</button></div></div>';
+    if(DB.machines.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Ei laitteita.</p></div>';
+    var i; s+='<div class="panel">';
+    for(i=0;i<DB.machines.length;i++){ var m=DB.machines[i];
+      var pct=Math.min(100,Math.round(m.used/m.total*100));
+      var col=m.used>=m.total?"#CE3F1B":(m.used>=m.total*0.75?"#BE8A2E":"#5E8C5A");
+      s+='<div style="padding:.6em 0;border-bottom:1px solid var(--rule);">'
+        + '<div style="display:flex;justify-content:space-between;gap:8px;"><b>'+esc(m.name)+'</b>'
+        + '<span class="mono" style="font-size:.66rem;color:var(--ink-soft);">'+m.used+' / '+m.total+' h · viim. '+fmtD(m.last)+'</span></div>'
+        + '<div class="bar" style="margin:.35em 0;"><i style="width:'+pct+'%;background:'+col+'"></i></div>'
+        + '<div class="btnrow" style="margin:0;"><input type="number" data-mh="'+m.id+'" placeholder="+ h" style="width:80px;padding:.25em;border:1px solid var(--rule);border-radius:3px;">'
+        + '<button class="btn mini" data-mhb="'+m.id+'">Kirjaa tunnit</button>'
+        + '<button class="btn mini ghost" data-mdone="'+m.id+'">Huolto tehty</button></div></div>'; }
+    return s+'</div>';
+  }
+  function bindMach(){
+    var a=document.getElementById("kAdd");
+    if(a){ a.addEventListener("click", function(){
+      var n=document.getElementById("kName").value.trim(); if(n.length<2){ flash("Kirjoita laitteen nimi.","err"); return; }
+      DB.machines.push({ id:uid("k_"), name:n, used:0, total:parseInt(document.getElementById("kTotal").value,10)||200, last:nowISO() });
+      logAdd("laite","Laite lisätty: "+n,person(S.personId).name); save(); flash("Lisätty.","ok"); }); }
+    document.querySelectorAll("[data-mhb]").forEach(function(b){ b.addEventListener("click", function(){
+      var id=b.getAttribute("data-mhb"), inp=document.querySelector('[data-mh="'+id+'"]');
+      var v=parseFloat(inp.value); if(!v){ flash("Anna tunnit.","err"); return; }
+      var m=DB.machines.filter(function(x){ return x.id===id; })[0]; m.used=Math.round((m.used+v)*10)/10;
+      logAdd("laite","Käyttötunnit +"+v+" h: "+m.name,person(S.personId).name); save(); flash("Kirjattu.","ok"); }); });
+    document.querySelectorAll("[data-mdone]").forEach(function(b){ b.addEventListener("click", function(){
+      var id=b.getAttribute("data-mdone"), m=DB.machines.filter(function(x){ return x.id===id; })[0];
+      m.used=0; m.last=nowISO(); logAdd("laite","Huolto kuitattu: "+m.name,person(S.personId).name); save(); flash("Huolto kuitattu.","ok"); }); });
+  }
+  var FRACS=(window.PAJA?PAJA.fractionNames():[]);
+  function vWaste(){
+    var o="",i; for(i=0;i<FRACS.length;i++){ o+='<option value="'+esc(FRACS[i])+'">'+esc(FRACS[i])+'</option>'; }
+    var s='<p class="lead">Kirjaa jae, määrä ja käsittelijä. Arvo voi olla positiivinen (kierrätystulo) tai negatiivinen (käsittelykulu).</p>'
+      + '<div class="panel"><span class="kicker">Kirjaa</span><h4>Uusi jäte-erä</h4><div class="inline">'
+      + '<div class="field"><label>Jae</label><select id="wFrac">'+o+'</select></div>'
+      + '<div class="field" style="max-width:110px;"><label>Määrä</label><input type="number" id="wAmt" step="0.1" value="0"></div>'
+      + '<div class="field" style="max-width:90px;"><label>Yksikkö</label><input type="text" id="wUnit" value="kg"></div>'
+      + '<div class="field"><label>Käsittelijä</label><input type="text" id="wHand"></div>'
+      + '<div class="field" style="max-width:110px;"><label>Arvo €</label><input type="number" id="wVal" step="0.01" value="0"></div>'
+      + '<button class="btn primary" id="wAdd">Kirjaa</button></div></div>';
+    if(DB.waste.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Ei kirjauksia.</p></div>';
+    var tot=0; s+='<div class="panel"><div class="tblwrap"><table><thead><tr><th>Pvm</th><th>Jae</th><th class="num">Määrä</th><th>Käsittelijä</th><th class="num">Arvo</th></tr></thead><tbody>';
+    for(i=DB.waste.length-1;i>=0;i--){ var w=DB.waste[i]; tot+=w.value||0;
+      s+='<tr><td class="mono">'+fmtD(w.ts)+'</td><td>'+esc(w.frac)+'</td><td class="num">'+w.amount+' '+esc(w.unit)+'</td><td class="mono" style="font-size:.7rem;">'+esc(w.handler||"—")+'</td><td class="num">'+eur(w.value||0)+'</td></tr>'; }
+    return s+'</tbody></table></div><div class="msg '+(tot>=0?"ok":"info")+'">Yhteensä '+eur(tot)+'.</div></div>';
+  }
+  function bindWaste(){
+    var b=document.getElementById("wAdd"); if(!b) return;
+    b.addEventListener("click", function(){
+      var amt=parseFloat(document.getElementById("wAmt").value)||0;
+      if(amt<=0){ flash("Anna määrä.","err"); return; }
+      DB.waste.push({ id:uid("w_"), ts:nowISO(), frac:document.getElementById("wFrac").value,
+        amount:amt, unit:document.getElementById("wUnit").value.trim()||"kg",
+        handler:document.getElementById("wHand").value.trim(), value:parseFloat(document.getElementById("wVal").value)||0 });
+      logAdd("kiertotalous","Jae kirjattu: "+document.getElementById("wFrac").value+" "+amt,person(S.personId).name);
+      save(); flash("Kirjattu.","ok"); });
+  }
+  function vOrders(){
+    var so="",i; for(i=0;i<DB.suppliers.length;i++){ so+='<option value="'+esc(DB.suppliers[i].name)+'">'+esc(DB.suppliers[i].name)+'</option>'; }
+    var s='<div class="panel"><span class="kicker">Uusi</span><h4>Hankintapyyntö</h4><div class="inline">'
+      + '<div class="field"><label>Nimike</label><input type="text" id="oItem"></div>'
+      + '<div class="field"><label>Toimittaja</label><select id="oSup">'+so+'</select></div>'
+      + '<div class="field" style="max-width:120px;"><label>Hinta €</label><input type="number" id="oPrice" step="0.01" value="0"></div>'
+      + '<button class="btn primary" id="oAdd">Pyydä</button></div></div>';
+    if(DB.orders.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Ei hankintoja.</p></div>';
+    s+='<div class="panel"><div class="tblwrap"><table><thead><tr><th>Nimike</th><th>Toimittaja</th><th class="num">Hinta</th><th>Pyytäjä</th><th>Tila</th><th></th></tr></thead><tbody>';
+    for(i=DB.orders.length-1;i>=0;i--){ var o=DB.orders[i];
+      s+='<tr><td>'+esc(o.item)+'</td><td class="mono" style="font-size:.7rem;">'+esc(o.supplier)+'</td><td class="num">'+eur(o.price)+'</td>'
+        + '<td class="mono" style="font-size:.7rem;">'+esc(o.by)+'</td><td><span class="pill '+(o.status==="odottaa"?"p-low":"p-ok")+'">'+esc(o.status)+'</span></td>'
+        + '<td>'+(o.status==="odottaa"?'<button class="btn mini" data-orec="'+o.id+'">Vastaanotettu</button>':'')+'</td></tr>'; }
+    return s+'</tbody></table></div></div>';
+  }
+  function bindOrders(){
+    var a=document.getElementById("oAdd");
+    if(a){ a.addEventListener("click", function(){
+      var it=document.getElementById("oItem").value.trim(); if(it.length<2){ flash("Kirjoita nimike.","err"); return; }
+      DB.orders.push({ id:uid("o_"), ts:nowISO(), item:it, supplier:document.getElementById("oSup").value,
+        price:parseFloat(document.getElementById("oPrice").value)||0, by:person(S.personId).name, status:"odottaa" });
+      logAdd("hankinta","Pyyntö: "+it,person(S.personId).name); save(); flash("Pyyntö kirjattu.","ok"); }); }
+    document.querySelectorAll("[data-orec]").forEach(function(b){ b.addEventListener("click", function(){
+      var o=DB.orders.filter(function(x){ return x.id===b.getAttribute("data-orec"); })[0];
+      o.status="vastaanotettu"; logAdd("hankinta","Vastaanotettu: "+o.item,person(S.personId).name); save(); flash("Kuitattu.","ok"); }); });
+  }
+
+  // ---------- LEHTORI ----------
+  function vTeacherDash(){
+    var st=students(), tot=0, over=0, i;
+    for(i=0;i<st.length;i++){ var b=balance(st[i].id); tot+=b.total; if(b.own>=DB.settings.limit) over++; }
+    return '<div class="kpis">'
+      + '<div class="kpi"><div class="k">Opiskelijoita</div><div class="v">'+st.length+'</div></div>'
+      + '<div class="kpi"><div class="k">Materiaalikulu</div><div class="v">'+eur(tot)+'</div></div>'
+      + '<div class="kpi"><div class="k">Yli rajan</div><div class="v" style="color:'+(over?"#CE3F1B":"#211C16")+'">'+over+'</div></div></div>'
+      + vTeacherStudents();
+  }
+  function vTeacherStudents(){
+    var st=students();
+    if(st.length===0) return '<div class="panel"><p class="lead" style="margin:0;">Ei opiskelijoita.</p></div>';
+    var s='<div class="panel"><span class="kicker">Kuluseuranta</span><h4>Opiskelijat</h4><div class="tblwrap"><table><thead><tr><th>Opiskelija</th><th class="num">Kurssi</th><th class="num">Oma</th><th>Raja</th></tr></thead><tbody>';
+    var i; for(i=0;i<st.length;i++){ var b=balance(st[i].id);
+      var pct=Math.min(100,Math.round(b.own/DB.settings.limit*100));
+      var col=b.own>=DB.settings.limit?"#CE3F1B":(b.own>=DB.settings.limit*0.6?"#BE8A2E":"#5E8C5A");
+      s+='<tr><td>'+esc(st[i].name)+'<br><span class="mono" style="font-size:.6rem;color:var(--ink-soft);">'+esc(st[i].sid||"")+'</span></td>'
+        + '<td class="num">'+eur(b.course)+'</td><td class="num"><b>'+eur(b.own)+'</b></td>'
+        + '<td style="min-width:110px;"><div class="bar"><i style="width:'+pct+'%;background:'+col+'"></i></div></td></tr>'; }
+    return s+'</tbody></table></div></div>';
+  }
+
+  // ---------- KOORDINAATTORI ----------
+  function vCoordDash(){
+    var st=students(), tot=0, val=0, waste=0, i;
+    for(i=0;i<st.length;i++){ tot+=balance(st[i].id).own; }
+    for(i=0;i<DB.materials.length;i++){ val+=DB.materials[i].stock*DB.materials[i].price; }
+    for(i=0;i<DB.waste.length;i++){ waste+=DB.waste[i].value||0; }
+    return '<div class="kpis">'
+      + '<div class="kpi"><div class="k">Inventaarion arvo</div><div class="v">'+eur(val)+'</div></div>'
+      + '<div class="kpi"><div class="k">Laskuttamatta</div><div class="v">'+eur(tot)+'</div></div>'
+      + '<div class="kpi"><div class="k">Kierrätysarvo</div><div class="v">'+eur(waste)+'</div></div>'
+      + '<div class="kpi"><div class="k">Toimittajia</div><div class="v">'+DB.suppliers.length+'</div></div></div>'
+      + vBilling();
+  }
+  function vBilling(){
+    var st=students();
+    var s='<div class="panel"><span class="kicker">Laskutus</span><h4>Opiskelijoiden saldot</h4>'
+      + '<p class="lead" style="margin:0 0 .6em;">Laskutusraja '+eur(DB.settings.limit)+'. Kurssitöitä ei laskuteta.</p>'
+      + '<div class="tblwrap"><table><thead><tr><th>Opiskelija</th><th class="num">Oma saldo</th><th>Tila</th><th></th></tr></thead><tbody>';
+    var i; for(i=0;i<st.length;i++){ var b=balance(st[i].id), over=b.own>=DB.settings.limit;
+      s+='<tr><td>'+esc(st[i].name)+'</td><td class="num"><b>'+eur(b.own)+'</b></td>'
+        + '<td><span class="pill '+(over?"p-crit":"p-ok")+'">'+(over?"laskutettava":"alle rajan")+'</span></td>'
+        + '<td>'+(b.own>0?'<button class="btn mini" data-inv="'+st[i].id+'">Merkitse laskutetuksi</button>':'')+'</td></tr>'; }
+    return s+'</tbody></table></div></div>';
+  }
+  function bindBilling(){
+    document.querySelectorAll("[data-inv]").forEach(function(b){ b.addEventListener("click", function(){
+      var pid=b.getAttribute("data-inv"), n=0, i;
+      for(i=0;i<DB.tx.length;i++){ var t=DB.tx[i]; if(t.personId===pid && !t.course && !t.invoiced){ t.invoiced=true; n++; } }
+      logAdd("laskutus",person(pid).name+": "+n+" tapahtumaa laskutettu",person(S.personId).name);
+      save(); flash(person(pid).name+" — "+n+" tapahtumaa merkitty laskutetuksi.","ok"); }); });
+  }
+  function vSuppliers(){
+    var s='<div class="panel"><span class="kicker">Lisää</span><h4>Uusi toimittaja</h4><div class="inline">'
+      + '<div class="field"><label>Nimi</label><input type="text" id="sName"></div>'
+      + '<div class="field"><label>Ala</label><input type="text" id="sType"></div>'
+      + '<div class="field" style="max-width:140px;"><label>Toimitusaika</label><input type="text" id="sDel" placeholder="2–3 pv"></div>'
+      + '<button class="btn primary" id="sAdd">Lisää</button></div></div>';
+    if(DB.suppliers.length===0) return s+'<div class="panel"><p class="lead" style="margin:0;">Ei toimittajia.</p></div>';
+    s+='<div class="panel"><div class="tblwrap"><table><thead><tr><th>Toimittaja</th><th>Ala</th><th>Toimitus</th><th class="num">Nimikkeitä</th></tr></thead><tbody>';
+    var i; for(i=0;i<DB.suppliers.length;i++){ var su=DB.suppliers[i];
+      var n=DB.materials.filter(function(m){ return m.supplier===su.name; }).length;
+      s+='<tr><td>'+esc(su.name)+'</td><td class="mono" style="font-size:.7rem;">'+esc(su.type||"—")+'</td><td class="mono" style="font-size:.7rem;">'+esc(su.delivery||"—")+'</td><td class="num">'+n+'</td></tr>'; }
+    return s+'</tbody></table></div></div>';
+  }
+  function bindSuppliers(){
+    var a=document.getElementById("sAdd"); if(!a) return;
+    a.addEventListener("click", function(){
+      var n=document.getElementById("sName").value.trim(); if(n.length<2){ flash("Kirjoita nimi.","err"); return; }
+      DB.suppliers.push({ id:uid("s_"), name:n, type:document.getElementById("sType").value.trim(), delivery:document.getElementById("sDel").value.trim() });
+      logAdd("toimittaja","Lisätty: "+n,person(S.personId).name); save(); flash("Lisätty.","ok"); });
+  }
+  function vReports(){
+    var s='<p class="lead">Vie tiedot taloushallintoon tai raportointiin.</p>'
+      + '<div class="panel"><span class="kicker">Vienti</span><h4>CSV ja varmuuskopio</h4><div class="btnrow">'
+      + '<button class="btn" id="rTx">Tapahtumat</button><button class="btn" id="rInv">Inventaario</button>'
+      + '<button class="btn" id="rWaste">Kiertotalous</button><button class="btn ghost" id="rAll">Varmuuskopio (JSON)</button></div></div>';
+    s+='<div class="panel"><span class="kicker">Loki</span><h4>Viimeisimmät tapahtumat</h4>';
+    var i,n=0;
+    for(i=DB.log.length-1;i>=0 && n<25;i--,n++){ var l=DB.log[i];
+      s+='<div class="mono" style="font-size:.66rem;padding:.3em 0;border-bottom:1px dashed var(--rule);"><span style="color:var(--ink-soft);">'+fmtDT(l.ts)+'</span> · '+esc(l.text)+' <span style="color:var(--ink-soft);">'+esc(l.by)+'</span></div>'; }
+    if(DB.log.length===0) s+='<p class="lead" style="margin:0;">Loki on tyhjä.</p>';
+    return s+'</div>';
+  }
+  function bindReports(){
+    function dl(text,name){ try{ var b=new Blob([text],{type:"text/csv;charset=utf-8"}),u=URL.createObjectURL(b),a=document.createElement("a");
+      a.href=u; a.download=name; document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(u); },1000);
+    }catch(e){ flash("Lataus ei onnistunut.","err"); } }
+    function cc(x){ return String(x==null?"":x).replace(/;/g," ").replace(/[\r\n]+/g," "); }
+    var a=document.getElementById("rTx");
+    if(a){ a.addEventListener("click", function(){
+      var rows=["Pvm;Opiskelija;Materiaali;Maara;Yksikko;Toimittaja;Hankinta;Toimitus;Varasto;Yhteensa;Tyyppi;Laskutettu"],i;
+      for(i=0;i<DB.tx.length;i++){ var t=DB.tx[i], p=person(t.personId);
+        rows.push([cc(fmtD(t.ts)),cc(p?p.name:""),cc(t.name),t.qty,cc(t.unit),cc(t.supplier),
+          t.base.toFixed(2),t.del.toFixed(2),t.sto.toFixed(2),t.total.toFixed(2),t.course?"kurssi":"oma",t.invoiced?"kyllä":"ei"].join(";")); }
+      dl("\ufeff"+rows.join("\r\n"),"mhks_tapahtumat.csv"); }); }
+    var b=document.getElementById("rInv");
+    if(b){ b.addEventListener("click", function(){
+      var rows=["Materiaali;Saldo;Yksikko;Min;Hinta;Toimittaja;Sijainti"],i;
+      for(i=0;i<DB.materials.length;i++){ var m=DB.materials[i];
+        rows.push([cc(m.name),m.stock,cc(m.unit),m.min,m.price.toFixed(2),cc(m.supplier),cc(m.loc)].join(";")); }
+      dl("\ufeff"+rows.join("\r\n"),"mhks_inventaario.csv"); }); }
+    var c=document.getElementById("rWaste");
+    if(c){ c.addEventListener("click", function(){
+      var rows=["Pvm;Jae;Maara;Yksikko;Kasittelija;Arvo"],i;
+      for(i=0;i<DB.waste.length;i++){ var w=DB.waste[i];
+        rows.push([cc(fmtD(w.ts)),cc(w.frac),w.amount,cc(w.unit),cc(w.handler),(w.value||0).toFixed(2)].join(";")); }
+      dl("\ufeff"+rows.join("\r\n"),"mhks_kiertotalous.csv"); }); }
+    var d=document.getElementById("rAll");
+    if(d){ d.addEventListener("click", function(){
+      try{ var bl=new Blob([JSON.stringify(DB,null,2)],{type:"application/json"}),u=URL.createObjectURL(bl),el=document.createElement("a");
+        el.href=u; el.download="mhks_varmuuskopio.json"; document.body.appendChild(el); el.click(); document.body.removeChild(el);
+      }catch(e){ flash("Lataus ei onnistunut.","err"); } }); }
+  }
+
+  // ---------- ASETUKSET ----------
+  function vSettings(){
+    return '<div class="panel"><span class="kicker">Hinnoittelu</span><h4>Kustannuslisät</h4>'
+      + '<p class="lead">Materiaalin hinta = hankintahinta + toimituskulun osuus + varastointikustannus.</p><div class="inline">'
+      + '<div class="field" style="max-width:150px;"><label>Toimituskulu %</label><input type="number" id="setDel" value="'+DB.settings.delPct+'"></div>'
+      + '<div class="field" style="max-width:150px;"><label>Varastointi %</label><input type="number" id="setSto" value="'+DB.settings.stoPct+'"></div>'
+      + '<div class="field" style="max-width:150px;"><label>Laskutusraja €</label><input type="number" id="setLim" value="'+DB.settings.limit+'"></div>'
+      + '<button class="btn primary" id="setSave">Tallenna</button></div></div>'
+      + '<div class="panel"><span class="kicker">Aineisto</span><h4>Demo ja tyhjennys</h4><div class="btnrow">'
+      + '<button class="btn" id="setSeed">Lataa esimerkkiaineisto</button>'
+      + '<button class="btn ghost" id="setWipe">Tyhjennä kaikki</button></div></div>'
+      + '<div class="panel"><span class="kicker">Sovellus</span><h4>Puhelimeen</h4>'
+      + '<p class="lead">Kun sovellus on Metropolian HTTPS-osoitteessa, sen voi asentaa puhelimen kotinäytölle ja se toimii myös ilman verkkoa.</p>'
+      + '<div class="btnrow"><button class="btn ghost" id="installBtn2" style="display:none;">Asenna sovellus</button>'
+      + '<span class="mono" id="pwaState" style="font-size:.62rem;color:var(--ink-soft);align-self:center;"></span></div></div>';
+  }
+  function bindSettings(){
+    var b=document.getElementById("setSave");
+    if(b){ b.addEventListener("click", function(){
+      DB.settings.delPct=parseFloat(document.getElementById("setDel").value)||0;
+      DB.settings.stoPct=parseFloat(document.getElementById("setSto").value)||0;
+      DB.settings.limit=parseFloat(document.getElementById("setLim").value)||0;
+      save(); flash("Tallennettu.","ok"); }); }
+    var sd=document.getElementById("setSeed"); if(sd){ sd.addEventListener("click", seed); }
+    var w=document.getElementById("setWipe"); if(w){ w.addEventListener("click", function(){
+      if(window.confirm("Tyhjennetäänkö kaikki tiedot? Tätä ei voi perua.")){ DB=defaults(); S.role=null; S.personId=null; save(); render(); } }); }
+    setupInstall();
+  }
+
+  // ---------- DEMO ----------
+  function seed(){
+    if(DB.people.length>0 && !window.confirm("Korvataanko nykyiset tiedot esimerkkiaineistolla?")) return;
+    DB=defaults();
+    DB.suppliers=[
+      { id:uid("s_"), name:"Puukeskus Oy", type:"Puutavara", delivery:"2–3 pv" },
+      { id:uid("s_"), name:"Aalto-metalli Oy", type:"Metallit", delivery:"3–5 pv" },
+      { id:uid("s_"), name:"Keramiikkatukku", type:"Keramiikka", delivery:"5–7 pv" },
+      { id:uid("s_"), name:"Prusa Research", type:"3D-tulostus", delivery:"5–7 pv" }
+    ];
+    DB.materials=[
+      { id:uid("m_"), name:"Koivu 25 mm", unit:"m", price:6.40, stock:42, min:15, supplier:"Puukeskus Oy", loc:"P-01" },
+      { id:uid("m_"), name:"Tammi 30 mm", unit:"m", price:14.20, stock:9, min:10, supplier:"Puukeskus Oy", loc:"P-04" },
+      { id:uid("m_"), name:"Teräsneliöputke 20×20", unit:"m", price:4.20, stock:26, min:10, supplier:"Aalto-metalli Oy", loc:"M-12" },
+      { id:uid("m_"), name:"Alumiinilevy 2 mm", unit:"m2", price:28.0, stock:3.5, min:2, supplier:"Aalto-metalli Oy", loc:"M-03" },
+      { id:uid("m_"), name:"Keramiikkasavi Craft T", unit:"kg", price:2.10, stock:48, min:20, supplier:"Keramiikkatukku", loc:"K-01" },
+      { id:uid("m_"), name:"PLA-filamentti", unit:"kg", price:22.0, stock:1.2, min:3, supplier:"Prusa Research", loc:"D-01" }
+    ];
+    DB.machines=[
+      { id:uid("k_"), name:"BACCI CNC 5-akselinen", used:152, total:200, last:"2026-03-14T08:00:00.000Z" },
+      { id:uid("k_"), name:"CO2-laser", used:88, total:200, last:"2026-03-01T08:00:00.000Z" },
+      { id:uid("k_"), name:"Vannesaha", used:210, total:200, last:"2026-01-20T08:00:00.000Z" },
+      { id:uid("k_"), name:"Metallisorvi", used:34, total:150, last:"2026-04-02T08:00:00.000Z" }
+    ];
+    DB.people=[
+      { id:"p_stu1", name:"Aino Virtanen", sid:"2601001", role:"opiskelija" },
+      { id:"p_stu2", name:"Eero Nieminen", sid:"2601008", role:"opiskelija" },
+      { id:"p_stu3", name:"Sofia Laine", sid:"2601015", role:"opiskelija" },
+      { id:"p_maj1", name:"Pekka Koivikko", role:"pajamestari" },
+      { id:"p_leh1", name:"Mika Ihanus", role:"lehtori" },
+      { id:"p_koo1", name:"Hanna-Mari Seppälä", role:"koordinaattori" }
+    ];
+    // esimerkkitapahtumia
+    function tx(pid,matIdx,qty,course,daysAgo){
+      var m=DB.materials[matIdx], p=priceOf(m,qty);
+      DB.tx.push({ id:uid("t_"), ts:new Date(Date.now()-daysAgo*86400000).toISOString(), personId:pid, matId:m.id,
+        name:m.name, unit:m.unit, supplier:m.supplier, qty:qty, base:p.base, del:p.del, sto:p.sto, total:p.total, course:course, invoiced:false });
+      m.stock=Math.round((m.stock-qty)*1000)/1000;
+    }
+    tx("p_stu1",0,1.2,true,9); tx("p_stu1",4,3,true,6); tx("p_stu1",1,0.8,false,3);
+    tx("p_stu2",2,2.5,true,8); tx("p_stu2",3,0.6,false,4); tx("p_stu2",5,0.4,false,2);
+    tx("p_stu3",0,0.9,true,7); tx("p_stu3",4,2,true,2);
+    DB.waste=[
+      { id:uid("w_"), ts:new Date(Date.now()-5*86400000).toISOString(), frac:"Uusiometalli", amount:12.4, unit:"kg", handler:"Kuusakoski Oy", value:8.2 },
+      { id:uid("w_"), ts:new Date(Date.now()-4*86400000).toISOString(), frac:"RETAKE-uusio", amount:6.0, unit:"kg", handler:"Oma paja", value:0 },
+      { id:uid("w_"), ts:new Date(Date.now()-2*86400000).toISOString(), frac:"Vaarallinen jäte", amount:1.1, unit:"l", handler:"Fortum Waste", value:-4.5 }
+    ];
+    DB.orders=[{ id:uid("o_"), ts:nowISO(), item:"PLA-filamentti 5 kg", supplier:"Prusa Research", price:110, by:"Pekka Koivikko", status:"odottaa" }];
+    logAdd("järjestelmä","Esimerkkiaineisto ladattu","");
+    save(); flash("Esimerkkiaineisto ladattu. Valitse rooli.","ok");
+  }
+
+  // ---------- PWA ----------
+  var deferredPrompt=null;
+  window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); deferredPrompt=e; setupInstall(); });
+  function setupInstall(){
+    var ids=["installBtn","installBtn2"],i;
+    for(i=0;i<ids.length;i++){ (function(el){
+      if(!el) return;
+      if(deferredPrompt){ el.style.display="inline-block";
+        el.onclick=function(){ deferredPrompt.prompt(); deferredPrompt=null; el.style.display="none"; }; }
+    })(document.getElementById(ids[i])); }
+    var st=document.getElementById("pwaState");
+    if(st){ st.textContent = (location.protocol==="https:")
+      ? (deferredPrompt?"Asennettavissa":"Selain hoitaa asennuksen valikosta (Lisää kotinäyttöön)")
+      : "Asennus vaatii HTTPS-osoitteen — paikallisesti avattuna ei käytettävissä"; }
+  }
+  if("serviceWorker" in navigator && location.protocol==="https:"){
+    window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+  }
+
+  // ---------- RENDER ----------
+  function viewFor(){
+    if(S.role==="opiskelija"){ if(S.view==="card") return vStudentCard(); if(S.view==="shop") return vStudentShop(); if(S.view==="mywaste") return vStudentWaste(); return vStudentDash(); }
+    if(S.role==="pajamestari"){ if(S.view==="inv") return vInv(); if(S.view==="mach") return vMach(); if(S.view==="waste") return vWaste(); if(S.view==="orders") return vOrders(); return vMasterDash(); }
+    if(S.role==="lehtori"){ if(S.view==="students") return vTeacherStudents(); return vTeacherDash(); }
+    if(S.role==="koordinaattori"){ if(S.view==="billing") return vBilling(); if(S.view==="suppliers") return vSuppliers(); if(S.view==="reports") return vReports(); return vCoordDash(); }
+    return "";
+  }
+  function bindFor(){
+    if(S.view==="settings"){ bindSettings(); return; }
+    if(S.role==="opiskelija" && S.view==="shop") bindStudentShop();
+    if(S.role==="pajamestari"){ if(S.view==="inv") bindInv(); if(S.view==="mach") bindMach(); if(S.view==="waste") bindWaste(); if(S.view==="orders") bindOrders(); }
+    if(S.role==="koordinaattori"){ if(S.view==="billing"||S.view==="dash") bindBilling(); if(S.view==="suppliers") bindSuppliers(); if(S.view==="reports") bindReports(); }
+  }
+  function render(){
+    var app=document.getElementById("app");
+    if(!S.role){ app.innerHTML=(flashMsg?'<div class="login" style="padding-bottom:0;"><div class="msg '+flashMsg.k+'">'+esc(flashMsg.t)+'</div></div>':"")+viewLogin(); flashMsg=null; bindLogin(); return; }
+    var me=person(S.personId), nav=NAV[S.role], s="",i;
+    s+='<div class="shell"><aside class="side">'
+      + '<div class="top"><div class="logo">M</div><div><h2>MHKS</h2><div class="s">Metropolia</div></div></div><nav class="nav">';
+    for(i=0;i<nav.length;i++){ s+='<button class="navbtn'+(S.view===nav[i][0]?" active":"")+'" data-v="'+nav[i][0]+'">'+esc(nav[i][1])+'</button>'; }
+    s+='<button class="navbtn'+(S.view==="settings"?" active":"")+'" data-v="settings">Asetukset</button>';
+    s+='</nav><div class="bot"><div class="who">'+esc(me?me.name:"")+'<br><span class="r">'+esc(S.role)+'</span></div>'
+      + '<button class="btn ghost mini" id="logout">Vaihda rooli</button></div></aside>';
+    s+='<main class="main"><div class="topbar"><h3>'+esc(TITLES[S.view]||"")+'</h3>'
+      + '<span class="meta">Arabia · '+new Date().toLocaleDateString("fi-FI")+'</span></div><div class="content">';
+    if(flashMsg){ s+='<div class="msg '+flashMsg.k+'">'+esc(flashMsg.t)+'</div>'; flashMsg=null; }
+    s+=(S.view==="settings"?vSettings():viewFor());
+    s+='<div class="note">Pilotti: tiedot tallentuvat tähän selaimeen. Ota varmuuskopio Raportit-välilehdeltä. '
+      + 'Nimet ja opiskelijatunnukset ovat henkilötietoa — säilytä varmuuskopiot Metropolian ympäristössä.</div>';
+    s+='</div></main></div>';
+    app.innerHTML=s;
+    document.querySelectorAll("[data-v]").forEach(function(b){ b.addEventListener("click", function(){ S.view=b.getAttribute("data-v"); render(); }); });
+    var lo=document.getElementById("logout"); if(lo){ lo.addEventListener("click", function(){ S.role=null; S.personId=null; S.view="dash"; render(); }); }
+    bindFor();
+  }
+
+  load(); render();
+})();
+</script>
+<script src="paja-footer.js"></script>
+</body>
+</html>
