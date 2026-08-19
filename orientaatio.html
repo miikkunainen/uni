@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Orientaatiokurssi — Muotoilun pajat</title>
+<meta name="theme-color" content="#CE3F1B">
+<link rel="manifest" href="orientaatio.webmanifest">
+<link rel="icon" href="mhks-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Orientaatio">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,600&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#ECE6DA;--paper-deep:#E4DCCC;--card:#F3EFE7;--ink:#211C16;--ink-soft:#5A5347;
+    --ember:#CE3F1B;--rule:#C8BFAD;--rule-soft:#D8D0C0;--vihrea:#5E8C5A;--laatu:#BE8A2E;
+    --steel:#3D4B58;--oikeus:#4F6E92;--projekti:#6E5A93;--wood:#B0712F;--talous:#4E8C84;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;
+    font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:78px;}
+  .wrap{max-width:820px;margin:0 auto;padding:0 clamp(14px,4vw,26px) 30px;}
+  h1,h2,h3,h4{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;text-transform:uppercase;line-height:.95;margin:0;}
+  p{margin:0 0 1em;}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+
+  .head{padding:clamp(18px,4vw,30px) 0 6px;}
+  .head .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);}
+  .head h1{font-size:clamp(1.9rem,7vw,3rem);margin-top:.25em;}
+  .head h1 .e{color:var(--ember);}
+  .who{font-family:"IBM Plex Mono",monospace;font-size:.65rem;color:var(--ink-soft);margin-top:.4em;}
+
+  .prog{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;margin:12px 0 16px;}
+  .prog .pl{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;
+    font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.35em;}
+  .bar{height:10px;background:var(--rule-soft);border-radius:6px;overflow:hidden;}
+  .bar i{display:block;height:100%;background:var(--vihrea);transition:width .4s ease;}
+
+  .mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:11px;}
+  .mod{background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--steel);border-radius:12px;
+    padding:14px 15px;cursor:pointer;transition:transform .14s ease,box-shadow .14s ease;}
+  .mod:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(33,28,22,.12);}
+  .mod.done{border-left-color:var(--vihrea);}
+  .mod .n{font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.08em;color:var(--ink-soft);}
+  .mod h4{font-size:1.12rem;margin:.2em 0 .25em;}
+  .mod .d{font-size:.85rem;color:var(--ink-soft);line-height:1.35;}
+  .mod .st{font-family:"IBM Plex Mono",monospace;font-size:.55rem;letter-spacing:.05em;text-transform:uppercase;
+    margin-top:.5em;display:inline-block;padding:.18em .5em;border-radius:20px;}
+  .mod .st.ok{background:rgba(94,140,90,.2);color:#3c5e39;}
+  .mod .st.no{background:var(--paper-deep);color:var(--ink-soft);}
+  .m1{border-left-color:var(--ember);} .m2{border-left-color:var(--turva,#C25A3E);}
+  .m3{border-left-color:var(--oikeus);} .m4{border-left-color:var(--wood);}
+  .m5{border-left-color:var(--projekti);} .m6{border-left-color:var(--vihrea);}
+  .m7{border-left-color:var(--laatu);} .m8{border-left-color:var(--talous);}
+
+  .sec{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:16px 17px;margin-bottom:14px;}
+  .sec h3{font-size:1.3rem;margin-bottom:.4em;}
+  .sec h4{font-size:1.05rem;margin:1em 0 .3em;}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ember);font-weight:600;display:block;margin-bottom:.2em;}
+  .sec ul,.sec ol{margin:.3em 0 1em;padding-left:1.3em;}
+  .sec li{margin:.35em 0;}
+  .lead{color:var(--ink-soft);font-size:.95rem;}
+
+  .box{border-radius:8px;padding:12px 14px;margin:.9em 0;font-size:.93rem;}
+  .box.warn{background:rgba(206,63,27,.09);border-left:4px solid var(--ember);}
+  .box.ok{background:rgba(94,140,90,.12);border-left:4px solid var(--vihrea);}
+  .box.info{background:var(--paper-deep);border-left:4px solid var(--steel);}
+  .box b{display:block;margin-bottom:.2em;}
+
+  .steps{counter-reset:st;list-style:none;padding:0;margin:.5em 0 1em;}
+  .steps li{counter-increment:st;position:relative;padding:.5em 0 .5em 2.6em;border-bottom:1px dashed var(--rule);}
+  .steps li:last-child{border-bottom:none;}
+  .steps li::before{content:counter(st);position:absolute;left:0;top:.5em;width:1.7em;height:1.7em;
+    background:var(--ember);color:#fff;border-radius:50%;display:grid;place-items:center;
+    font-family:"IBM Plex Mono",monospace;font-size:.72rem;font-weight:600;}
+  .steps li b{display:block;}
+
+  .btn{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+    cursor:pointer;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:.7em 1em;border-radius:8px;}
+  .btn:hover{background:var(--ink);color:var(--paper);}
+  .btn.primary{background:var(--ember);border-color:var(--ember);color:#fff;}
+  .btn.primary:hover{background:#b0340f;}
+  .btn.ok{background:var(--vihrea);border-color:var(--vihrea);color:#fff;}
+  .btn.ghost{border-color:var(--rule);color:var(--ink-soft);}
+  .btn.wide{width:100%;}
+  .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+
+  .field{margin:.6em 0;}
+  .field label{display:block;font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--ink-soft);margin-bottom:.25em;}
+  .field input,.field select,.field textarea{width:100%;font-family:"Spectral",serif;font-size:1rem;
+    padding:.6em .7em;border:1px solid var(--rule);border-radius:8px;background:#fff;color:var(--ink);}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--ember);border-color:var(--ember);}
+  .inline{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;}
+  .inline .field{flex:1;min-width:140px;margin:0;}
+
+  .days{margin-top:10px;}
+  .day{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    background:#fff;border:1px solid var(--rule);border-radius:10px;padding:11px 13px;margin-bottom:8px;flex-wrap:wrap;}
+  .day .dn{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:700;text-transform:uppercase;font-size:1rem;}
+  .day .dd{font-family:"IBM Plex Mono",monospace;font-size:.6rem;color:var(--ink-soft);}
+  .day .dm{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.05em;text-transform:uppercase;
+    padding:.28em .6em;border-radius:20px;}
+  .dm.paikalla{background:rgba(94,140,90,.22);color:#3c5e39;}
+  .dm.myohassa{background:rgba(190,138,46,.25);color:#7a5a12;}
+  .dm.poissa{background:rgba(206,63,27,.16);color:#8f2a10;}
+  .dm.ei{background:var(--paper-deep);color:var(--ink-soft);}
+
+  .msg{font-size:.88rem;padding:.6em .8em;border-radius:8px;margin:.6em 0;}
+  .msg.ok{background:rgba(94,140,90,.12);border-left:3px solid var(--vihrea);color:#3c5e39;}
+  .msg.err{background:rgba(206,63,27,.1);border-left:3px solid var(--ember);color:#8f2a10;}
+  .msg.info{background:var(--paper-deep);border-left:3px solid var(--steel);color:var(--ink-soft);}
+
+  /* alapalkki mobiilissa */
+  .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--paper-deep);
+    border-top:1px solid var(--rule);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom));}
+  .tb{flex:1;background:transparent;border:none;cursor:pointer;padding:.55em .2em;border-radius:9px;
+    font-family:"IBM Plex Mono",monospace;font-size:.55rem;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-soft);}
+  .tb .i{display:block;font-size:1.15rem;line-height:1.1;margin-bottom:.1em;}
+  .tb.on{background:var(--ink);color:var(--paper);}
+
+  .back{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--ink-soft);background:none;border:none;cursor:pointer;padding:.5em 0;}
+  .back:hover{color:var(--ink);}
+
+  /* Kommentit ja jakaminen */
+  .cmt{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:11px 13px;margin-bottom:8px;}
+  .cmt.ohjaaja{border-left:4px solid var(--ember);background:rgba(206,63,27,.04);}
+  .cmt.opiskelija{border-left:4px solid var(--oikeus);}
+  .cmt .ch{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap;}
+  .cmt .cw{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:700;text-transform:uppercase;font-size:.95rem;}
+  .cmt .cr{font-family:"IBM Plex Mono",monospace;font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;
+    padding:.16em .45em;border-radius:20px;background:var(--paper-deep);color:var(--ink-soft);}
+  .cmt.ohjaaja .cr{background:var(--ember);color:#fff;}
+  .cmt .ct{font-family:"IBM Plex Mono",monospace;font-size:.55rem;color:var(--ink-soft);}
+  .cmt .cb{font-size:.94rem;margin-top:.35em;white-space:pre-wrap;}
+  .cmt .cm{font-family:"IBM Plex Mono",monospace;font-size:.52rem;color:var(--ink-soft);margin-top:.4em;}
+  .cmt .cmine{color:var(--vihrea);}
+
+  .sharebar{background:var(--paper-deep);border:1px dashed var(--rule);border-radius:10px;
+    padding:11px 13px;margin:.8em 0;font-size:.88rem;color:var(--ink-soft);}
+  .sharebar b{display:block;color:var(--ink);margin-bottom:.2em;}
+
+  .rolepick{display:flex;gap:8px;margin:.3em 0;}
+  .rp{flex:1;border:1px solid var(--rule);background:#fff;border-radius:10px;padding:.7em .5em;cursor:pointer;
+    font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);}
+  .rp.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .rp.on.staff{background:var(--ember);border-color:var(--ember);}
+
+  .note{font-family:"IBM Plex Mono",monospace;font-size:.62rem;color:var(--ink-soft);line-height:1.7;
+    margin-top:18px;border-top:1px solid var(--rule);padding-top:10px;}
+  @media (prefers-reduced-motion:reduce){ .mod{transition:none;} .mod:hover{transform:none;} }
+</style>
+</head>
+<body>
+<script src="paja-data.js"></script>
+<script src="paja-config.js"></script>
+<div class="wrap">
+  <header class="head" id="head"></header>
+  <main id="view"></main>
+  <div class="note" id="note"></div>
+</div>
+<nav class="tabbar" id="tabbar"></nav>
+
+<script>
+(function(){
+  "use strict";
+  var KEY="orientaatio_v1";
+  var view="koti", openMod="";
+
+  var DAYS=[
+    {id:"d1",label:"Päivä 1",desc:"Aloitus, perehdytys, paistinlastan suunnittelu"},
+    {id:"d2",label:"Päivä 2",desc:"Pajakierto alkaa"},
+    {id:"d3",label:"Päivä 3",desc:"Pajakierto"},
+    {id:"d4",label:"Päivä 4",desc:"Pajakierto"},
+    {id:"d5",label:"Päivä 5",desc:"Pajanvaihto"},
+    {id:"d6",label:"Päivä 6",desc:"Pajakierto"},
+    {id:"d7",label:"Päivä 7",desc:"Pajakierto"},
+    {id:"d8",label:"Päivä 8",desc:"Viimeistely"},
+    {id:"d9",label:"Päivä 9",desc:"Yhteenveto ja työluvat"}
+  ];
+
+  var MODS=[
+    {id:"intro", n:"Osa 1", cls:"m1", h:"Työpaikka ja vaarat", d:"Yhteinen työpaikka, työn vaarat ja toiminta onnettomuustilanteessa. Noin tunnin luento."},
+    {id:"ohjelmistot", n:"Osa 2", cls:"m3", h:"Muotoilijan ohjelmistot", d:"Kuvankäsittely, Rhino ja tekoälytyökalut."},
+    {id:"lasta", n:"Osa 3", cls:"m4", h:"Paistinlastan suunnittelu", d:"Suunnittelun periaatteet ja luonnostelu."},
+    {id:"tyot", n:"Osa 4", cls:"m5", h:"Muut kurssityöt", d:"Leikkuulauta, korurasia, kavaletti, jakkara ja työvälineet."},
+    {id:"vaatteet", n:"Osa 5", cls:"m7", h:"Työvaatteet ja suojautuminen", d:"Mitä päälle ja mitä suojaimia missäkin."},
+    {id:"siivous", n:"Osa 6", cls:"m6", h:"Siivous, jäte ja RETAKE", d:"Miten tila jätetään ja mihin jäte kuuluu."},
+    {id:"laatikko", n:"Osa 7", cls:"m8", h:"Oma laatikko", d:"Säilytys, järjestys ja vastuu omista tavaroista."}
+  ];
+
+  var DB={ name:"", group:"", role:"opiskelija", att:{}, read:{}, sketch:"", cmts:[] };
+  function load(){ try{ var s=localStorage.getItem(KEY); if(s){ var d=JSON.parse(s);
+    DB.name=d.name||""; DB.group=d.group||""; DB.role=d.role||"opiskelija"; DB.att=d.att||{}; DB.read=d.read||{}; DB.sketch=d.sketch||""; DB.cmts=d.cmts||[]; } }catch(e){} }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(DB)); }catch(e){} }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function nowISO(){ return new Date().toISOString(); }
+  function hhmm(){ var d=new Date(); function p(n){ return (n<10?"0":"")+n; } return p(d.getHours())+":"+p(d.getMinutes()); }
+  function today(){ return new Date().toISOString().slice(0,10); }
+  var flashMsg=null;
+  function flash(t,k){ flashMsg={t:t,k:k}; render(); }
+
+  function readCount(){ var n=0,i; for(i=0;i<MODS.length;i++){ if(DB.read[MODS[i].id]) n++; } return n; }
+  function attStats(){
+    var pres=0,marked=0,i;
+    for(i=0;i<DAYS.length;i++){ var a=DB.att[DAYS[i].id];
+      if(a&&a.status){ marked++; if(a.status==="paikalla") pres+=1; else if(a.status==="myohassa") pres+=0.5; } }
+    return { pct: marked>0?Math.round(pres/marked*100):null, marked:marked };
+  }
+
+  // ================= KOTI =================
+  function viewKoti(){
+    var rc=readCount(), pct=Math.round(rc/MODS.length*100), a=attStats();
+    var s='<div class="prog"><div class="pl"><span>Materiaalit luettu</span><span>'+rc+' / '+MODS.length+'</span></div>'
+      + '<div class="bar"><i style="width:'+pct+'%"></i></div></div>';
+    if(!DB.name){
+      s+='<div class="sec"><span class="kicker">Aloita tästä</span><h3>Kuka olet?</h3>'
+        + '<p class="lead">Nimi tallentuu vain tähän puhelimeen. Sitä käytetään läsnäolomerkintöihin, jotka näytät ohjaajalle.</p>'
+        + '<div class="field"><label>Nimi</label><input type="text" id="nName" placeholder="Etunimi Sukunimi"></div>'
+        + '<div class="field"><label>Ryhmä tai yksikkö</label><input type="text" id="nGroup" placeholder="esim. TXA26"></div>'
+        + '<div class="field"><label>Rooli</label><div class="rolepick">'
+        + '<button class="rp on" data-role="opiskelija">Opiskelija</button>'
+        + '<button class="rp" data-role="ohjaaja">Ohjaaja</button></div></div>'
+        + '<div class="btnrow"><button class="btn primary wide" id="nSave">Tallenna</button></div></div>';
+    }
+    s+='<div class="mods">';
+    var i; for(i=0;i<MODS.length;i++){ var m=MODS[i], done=!!DB.read[m.id];
+      s+='<div class="mod '+m.cls+(done?" done":"")+'" data-mod="'+m.id+'"><span class="n">'+m.n+'</span>'
+        + '<h4>'+esc(m.h)+'</h4><div class="d">'+esc(m.d)+'</div>'
+        + '<span class="st '+(done?"ok":"no")+'">'+(done?"Luettu":"Lukematta")+'</span></div>'; }
+    s+='</div>';
+    s+='<div class="sec" style="margin-top:14px;"><span class="kicker">Läsnäolo</span><h3>Oma läsnäolosi</h3>'
+      + '<p class="lead" style="margin:0;">'+(a.marked?("Merkitty "+a.marked+" / "+DAYS.length+" päivää · läsnäolo "+a.pct+" %"):"Et ole vielä merkinnyt yhtään päivää.")+'</p>'
+      + '<div class="btnrow"><button class="btn wide" id="toAtt">Merkitse läsnäolo</button></div></div>';
+    s+='<div class="box info"><b>Ennen koneille menoa</b>Paja-ajokortti suoritetaan erikseen. Se avaa oikeuden työskennellä valvotusti.'
+      + '<div class="btnrow"><a class="btn" href="syksyn_orientaatiokurssi.html" style="text-decoration:none;">Avaa ajokorttiputki</a></div></div>';
+    return s;
+  }
+
+  // ================= LÄSNÄOLO =================
+  function viewAtt(){
+    var a=attStats();
+    var s='<button class="back" id="back">&larr; Takaisin</button>'
+      + '<div class="sec"><span class="kicker">Läsnäolo</span><h3>Merkitse itse</h3>'
+      + '<p class="lead">Merkitse jokainen kurssipäivä. Myöhästyminen merkitään rehellisesti ja syy kirjataan — se ei ole rangaistus vaan tieto, jonka avulla ohjaus osataan järjestää.</p>'
+      + (a.marked?'<div class="box ok"><b>Läsnäolosi '+a.pct+' %</b>Merkitty '+a.marked+' / '+DAYS.length+' päivää. Myöhästyminen lasketaan puolikkaana.</div>':'')
+      + '<div class="days">';
+    var i; for(i=0;i<DAYS.length;i++){ var d=DAYS[i], m=DB.att[d.id]||{};
+      var st=m.status||"ei";
+      var lab={paikalla:"Paikalla",myohassa:"Myöhässä",poissa:"Poissa",ei:"Ei merkitty"};
+      s+='<div class="day"><div><div class="dn">'+esc(d.label)+'</div><div class="dd">'+esc(d.desc)
+        + (m.time?(" · "+esc(m.time)):"")+(m.reason?(" · "+esc(m.reason)):"")+'</div></div>'
+        + '<span class="dm '+st+'">'+lab[st]+'</span>'
+        + '<div class="btnrow" style="margin:0;width:100%;">'
+        + '<button class="btn ok mini" data-set="'+d.id+'|paikalla">Paikalla</button>'
+        + '<button class="btn ghost mini" data-set="'+d.id+'|myohassa">Myöhässä</button>'
+        + '<button class="btn ghost mini" data-set="'+d.id+'|poissa">Poissa</button>'
+        + '</div></div>'; }
+    s+='</div>'
+      + '<div class="btnrow"><button class="btn" id="expAtt">Vie merkinnät (CSV)</button></div>'
+      + '<div class="msg info">Merkinnät ovat vain tässä puhelimessa. Näytä ne ohjaajalle tai vie tiedostona — virallinen kirjanpito on ohjaajalla.</div></div>';
+    return s;
+  }
+
+  // ================= MODUULIT =================
+  function modIntro(){
+    return '<span class="kicker">Osa 1 · noin 1 h</span><h3>Työpaikka ja vaarat</h3>'
+      + '<p class="lead">Tämä osuus käydään yhdessä luentona ensimmäisenä päivänä. Lue se myös itse — samat asiat kysytään paja-ajokortissa.</p>'
+
+      + '<h4>Yhteinen työpaikka</h4>'
+      + '<p>Pajat ovat <b>yhteinen työpaikka</b>: samassa tilassa työskentelee samanaikaisesti useita eri toimijoita. Opiskelijoita eri ryhmistä, lehtoreita, pajamestareita, siivoojia, kiinteistöhuoltoa ja vierailijoita. Työturvallisuuslaki (738/2002, 49–54 §) velvoittaa tällaisessa tilanteessa huolehtimaan siitä, ettei oma työ vaaranna muita.</p>'
+      + '<div class="box warn"><b>Tämä on kurssin tärkein ajatus</b>Sinun tekemisesi ei kosketa vain sinua. Lattialle jätetty johto, avoimeksi jäänyt teräsuojus tai väärään astiaan heitetty öljyrätti vaarantaa jonkun toisen — usein sellaisen, joka ei tiedä mitä olet tehnyt eikä ollut paikalla kun teit sen.</div>'
+      + '<p>Erityisen tärkeitä ovat ne, jotka eivät ole perehdytyksessä mukana: <b>siivooja</b> tulee tilaan illalla, <b>vierailija</b> ei tunne tiloja, ja <b>seuraava ryhmä</b> aloittaa siitä mihin sinä jäit. He ovat kaikkein alttiimpia ja saavat vähiten tietoa. Siksi heidät otetaan huomioon ensin.</p>'
+
+      + '<h4>Työn vaarat pajoissa</h4>'
+      + '<ul>'
+      + '<li><b>Mekaaniset:</b> pyörivät terät, puristuminen, sinkoutuvat kappaleet, takapotku. Vakavin riski — ja se, jota aliarvioidaan eniten.</li>'
+      + '<li><b>Melu:</b> useimmat koneet ylittävät kuulovaurion rajan. Kuulo ei parane takaisin.</li>'
+      + '<li><b>Pöly:</b> puupöly on hengitysteille haitallista, ja kovapuupöly on luokiteltu syöpävaaralliseksi.</li>'
+      + '<li><b>Kemikaalit:</b> liuottimet, maalit, hartsit ja öljyt. Jokaisesta on oltava käyttöturvallisuustiedote.</li>'
+      + '<li><b>Palo:</b> kipinätyöt, laser, kuumatyö — ja öljyrätit, jotka voivat syttyä itsestään roskiksessa.</li>'
+      + '<li><b>Kuumuus:</b> hitsaus, taonta ja uunit. Kuuma metalli näyttää täsmälleen samalta kuin kylmä.</li>'
+      + '<li><b>Ergonomia ja väsymys:</b> pitkä keskittyminen, huono asento ja kiire. Suurin osa vahingoista sattuu väsyneenä tai kiireessä.</li>'
+      + '</ul>'
+
+      + '<h4>Toiminta onnettomuustilanteessa</h4>'
+      + '<p>Opettele tämä järjestys ulkoa. Hätätilanteessa ei ehdi lukea ohjetta.</p>'
+      + '<ol class="steps">'
+      + '<li><b>Pysäytä</b>Katkaise koneen virta tai paina hätäpysäytintä. Estä lisävahingot.</li>'
+      + '<li><b>Suojaa</b>Varmista oma turvallisuutesi ensin. Auttaja ei saa joutua itse vaaraan. Siirrä muut pois vaara-alueelta.</li>'
+      + '<li><b>Hälytä</b>Soita <b>112</b>. Kerro mitä tapahtui, missä olet (osoite ja tila) ja montako on loukkaantunut. Älä sulje puhelinta ennen kuin saat luvan.</li>'
+      + '<li><b>Anna ensiapua</b>Tyrehdytä verenvuoto painamalla. Kemikaali silmässä: huuhtele silmähuuhtelupisteellä vähintään 15 minuuttia. Palovamma: viileä vesi. Tajuton mutta hengittää: kylkiasentoon.</li>'
+      + '<li><b>Opasta</b>Lähetä joku vastaanottamaan ambulanssi ja opastamaan perille.</li>'
+      + '<li><b>Ilmoita</b>Kerro pajamestarille tai lehtorille aina — myös läheltä piti -tilanteesta. Ilmoitus ei ole syyttely vaan tapa estää seuraava.</li>'
+      + '</ol>'
+      + '<div class="box warn"><b>Selvitä nämä ennen kuin aloitat työn</b>Missä on hätäpysäytin? Missä on sammutin ja sammutuspeite? Missä on ensiapukaappi, silmähuuhtelupiste ja hätäsuihku? Mistä pääsee ulos? Jos et tiedä, kysy nyt — et sitten kun jotain sattuu.</div>'
+      + '<div class="box info"><b>Oikeutesi kieltäytyä</b>Työturvallisuuslain 23 § antaa oikeuden pidättäytyä työstä, joka aiheuttaa vakavaa vaaraa. Sinun ei tarvitse tehdä työtä, jota et koe turvalliseksi. Kerro syy ohjaajalle — se on ammattitaitoa, ei kieltäytymistä.</div>';
+  }
+
+  function modOhjelmistot(){
+    return '<span class="kicker">Osa 2</span><h3>Muotoilijan ohjelmistot</h3>'
+      + '<p class="lead">Työkalut, joita käytät opintojen aikana. Tässä vaiheessa riittää tietää mihin kukin on ja mistä aloitat.</p>'
+
+      + '<h4>Kuvankäsittely ja kuvitus</h4>'
+      + '<p>Luonnosten puhtaaksipiirto, materiaalikuvat, esityskuvat ja portfolio. Rasterikuva (valokuva) ja vektorikuva (viiva, logo, laserleikkuutiedosto) ovat eri asioita — vektori skaalautuu rajattomasti ja on se, jota laser lukee.</p>'
+      + '<ul><li><b>Rasteri:</b> valokuvien käsittely, tekstuurit, esityskuvien viimeistely.</li>'
+      + '<li><b>Vektori:</b> viivapiirrokset, intarsia-aiheet, laserleikkuu, mitoitetut kuvat.</li></ul>'
+      + '<div class="box info"><b>Tallennusmuodot</b>Työtiedosto säilyttää tasot ja muokattavuuden. Jakoon menevä tiedosto (PDF tai PNG) on lopullinen. Pidä molemmat — älä tallenna työtä vain jaettavassa muodossa.</div>'
+
+      + '<h4>Rhino — 3D-mallinnus</h4>'
+      + '<p>Rhino on muotoilun kolmiulotteinen työkalu: vapaamuotoiset pinnat, tarkat mitat ja valmistukseen vietävät tiedostot. Käytät sitä myöhemmillä kursseilla, ja siitä syntyvät tiedostot menevät CNC-koneelle ja 3D-tulostimelle.</p>'
+      + '<ul><li>Aloita aina <b>mitoista ja yksiköistä</b> — millimetrit, ei "suurin piirtein".</li>'
+      + '<li>Rakenna malli niin, että sen voi <b>valmistaa</b>: mieti työstösuunta ja terän ulottuvuus jo mallinnusvaiheessa.</li>'
+      + '<li>Tallenna välivaiheet. Kaatuminen kuuluu asiaan.</li></ul>'
+
+      + '<h4>Tekoälytyökalut</h4>'
+      + '<p>Tekoäly on nyt osa muotoilijan työkalupakkia: ideointi, luonnostelun nopeuttaminen, tekstien ja esitysten työstö, koodin ja parametrien apuna. Sitä saa käyttää — mutta käytön pitää olla avointa ja harkittua.</p>'
+      + '<div class="box warn"><b>Kolme sääntöä</b>'
+      + '<b style="display:inline;">1. Kerro kun käytät.</b> Merkitse työhösi, missä kohtaa käytit tekoälyä ja mihin. Piilottelu on se, mikä tekee siitä ongelman.<br>'
+      + '<b style="display:inline;">2. Vastuu on sinulla.</b> Tekoäly esittää virheellistäkin tietoa vakuuttavasti. Mitat, materiaalitiedot ja turvallisuusohjeet tarkistetaan aina alkuperäisestä lähteestä.<br>'
+      + '<b style="display:inline;">3. Se ei korvaa tekemistä.</b> Käsi oppii tekemällä. Jos annat koneen tehdä luonnostelun puolestasi, jää oppimatta juuri se, mitä tällä kurssilla harjoitellaan.</div>'
+      + '<p class="lead">Turvallisuusasioissa tekoäly ei ole lähde. Konekortti, käyttöturvallisuustiedote ja pajamestari ovat.</p>';
+  }
+
+  function modLasta(){
+    return '<span class="kicker">Osa 3</span><h3>Paistinlastan suunnittelu</h3>'
+      + '<p class="lead">Ensimmäinen työ on yksinkertainen esine, jossa on kaikki muotoilun peruskysymykset. Suunnittelu tehdään päivänä 1 ennen pajalle menoa.</p>'
+
+      + '<h4>Miksi juuri paistinlasta</h4>'
+      + '<p>Se on tarpeeksi pieni valmistettavaksi yhdessä päivässä, mutta tarpeeksi vaativa, että huono suunnittelu näkyy heti käytössä. Se on myös käyttöesine, jota testataan kädessä — ei kuva paperilla.</p>'
+
+      + '<h4>Suunnittelun periaatteet</h4>'
+      + '<ul>'
+      + '<li><b>Ergonomia:</b> kahva mitoitetaan kädelle. Liian ohut väsyttää ja voi murtua, liian paksu ei tunnu hallittavalta. Kokeile käsin ennen kuin päätät.</li>'
+      + '<li><b>Toiminta:</b> terän kärki on ohut, jotta se menee paistoksen alle. Terän ja kahvan välinen kulma ratkaisee, osuuko kahva pannun reunaan.</li>'
+      + '<li><b>Materiaali:</b> puun syysuunta määrää lujuuden. Kapea kohta poikkisyin murtuu. Suunnittele muoto syiden mukaan, älä niitä vastaan.</li>'
+      + '<li><b>Valmistettavuus:</b> muoto pitää pystyä sahaamaan ja hiomaan käytettävissä olevilla koneilla. Liian jyrkkä sisäkaari ei onnistu vannesahalla.</li>'
+      + '<li><b>Turvallisuus valmistuksessa:</b> liian pieni kappale on vaarallinen työstää. Mieti jo luonnoksessa, miten kappaleesta pidetään kiinni.</li>'
+      + '<li><b>Käyttöturvallisuus:</b> elintarvikekelpoinen pintakäsittely, ei teräviä reunoja, ei rakoja joihin jää likaa.</li>'
+      + '</ul>'
+
+      + '<h4>Luonnostelu</h4>'
+      + '<ol class="steps">'
+      + '<li><b>Mittaa käsi</b>Piirrä oman kätesi ote 1:1. Kahva suunnitellaan sen päälle, ei tyhjään paperiin.</li>'
+      + '<li><b>Piirrä nopeasti monta</b>Vähintään kymmenen erilaista sivukuvaa. Ensimmäinen idea on harvoin paras — se on vain ensimmäinen.</li>'
+      + '<li><b>Valitse kolme ja tarkenna</b>Piirrä ne isommalla ja mieti kunkin kohdalla: miten tätä pidetään, miten tämä valmistetaan?</li>'
+      + '<li><b>Mitoita valittu</b>Piirrä 1:1 mitoilla. Kahvan paksuus, terän paksuus, kokonaispituus.</li>'
+      + '<li><b>Tarkista syysuunta</b>Piirrä syiden suunta luonnokseen ja katso, onko jokin kohta poikkisyin ja liian kapea.</li>'
+      + '<li><b>Näytä ohjaajalle</b>Tarkistus ennen sahausta säästää aihion ja tunnin työtä.</li>'
+      + '</ol>'
+      + '<div class="box ok"><b>Muistiinpano itsellesi</b>Kirjoita tähän suunnitteluvalintasi ja perustelut — mitä valitsit ja miksi. Tämä on hyvää materiaalia myös portfolioon.'
+      + '<div class="field"><label>Omat muistiinpanot</label><textarea id="sketchNote" rows="4" placeholder="Kahvan muoto, mitat, materiaali, perustelut...">'+esc(DB.sketch)+'</textarea></div>'
+      + '<div class="btnrow"><button class="btn" id="saveSketch">Tallenna muistiinpano</button></div></div>';
+  }
+
+  function modTyot(){
+    return '<span class="kicker">Osa 4</span><h3>Muut kurssityöt</h3>'
+      + '<p class="lead">Kurssilla tehdään kuusi työtä kahdessa pajassa. Jokainen opettaa eri asian — työt eivät ole tuotteita vaan harjoituksia.</p>'
+      + '<h4>Puupaja</h4>'
+      + '<ul>'
+      + '<li><b>Paistinlasta.</b> Aihion valmistus, muotosahaus kahdelta sivulta, hionta ja elintarvikekelpoinen pintakäsittely. Opit: muodon työstö ja viimeistely.</li>'
+      + '<li><b>Leikkuulauta.</b> Katkaisu ja halkaisu, oiko- ja tasohöyläys, liimalevyn valmistus, nostouran ajo, viisteet ja pyöristykset. Opit: mitallistus ja liimalevy.</li>'
+      + '<li><b>Intarsiakorurasia.</b> Kannellinen puusaranoitu rasia, korupaikat poraten tai veistäen, jigien rakentaminen. Kanteen tulee 2D CAD -kurssilla laserleikattava intarsia. Opit: tarkkuus, jigit ja liitos.</li>'
+      + '</ul>'
+      + '<h4>Metallipaja</h4>'
+      + '<ul>'
+      + '<li><b>Kavaletti.</b> Laippojen poraus ja kierteytys, laakerin asennus, kokoonpano. Opit: poraus, kierre ja sovitus.</li>'
+      + '<li><b>Pikkujakkara.</b> Neliöputken sahaus, hionta, kokoonpano, tulppahitsaus ja maalaus. Opit: rakenne ja liittäminen.</li>'
+      + '<li><b>Plastisen sommittelun työvälineet.</b> Taonta ja prässäys kylmänä ja kuumana — valvotusti. Opit: metallin muokkautuvuus.</li>'
+      + '</ul>'
+      + '<div class="box info"><b>Työn valmius</b>Työ on valmis, kun mitat ovat toleranssissa, pinta on tasainen, reunat eivät ole teräviä ja työpiste on siivottu. Ohjaaja tarkistaa sovituissa tarkistuspisteissä — pyydä tarkistus ajoissa, älä vasta lopussa.</div>';
+  }
+
+  function modVaatteet(){
+    var pl=(window.PAJA?PAJA.ppe():[]),s="",i;
+    for(i=0;i<pl.length;i++){ s+='<li>'+esc(pl[i])+'</li>'; }
+    return '<span class="kicker">Osa 5</span><h3>Työvaatteet ja suojautuminen</h3>'
+      + '<p class="lead">Vaatetus on ensimmäinen suojaus. Se ratkaistaan ennen kuin astut pajaan, ei koneen vieressä.</p>'
+      + '<h4>Työvaatteet</h4>'
+      + '<ul>'
+      + '<li><b>Vartalonmyötäiset vaatteet.</b> Ei roikkuvia hihoja, huppunauhoja tai laajoja liepeitä — ne tarttuvat pyörivään koneeseen.</li>'
+      + '<li><b>Pitkät hiukset kiinni.</b> Kiinnitä ne kunnolla, ei löysälle nutturalle.</li>'
+      + '<li><b>Ei koruja.</b> Sormukset, rannekkeet, kaulakorut ja roikkuvat korvakorut pois. Sormus voi viedä sormen.</li>'
+      + '<li><b>Umpinaiset jalkineet.</b> Metallipajassa ja raskaissa töissä turvajalkineet.</li>'
+      + '<li><b>Luonnonkuidut kuumatöissä.</b> Synteettiset kuidut sulavat iholle. Hitsauksessa ja taonnassa puuvilla tai nahka.</li>'
+      + '</ul>'
+      + '<h4>Suojaimet</h4>'
+      + '<p>Suojaimet ovat suojainpisteellä sisäänkäynnin luona. Ota käyttöön ja palauta lähtiessä.</p>'
+      + '<ul>'+s+'</ul>'
+      + '<div class="box warn"><b>Kaksi asiaa, jotka unohtuvat useimmin</b>Kuulosuojaimet otetaan pois heti kun kone hiljenee — mutta melu jatkuu naapurikoneella. Ja käsineet ovat vaaralliset pyörivän koneen luona: porakoneen, sorvin ja jyrsimen lähellä käsineitä <b>ei käytetä</b>, koska ne tarttuvat ja vetävät käden mukaansa.</div>'
+      + '<div class="box info"><b>Suojain ei korvaa menetelmää</b>Suojain on viimeinen keino. Ensin poistetaan vaara, sitten eristetään se, sitten ohjeistetaan — ja vasta lopuksi suojaudutaan. Jos suojain tuntuu ainoalta esteeltä vamman ja itsesi välillä, jokin muu on pielessä.</div>';
+  }
+
+  function modSiivous(){
+    var fr=(window.PAJA?PAJA.fractions():[]),s="",i;
+    for(i=0;i<fr.length;i++){ s+='<li><b>'+esc(fr[i].name)+'.</b> '+esc(fr[i].note||"")+'</li>'; }
+    return '<span class="kicker">Osa 6</span><h3>Siivous, jäte ja RETAKE</h3>'
+      + '<p class="lead">Siisti paja ei ole kohteliaisuus vaan turvallisuutta. Sotkuisessa tilassa ei näe vaaraa eikä löydä työkalua.</p>'
+      + '<h4>Ennen kuin lähdet</h4>'
+      + '<ol class="steps">'
+      + '<li><b>Kone</b>Harjaa ja imuroi käyttämäsi kone. Teräsuojat paikoilleen, virrat pois.</li>'
+      + '<li><b>Työpiste</b>Pöytä tyhjäksi ja pyyhi. Lattia harjattu.</li>'
+      + '<li><b>Työkalut</b>Jokainen omalle merkitylle paikalleen. Paikkakoodi kertoo minne — sama koodi laatikossa ja työkalun paikassa.</li>'
+      + '<li><b>Jätteet</b>Lajittele oikeisiin jakeisiin. Älä jätä seuraavalle.</li>'
+      + '<li><b>Suojaimet</b>Palauta suojainpisteelle.</li>'
+      + '<li><b>Ilmoita</b>Jos jokin hajosi tai on vialla, kerro pajamestarille. Vika ei korjaannu vaikenemalla.</li>'
+      + '</ol>'
+      + '<h4>Jätejakeet</h4>'
+      + '<ul>'+s+'</ul>'
+      + '<div class="box warn"><b>Öljy- ja liuotinrätit</b>Ne menevät aina jalalla avattavaan metalliastiaan, eivät roskikseen. Öljyyntynyt rätti voi syttyä itsestään ilman mitään ulkoista sytytystä. Tämä on yksi yleisimmistä palonsyistä pajoissa.</div>'
+      + '<h4>RETAKE — materiaali kiertoon</h4>'
+      + '<p>Hukkapala ei ole automaattisesti jäte. Käyttökelpoinen aihio menee RETAKE-hyllyyn, josta seuraava opiskelija voi ottaa sen. Se säästää rahaa ja materiaalia, mutta ennen kaikkea se opettaa katsomaan materiaalia resurssina.</p>'
+      + '<ul><li>Mieti jo sahatessa, jääkö käyttökelpoista palaa.</li>'
+      + '<li>Vie kelvollinen pala RETAKE-hyllyyn, älä jätä pöydälle.</li>'
+      + '<li>Katso RETAKE-hyllystä ennen kuin otat uuden aihion.</li></ul>'
+      + '<p class="lead">Tiloissa on 120 litran astiat. Ne kerätään perjantaisin 350 litran kerrossukkuloihin, jotka viedään jätehuoneeseen tai ulkopuristimeen.</p>';
+  }
+
+  function modLaatikko(){
+    return '<span class="kicker">Osa 7</span><h3>Oma laatikko</h3>'
+      + '<p class="lead">Saat käyttöösi oman laatikon. Se on pieni asia, joka ratkaisee yllättävän paljon arjessa.</p>'
+      + '<h4>Mitä laatikkoon kuuluu</h4>'
+      + '<ul>'
+      + '<li>Keskeneräiset työsi ja aihiosi</li>'
+      + '<li>Omat mittavälineesi ja pienet henkilökohtaiset työkalut</li>'
+      + '<li>Luonnokset, mitoituspiirrokset ja muistiinpanot</li>'
+      + '<li>Omat suojaimesi, jos hankit sellaiset</li>'
+      + '</ul>'
+      + '<h4>Mitä laatikkoon ei kuulu</h4>'
+      + '<ul>'
+      + '<li><b>Pajan yhteiset työkalut.</b> Ne palautetaan omille paikoilleen — muuten seuraava ei löydä niitä.</li>'
+      + '<li><b>Kemikaalit.</b> Aineet säilytetään niille määrätyissä kaapeissa, ei laatikossa.</li>'
+      + '<li><b>Öljyiset rätit.</b> Itsesyttymisvaara suljetussa tilassa.</li>'
+      + '<li><b>Ruoka.</b> Pajassa on pölyä ja kemikaaleja.</li>'
+      + '</ul>'
+      + '<div class="box info"><b>Pelisäännöt</b>Laatikko on lainassa opintojen ajan. Merkitse se nimelläsi, pidä järjestyksessä ja tyhjennä kun opinnot päättyvät. Jos työ ei mahdu laatikkoon, sovi säilytyksestä pajamestarin kanssa — älä jätä sitä pöydälle.</div>'
+      + '<div class="box ok"><b>Miksi tämä on tärkeää</b>Kun jokaisella on oma paikka tavaroilleen, yhteiset pinnat pysyvät tyhjinä. Tyhjä pöytä on turvallinen pöytä: siinä näkee mitä tekee, ja siihen mahtuu työskentelemään.</div>';
+  }
+
+  // ================= KOMMENTIT JA JAKAMINEN =================
+  function cmtsFor(topic){ return DB.cmts.filter(function(c){ return c.topic===topic; }); }
+  function topicName(id){
+    if(id==="yleinen") return "Yleinen keskustelu";
+    var i; for(i=0;i<MODS.length;i++){ if(MODS[i].id===id) return MODS[i].h; }
+    return id;
+  }
+  function cmtHTML(c){
+    var mine=(c.by===DB.name);
+    return '<div class="cmt '+esc(c.role)+'"><div class="ch"><span class="cw">'+esc(c.by)+'</span>'
+      + '<span class="cr">'+(c.role==="ohjaaja"?"Ohjaaja":"Opiskelija")+'</span>'
+      + '<span class="ct">'+esc(c.at.slice(8,10)+"."+c.at.slice(5,7)+". "+c.at.slice(11,16))+'</span></div>'
+      + '<div class="cb">'+esc(c.text)+'</div>'
+      + '<div class="cm'+(mine?" cmine":"")+'">'+(mine?"Oma merkintäsi":("Tuotu: "+esc(c.src||"tämä laite")))+'</div></div>';
+  }
+  function cmtBlock(topic){
+    var list=cmtsFor(topic);
+    var s='<h4>Keskustelu ja huomiot</h4>';
+    if(!DB.name){ return s+'<div class="box info">Kirjoita nimesi etusivulla, niin voit kommentoida.</div>'; }
+    if(list.length===0) s+='<p class="lead">Ei vielä huomioita. Kirjoita ensimmäinen — kysymys, havainto tai vinkki muille.</p>';
+    else { var i; for(i=0;i<list.length;i++){ s+=cmtHTML(list[i]); } }
+    s+='<div class="field"><label>Kirjoita huomio tai kysymys</label>'
+      + '<textarea id="cTxt" rows="3" placeholder="Esim. mitä jäi epäselväksi, mikä auttoi, mitä kannattaa tietää"></textarea></div>'
+      + '<div class="btnrow"><button class="btn primary" data-cadd="'+topic+'">Lisää</button>'
+      + '<button class="btn" data-cask="'+topic+'">Kysy ohjaajalta</button>'
+      + '<button class="btn ghost" data-cshare="'+topic+'">Jaa</button></div>'
+      + '<div class="sharebar"><b>Näin tieto liikkuu</b>Kirjoittamasi huomio tallentuu tälle laitteelle. '
+      + '<b style="display:inline;">Kysy ohjaajalta</b> lähettää sen sähköpostina, jolloin se tavoittaa ohjaajan oikeasti. '
+      + '<b style="display:inline;">Jaa</b> kopioi tekstin, jonka voit liittää vaikka ryhmän keskusteluun. '
+      + 'Yhteinen keskustelu ilman lähettämistä vaatii palvelimen — sitä ei vielä ole.</div>';
+    return s;
+  }
+  function viewTalk(){
+    var s='<div class="sec"><span class="kicker">Yhteinen tieto</span><h3>Keskustelu</h3>'
+      + '<p class="lead">Kysymykset, havainnot ja vinkit. Ohjaajan merkinnät näkyvät punaisella — ne ovat ohjeita, opiskelijoiden merkinnät ovat kokemuksia.</p>';
+    if(DB.role==="ohjaaja"){
+      s+='<div class="box warn"><b>Ohjaajana</b>Kirjoittamasi merkinnät näkyvät ohjeina. Voit koota kaikki huomiot tiedostoksi ja jakaa sen opiskelijoille, jolloin ne näkyvät heidän sovelluksessaan.</div>';
+    }
+    s+=cmtBlock("yleinen")+'</div>';
+    s+='<div class="sec"><span class="kicker">Jakaminen</span><h3>Kokoa ja jaa</h3>'
+      + '<p class="lead">Vie omat huomiosi tiedostona tai tuo toisten kokoama tiedosto, niin näet heidän merkintänsä.</p>'
+      + '<div class="btnrow"><button class="btn" id="expC">Vie huomiot ('+DB.cmts.length+')</button>'
+      + '<label class="btn ghost" style="cursor:pointer;">Tuo huomioita<input type="file" id="impC" accept="application/json" style="display:none;"></label></div>'
+      + '<div class="msg info">Tuonti lisää merkinnät omien rinnalle — se ei korvaa mitään. Samat merkinnät ei tuoda kahdesti.</div></div>';
+    return s;
+  }
+
+  function viewMod(){
+    var body="";
+    if(openMod==="intro") body=modIntro();
+    else if(openMod==="ohjelmistot") body=modOhjelmistot();
+    else if(openMod==="lasta") body=modLasta();
+    else if(openMod==="tyot") body=modTyot();
+    else if(openMod==="vaatteet") body=modVaatteet();
+    else if(openMod==="siivous") body=modSiivous();
+    else if(openMod==="laatikko") body=modLaatikko();
+    var done=!!DB.read[openMod];
+    return '<button class="back" id="back">&larr; Takaisin</button><div class="sec">'+body
+      + '<div class="btnrow"><button class="btn '+(done?"ghost":"ok")+' wide" id="markRead">'
+      + (done?"Merkitty luetuksi — poista merkintä":"Merkitse luetuksi")+'</button></div></div>'
+      + '<div class="sec">'+cmtBlock(openMod)+'</div>';
+  }
+
+  // ================= RENDER =================
+  function render(){
+    var h=document.getElementById("head");
+    h.innerHTML='<span class="eyebrow">Muotoilun pajat · Metropolia</span>'
+      + '<h1>Orientaatio<span class="e">kurssi</span></h1>'
+      + (DB.name?'<div class="who">'+esc(DB.name)+(DB.group?" · "+esc(DB.group):"")+'</div>':'');
+
+    var v=document.getElementById("view"), html="";
+    if(view==="koti") html=viewKoti();
+    else if(view==="lasnaolo") html=viewAtt();
+    else if(view==="mod") html=viewMod();
+    else if(view==="keskustelu") html=viewTalk();
+    if(flashMsg){ html='<div class="msg '+flashMsg.k+'">'+esc(flashMsg.t)+'</div>'+html; flashMsg=null; }
+    v.innerHTML=html;
+
+    var tb=document.getElementById("tabbar");
+    var T=[{id:"koti",i:"\u2302",l:"Koti"},{id:"lasnaolo",i:"\u2713",l:"Läsnäolo"},{id:"keskustelu",i:"\u25CC",l:"Keskustelu"}];
+    var s="",i;
+    for(i=0;i<T.length;i++){ s+='<button class="tb'+((view===T[i].id)?" on":"")+'" data-v="'+T[i].id+'">'
+      + '<span class="i">'+T[i].i+'</span>'+T[i].l+'</button>'; }
+    s+='<button class="tb" id="tbCard"><span class="i">\u25A3</span>Ajokortti</button>';
+    tb.innerHTML=s;
+
+    document.getElementById("note").innerHTML=
+      "Tiedot tallentuvat vain tähän puhelimeen. Läsnäolomerkinnät ovat omaa seurantaasi — virallinen kirjanpito on ohjaajalla. "
+      + "Hätänumero 112. Työturvallisuuslaki 738/2002.";
+
+    bind();
+  }
+
+  function bind(){
+    document.querySelectorAll("[data-v]").forEach(function(b){ b.addEventListener("click", function(){
+      view=b.getAttribute("data-v"); openMod=""; render(); }); });
+    var tc=document.getElementById("tbCard");
+    if(tc){ tc.addEventListener("click", function(){ location.href="syksyn_orientaatiokurssi.html"; }); }
+    var bk=document.getElementById("back");
+    if(bk){ bk.addEventListener("click", function(){ view="koti"; openMod=""; render(); }); }
+    document.querySelectorAll("[data-mod]").forEach(function(m){ m.addEventListener("click", function(){
+      openMod=m.getAttribute("data-mod"); view="mod"; window.scrollTo(0,0); render(); }); });
+    var ta=document.getElementById("toAtt");
+    if(ta){ ta.addEventListener("click", function(){ view="lasnaolo"; render(); }); }
+
+    var ns=document.getElementById("nSave");
+    if(ns){ ns.addEventListener("click", function(){
+      var n=document.getElementById("nName").value.trim();
+      if(n.length<2){ flash("Kirjoita nimesi.","err"); return; }
+      DB.name=n; DB.group=document.getElementById("nGroup").value.trim(); save(); render(); }); }
+
+    var mr=document.getElementById("markRead");
+    if(mr){ mr.addEventListener("click", function(){
+      if(DB.read[openMod]) delete DB.read[openMod]; else DB.read[openMod]=nowISO();
+      save(); render(); }); }
+
+    var ss=document.getElementById("saveSketch");
+    if(ss){ ss.addEventListener("click", function(){
+      DB.sketch=document.getElementById("sketchNote").value; save(); flash("Muistiinpano tallennettu.","ok"); }); }
+
+    document.querySelectorAll("[data-set]").forEach(function(b){ b.addEventListener("click", function(){
+      var p=b.getAttribute("data-set").split("|"), id=p[0], st=p[1];
+      var rec={ status:st, time:hhmm(), date:today() };
+      if(st==="myohassa"){
+        var r=window.prompt("Kerro lyhyesti miksi myöhästyit. Tieto auttaa ohjauksen järjestämisessä.");
+        if(r===null) return;
+        rec.reason=r.trim();
+      }
+      if(st==="poissa"){
+        var r2=window.prompt("Syy poissaololle (vapaaehtoinen):");
+        if(r2!==null && r2.trim()) rec.reason=r2.trim();
+      }
+      DB.att[id]=rec; save(); render(); }); });
+
+    // roolivalinta
+    document.querySelectorAll("[data-role]").forEach(function(b){ b.addEventListener("click", function(){
+      document.querySelectorAll("[data-role]").forEach(function(x){ x.className="rp"; });
+      b.className="rp on"+(b.getAttribute("data-role")==="ohjaaja"?" staff":"");
+      DB.role=b.getAttribute("data-role"); }); });
+
+    // kommentin lisays
+    document.querySelectorAll("[data-cadd]").forEach(function(b){ b.addEventListener("click", function(){
+      var topic=b.getAttribute("data-cadd"), el=document.getElementById("cTxt");
+      var txt=el?el.value.trim():"";
+      if(txt.length<3){ flash("Kirjoita huomio.","err"); return; }
+      DB.cmts.push({ id:"c"+Math.random().toString(36).slice(2,9), topic:topic, by:DB.name,
+        role:DB.role, group:DB.group, text:txt, at:nowISO() });
+      save(); flash("Huomio tallennettu tälle laitteelle. Lähetä tai jaa se, niin se tavoittaa muut.","ok"); }); });
+
+    // kysy ohjaajalta -> sahkoposti
+    document.querySelectorAll("[data-cask]").forEach(function(b){ b.addEventListener("click", function(){
+      var topic=b.getAttribute("data-cask"), el=document.getElementById("cTxt");
+      var txt=el?el.value.trim():"";
+      if(txt.length<3){ flash("Kirjoita kysymys ensin.","err"); return; }
+      var subj="Orientaatiokurssi — "+topicName(topic);
+      var body="Aihe: "+topicName(topic)+"\n"
+        + "Lähettäjä: "+(DB.name||"")+(DB.group?" ("+DB.group+")":"")+"\n\n"
+        + txt+"\n\n---\nLähetetty orientaatiokurssin sovelluksesta.";
+      location.href="mailto:?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body); }); });
+
+    // jaa
+    document.querySelectorAll("[data-cshare]").forEach(function(b){ b.addEventListener("click", function(){
+      var topic=b.getAttribute("data-cshare"), el=document.getElementById("cTxt");
+      var txt=el&&el.value.trim()?el.value.trim():cmtsFor(topic).map(function(c){ return c.by+": "+c.text; }).join("\n\n");
+      if(!txt){ flash("Ei jaettavaa.","err"); return; }
+      var full="Orientaatiokurssi — "+topicName(topic)+"\n\n"+txt;
+      if(navigator.share){ navigator.share({ title:"Orientaatiokurssi", text:full }).catch(function(){}); }
+      else if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(full).then(function(){ flash("Kopioitu leikepöydälle.","ok"); },
+          function(){ window.prompt("Kopioi teksti:", full); });
+      } else { window.prompt("Kopioi teksti:", full); } }); });
+
+    // vienti ja tuonti
+    var ec=document.getElementById("expC");
+    if(ec){ ec.addEventListener("click", function(){
+      if(DB.cmts.length===0){ flash("Ei vietäviä huomioita.","err"); return; }
+      var pack={ type:"orientaatio-huomiot", version:1, from:DB.name, role:DB.role, at:nowISO(), cmts:DB.cmts };
+      try{ var b2=new Blob([JSON.stringify(pack,null,2)],{type:"application/json"}),u=URL.createObjectURL(b2),a=document.createElement("a");
+        a.href=u; a.download="huomiot_"+(DB.name||"minä").replace(/\s+/g,"_")+".json";
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      }catch(e){ flash("Lataus ei onnistunut.","err"); } }); }
+    var ic=document.getElementById("impC");
+    if(ic){ ic.addEventListener("change", function(){
+      if(!ic.files[0]) return; var fr=new FileReader();
+      fr.onload=function(){ try{
+        var d=JSON.parse(fr.result);
+        if(!d.cmts || !d.cmts.length){ flash("Tiedostossa ei ole huomioita.","err"); return; }
+        var have={},i; for(i=0;i<DB.cmts.length;i++){ have[DB.cmts[i].id]=1; }
+        var added=0;
+        for(i=0;i<d.cmts.length;i++){ var c=d.cmts[i];
+          if(have[c.id]) continue;
+          c.src=(d.from||"toinen laite"); DB.cmts.push(c); added++; }
+        save(); flash(added+" huomiota tuotu"+(added<d.cmts.length?" ("+(d.cmts.length-added)+" oli jo).":"."),"ok");
+      }catch(e){ flash("Tiedostoa ei voitu lukea.","err"); } };
+      fr.readAsText(ic.files[0]); }); }
+
+    var ea=document.getElementById("expAtt");
+    if(ea){ ea.addEventListener("click", function(){
+      var rows=["Nimi;Ryhma;Paiva;Tila;Kello;Syy"],i;
+      for(i=0;i<DAYS.length;i++){ var a=DB.att[DAYS[i].id]||{};
+        rows.push([DB.name,DB.group,DAYS[i].label,a.status||"ei merkitty",a.time||"",(a.reason||"").replace(/;/g," ")].join(";")); }
+      try{ var b=new Blob(["\ufeff"+rows.join("\r\n")],{type:"text/csv;charset=utf-8"}),u=URL.createObjectURL(b),el=document.createElement("a");
+        el.href=u; el.download="lasnaolo_"+(DB.name||"opiskelija").replace(/\s+/g,"_")+".csv";
+        document.body.appendChild(el); el.click(); document.body.removeChild(el);
+      }catch(e){ flash("Lataus ei onnistunut.","err"); } }); }
+  }
+
+  if("serviceWorker" in navigator && location.protocol==="https:"){
+    window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+  }
+
+  load(); render();
+})();
+</script>
+</body>
+</html>

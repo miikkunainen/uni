@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Näkyvyysasetukset — Muotoilun pajat</title>
+<meta name="theme-color" content="#CE3F1B">
+<link rel="icon" href="mhks-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,600&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#ECE6DA;--paper-deep:#E4DCCC;--card:#F3EFE7;--ink:#211C16;--ink-soft:#5A5347;
+    --ember:#CE3F1B;--rule:#C8BFAD;--rule-soft:#D8D0C0;--vihrea:#5E8C5A;--laatu:#BE8A2E;--steel:#3D4B58;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:16px;line-height:1.55;}
+  .wrap{max-width:860px;margin:0 auto;padding:0 clamp(14px,4vw,26px) 60px;}
+  h1,h2,h3,h4{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;text-transform:uppercase;line-height:.95;margin:0;}
+  p{margin:0 0 1em;}
+  .mono{font-family:"IBM Plex Mono",monospace;}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.85em;background:#fff;border:1px solid var(--rule);border-radius:3px;padding:.05em .35em;}
+
+  .head{padding:clamp(20px,4vw,32px) 0 8px;}
+  .head .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);}
+  .head h1{font-size:clamp(1.8rem,5.5vw,2.8rem);margin-top:.25em;}
+  .head h1 .e{color:var(--ember);}
+  .head p{color:var(--ink-soft);font-size:.93rem;max-width:70ch;margin:.5em 0 0;}
+
+  .count{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:12px 15px;margin:14px 0;
+    display:flex;gap:18px;flex-wrap:wrap;align-items:center;}
+  .count .c{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:800;font-size:1.9rem;line-height:1;}
+  .count .l{font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);}
+
+  .grp{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:13px 15px;margin-bottom:12px;}
+  .grp h3{font-size:1.1rem;margin-bottom:.5em;}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ember);font-weight:600;display:block;margin-bottom:.2em;}
+
+  .row{display:flex;align-items:flex-start;gap:11px;padding:.6em 0;border-bottom:1px dashed var(--rule);}
+  .row:last-child{border-bottom:none;}
+  .row input[type=checkbox]{width:22px;height:22px;flex:none;margin-top:.15em;accent-color:var(--ember);cursor:pointer;}
+  .row .t{flex:1;min-width:0;}
+  .row .n{font-family:"Big Shoulders Display",Arial,sans-serif;font-weight:700;text-transform:uppercase;font-size:1.02rem;}
+  .row .d{font-size:.85rem;color:var(--ink-soft);line-height:1.35;}
+  .row .f{font-family:"IBM Plex Mono",monospace;font-size:.55rem;color:var(--ink-soft);opacity:.8;margin-top:.15em;word-break:break-all;}
+  .row.off .n,.row.off .d{opacity:.45;}
+  .row .lock{font-family:"IBM Plex Mono",monospace;font-size:.5rem;letter-spacing:.05em;text-transform:uppercase;
+    background:var(--paper-deep);color:var(--ink-soft);padding:.16em .45em;border-radius:20px;}
+
+  .btn{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;
+    border:1px solid var(--ink);background:transparent;color:var(--ink);padding:.65em .95em;border-radius:6px;}
+  .btn:hover{background:var(--ink);color:var(--paper);}
+  .btn.primary{background:var(--ember);border-color:var(--ember);color:#fff;}
+  .btn.primary:hover{background:#b0340f;}
+  .btn.ghost{border-color:var(--rule);color:var(--ink-soft);}
+  .btn.mini{font-size:.55rem;padding:.4em .65em;}
+  .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+
+  .box{border-radius:8px;padding:12px 14px;margin:.9em 0;font-size:.9rem;}
+  .box.warn{background:rgba(206,63,27,.09);border-left:4px solid var(--ember);}
+  .box.ok{background:rgba(94,140,90,.12);border-left:4px solid var(--vihrea);}
+  .box.info{background:var(--paper-deep);border-left:4px solid var(--steel);}
+  .box b{display:block;margin-bottom:.2em;}
+
+  .msg{font-size:.88rem;padding:.6em .8em;border-radius:6px;margin:.6em 0;}
+  .msg.ok{background:rgba(94,140,90,.12);border-left:3px solid var(--vihrea);color:#3c5e39;}
+  .msg.info{background:var(--paper-deep);border-left:3px solid var(--steel);color:var(--ink-soft);}
+  .note{font-family:"IBM Plex Mono",monospace;font-size:.6rem;color:var(--ink-soft);line-height:1.7;
+    margin-top:16px;border-top:1px solid var(--rule);padding-top:10px;}
+</style>
+</head>
+<body>
+<script src="paja-data.js"></script>
+<script src="paja-config.js"></script>
+<script src="pajakuutio-nav.js"></script>
+<div class="wrap">
+  <header class="head">
+    <span class="eyebrow">Muotoilun pajat · vain vastuuhenkilölle</span>
+    <h1>Näkyvyys<span class="e">asetukset</span></h1>
+    <p>Rastita mitkä työkalut näkyvät portaalissa, navipalkissa ja kartassa. Piilotettu työkalu säilyy tiedostona — se vain ei näy käyttäjille.</p>
+  </header>
+  <div id="view"></div>
+  <div class="note" id="note"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var C=window.PAJACFG;
+  var vis={}, sec={}, flashMsg=null;
+
+  var GROUPS=[
+    { h:"Opiskelijan työkalut", k:"Päivittäin käytössä", items:[
+      ["orientaatio","Orientaatiokurssi","Opiskelijan sovellus: läsnäolo, materiaalit, keskustelu"],
+      ["kurssi","Ajokorttiputki","Perehdytys, työlupa ja paja-ajokortti"],
+      ["tyolupa","Työlupa","Allekirjoitettava lupa"],
+      ["app","Paja-app","Koneohjeet, jätteet, siivous, ajanvaraus"]
+    ]},
+    { h:"Turvallisuus", k:"Lakisääteinen ydin", items:[
+      ["kemia","Kemikaalienhallinta","Ehdotus, hyväksyntä, PRO24-siirto, kemikaaliluettelo"],
+      ["kone","Konerekisteri","Konekortit, vaaraluokat, sijainnit"],
+      ["herate","Herätteet ja loki","Poikkeamat ja läheltä piti -ilmoitukset"]
+    ]},
+    { h:"Hallinta ja talous", k:"Henkilökunnalle", items:[
+      ["mhks","MHKS","Materiaalikortti, hinnat, toimittajat, laskutus"],
+      ["seuranta","Seuranta","Ryhmä, läsnäolo, tehtävät, arviointi"]
+    ]},
+    { h:"Tausta ja ymmärrys", k:"Ei päivittäistä käyttöä", items:[
+      ["perusta","Pajatoiminnan perusta","Lainmukainen ja reilu pohja"],
+      ["kartta","Hallinnan kartta","Ajattelun perusta ja periaatteet"],
+      ["kuutio","Pajakuutio","Kuusi tahkoa mallina"],
+      ["peli","Pajapeli","Pelilauta roolien ymmärtämiseen"]
+    ]},
+    { h:"Yleiset", k:"Suositellaan pidettäväksi", items:[
+      ["sivukartta","Sivustokartta","Missä mikäkin on"],
+      ["asenna","Asenna puhelimeen","Sovelluksen asennusohje"],
+      ["tietosuoja","Tietosuoja ja GDPR","Pakollinen — linkki on joka sivun alalaidassa","lock"]
+    ]}
+  ];
+
+  var SECS=[
+    ["naytaHerateNostot","Herätenostot etusivulla","Avoimet poikkeamat portaalin yläreunassa"],
+    ["naytaOhjelma","Päivän ohjelma","Kurssipäivän aikataulu portaalissa"],
+    ["naytaKemikaaliKooste","Kemikaalinostot","KTT-hälytykset ja uudet ehdotukset portaalissa"],
+    ["naytaAsennusohje","Asennusohje","Puhelinasennuksen ohje portaalin alaosassa"]
+  ];
+
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function flash(t,k){ flashMsg={t:t,k:k}; render(); }
+  function init(){
+    var d=C.defaults(),k;
+    for(k in d){ if(d.hasOwnProperty(k)) vis[k]=C.on(k); }
+    var s=C.defaultSections();
+    for(k in s){ if(s.hasOwnProperty(k)) sec[k]=C.section(k); }
+  }
+  function onCount(){ var n=0,k; for(k in vis){ if(vis.hasOwnProperty(k)&&vis[k]) n++; } return n; }
+  function total(){ var n=0,k; for(k in vis){ if(vis.hasOwnProperty(k)) n++; } return n; }
+
+  function render(){
+    var s="";
+    if(flashMsg){ s+='<div class="msg '+flashMsg.k+'">'+esc(flashMsg.t)+'</div>'; flashMsg=null; }
+    s+='<div class="count"><div><div class="c">'+onCount()+' / '+total()+'</div><div class="l">Työkalua näkyvissä</div></div>'
+      + '<div><div class="c">'+(total()-onCount())+'</div><div class="l">Piilotettu</div></div>'
+      + '<div style="flex:1;min-width:180px;"><div class="l">'
+      + (C.hasLocal()?"Esikatselu käytössä tässä selaimessa":"Käytössä tiedoston oletusasetukset")+'</div></div></div>';
+
+    var i,j;
+    for(i=0;i<GROUPS.length;i++){ var g=GROUPS[i];
+      s+='<div class="grp"><span class="kicker">'+esc(g.k)+'</span><h3>'+esc(g.h)+'</h3>';
+      for(j=0;j<g.items.length;j++){
+        var it=g.items[j], key=it[0], locked=(it[3]==="lock");
+        var on=locked?true:!!vis[key];
+        s+='<label class="row'+(on?"":" off")+'">'
+          + '<input type="checkbox" data-k="'+key+'"'+(on?" checked":"")+(locked?" disabled":"")+'>'
+          + '<span class="t"><span class="n">'+esc(it[1])+(locked?' <span class="lock">Aina näkyvissä</span>':'')+'</span>'
+          + '<span class="d">'+esc(it[2])+'</span>'
+          + '<span class="f">'+esc(C.file(key)||"")+'</span></span></label>';
+      }
+      s+='<div class="btnrow"><button class="btn ghost mini" data-all="'+i+'">Valitse kaikki</button>'
+        + '<button class="btn ghost mini" data-none="'+i+'">Poista kaikki</button></div></div>';
+    }
+
+    s+='<div class="grp"><span class="kicker">Tarkennus</span><h3>Portaalin osiot</h3>'
+      + '<p style="font-size:.88rem;color:var(--ink-soft);margin:0 0 .4em;">Näillä karsit portaalin etusivua ilman että piilotat koko työkalua.</p>';
+    for(i=0;i<SECS.length;i++){ var sc=SECS[i];
+      s+='<label class="row'+(sec[sc[0]]?"":" off")+'"><input type="checkbox" data-s="'+sc[0]+'"'+(sec[sc[0]]?" checked":"")+'>'
+        + '<span class="t"><span class="n">'+esc(sc[1])+'</span><span class="d">'+esc(sc[2])+'</span></span></label>'; }
+    s+='</div>';
+
+    s+='<div class="grp"><span class="kicker">Tallennus</span><h3>Ota käyttöön</h3>'
+      + '<div class="box info"><b>Kaksi tasoa</b>'
+      + '<b style="display:inline;">Esikatselu</b> vaikuttaa heti, mutta vain tässä selaimessa. Käytä sitä kun kokeilet.<br>'
+      + '<b style="display:inline;">Tiedosto</b> vaikuttaa kaikkiin: lataa uusi <code>paja-config.js</code> ja korvaa vanha sillä palvelimella.</div>'
+      + '<div class="btnrow"><button class="btn primary" id="prev">Ota esikatselu käyttöön</button>'
+      + '<button class="btn" id="dl">Lataa paja-config.js</button>'
+      + '<button class="btn ghost" id="reset">Palauta tiedoston oletukset</button></div></div>';
+
+    s+='<div class="box warn"><b>Piilottaminen ei poista mitään</b>Tiedosto jää palvelimelle, ja suora osoite toimii edelleen. '
+      + 'Tämä hallitsee näkyvyyttä, ei pääsyä. Jos työkalu pitää oikeasti sulkea, poista tiedosto tai rajaa pääsy palvelimella.</div>';
+
+    document.getElementById("view").innerHTML=s;
+    document.getElementById("note").innerHTML=
+      "Tämä sivu on tarkoitettu kokonaisuudesta vastaavalle. Muutokset koskevat näkyvyyttä portaalissa, navipalkissa ja kartassa. "
+      + "Tietosuojasivu on aina näkyvissä, koska linkki siihen kuuluu jokaisen sivun alalaitaan.";
+    bind();
+  }
+
+  function bind(){
+    document.querySelectorAll("[data-k]").forEach(function(c){ c.addEventListener("change", function(){
+      vis[c.getAttribute("data-k")]=c.checked; render(); }); });
+    document.querySelectorAll("[data-s]").forEach(function(c){ c.addEventListener("change", function(){
+      sec[c.getAttribute("data-s")]=c.checked; render(); }); });
+    document.querySelectorAll("[data-all]").forEach(function(b){ b.addEventListener("click", function(e){
+      e.preventDefault();
+      var g=GROUPS[parseInt(b.getAttribute("data-all"),10)],j;
+      for(j=0;j<g.items.length;j++){ vis[g.items[j][0]]=true; } render(); }); });
+    document.querySelectorAll("[data-none]").forEach(function(b){ b.addEventListener("click", function(e){
+      e.preventDefault();
+      var g=GROUPS[parseInt(b.getAttribute("data-none"),10)],j;
+      for(j=0;j<g.items.length;j++){ if(g.items[j][3]!=="lock") vis[g.items[j][0]]=false; } render(); }); });
+
+    var pv=document.getElementById("prev");
+    if(pv){ pv.addEventListener("click", function(){
+      C.saveLocal(vis,sec); flash("Esikatselu käytössä. Avaa etusivu, niin näet muutoksen.","ok"); }); }
+
+    var rs=document.getElementById("reset");
+    if(rs){ rs.addEventListener("click", function(){
+      if(!window.confirm("Palautetaanko tiedoston oletusasetukset? Esikatselu poistuu.")) return;
+      C.clearLocal(); init(); flash("Oletukset palautettu.","ok"); }); }
+
+    var dl=document.getElementById("dl");
+    if(dl){ dl.addEventListener("click", function(){
+      var txt=buildConfig();
+      try{ var b=new Blob([txt],{type:"text/javascript;charset=utf-8"}),u=URL.createObjectURL(b),a=document.createElement("a");
+        a.href=u; a.download="paja-config.js"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(u); },1000);
+        flash("Tiedosto ladattu. Korvaa sillä vanha paja-config.js palvelimella.","ok");
+      }catch(e){ flash("Lataus ei onnistunut.","info"); } }); }
+  }
+
+  function buildConfig(){
+    var src=window.__PAJACFG_SRC||"";
+    var out=src, k;
+    // korvaa VISIBLE-lohkon arvot
+    for(k in vis){ if(!vis.hasOwnProperty(k)) continue;
+      var re=new RegExp("(\\n\\s*"+k+":\\s*)(true|false)");
+      out=out.replace(re,"$1"+(vis[k]?"true":"false"));
+    }
+    for(k in sec){ if(!sec.hasOwnProperty(k)) continue;
+      var re2=new RegExp("(\\n\\s*"+k+":\\s*)(true|false)");
+      out=out.replace(re2,"$1"+(sec[k]?"true":"false"));
+    }
+    var stamp="/* Päivitetty hallinta.html-sivulta "+new Date().toLocaleDateString("fi-FI")+" */\n";
+    return stamp+out;
+  }
+
+  // hae config-tiedoston lähdekoodi, jotta lataus tuottaa kokonaisen tiedoston
+  (function(){
+    try{
+      var x=new XMLHttpRequest();
+      x.open("GET","paja-config.js",true);
+      x.onload=function(){ if(x.status>=200&&x.status<400){ window.__PAJACFG_SRC=x.responseText; } };
+      x.send();
+    }catch(e){}
+  })();
+
+  init(); render();
+})();
+</script>
+<script src="paja-footer.js"></script>
+</body>
+</html>
